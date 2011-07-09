@@ -10,21 +10,20 @@
 %%%----------------------------------------------------------------------
 
 -module(alog_syslog).
+-author('alexander.dergachev@gmail.com').
+
 -behaviour(gen_alogger).
 
--export([start/0,
-	 stop/0,
-	 log/2,
-	 format/6]).
+-export([ start/0
+        , stop/0
+        , log/2
+        , format/6]).
 
 -include("alogger.hrl").
 
 -define(IDENT, "alogger").
 -define(LOGOPT, [cons, perror, pid]).
 -define(FACILITY, user).
-
-%%% default log message format: module:line [pid]->[tag]: user message
--define(LOG_MSG_FORMAT, "~p:~p [~p]->[~p]: ~p").
 
 %%%----------------------------------------------------------------------
 %%% @spec start() -> ok
@@ -65,19 +64,18 @@ log(ALoggerPrio, Msg) ->
     ok.
 
 %%%----------------------------------------------------------------------
-%%% @spec format(FormatString::string(), [term()]) -> string()
+%%% @spec format(FormatString::string(), [term()], Tag::string(),
+%%%              Module::atom(), Line::integer(), Pid::pid()) -> io_list()
 %%%
 %%% @doc returns formated log message
 %%% @end
 %%%----------------------------------------------------------------------
 -spec format(string(), [term()], string(),
-	     atom(), integer(), pid()) -> string().
+             atom(), integer(), pid()) -> iolist().
 
 format(FormatString, Args, Tag, Module, Line, Pid) ->
-    IoUserMsg = io_lib:format(FormatString, Args),
-    IoLogMsg = io_lib:format(?LOG_MSG_FORMAT, [Module, Line, Pid,
-					       Tag, IoUserMsg]),
-    lists:flatten(IoLogMsg).
+    alog_common_formater:format(FormatString, Args,
+                                Tag, Module, Line, Pid).
 
 %%%======================================================================
 %%% internal functions
