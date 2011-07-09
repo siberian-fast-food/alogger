@@ -14,43 +14,43 @@
 %%              args   = [] :: list(),
 %%              level,
 %%              line,       :: non_neg_integer()
-%%              pid          
+%%              pid
 %%             }
 %%        ).
 
 
--define(LOG(Level, Tags, Format, Args),
-        alog_if:log(Level, Tags, ?MODULE, ?LINE, self(), Format, Args)
+-define(LOG(Format, Args, Level, Tags),
+        alog_if:log(Format, Args, Level, Tags, ?MODULE, ?LINE, self())
        ).
 
 %%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
--define(DBG(Tag, Format, Args), ?LOG(?debug, Tag, Format, Args)).
--define(DBG(Format, Args),      ?DBG([], Format, Args)).
+-define(DBG(Format, Args, Tag), ?LOG(Format, Args, ?debug, Tag)).
+-define(DBG(Format, Args),      ?DBG(Format, Args, [])).
 -define(DBG(Format),            ?DBG(Format, [])).
 
 %%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
--define(INFO(Tag, Format, Args), ?LOG(?info, Tag, Format, Args)).
--define(INFO(Format, Args),      ?INFO([], Format, Args)).
+-define(INFO(Format, Args, Tag), ?LOG(Format, Args, ?info, Tag)).
+-define(INFO(Format, Args),      ?INFO(Format, Args, [])).
 -define(INFO(Format),            ?INFO(Format, [])).
 
 %%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
--define(NOTICE(Tag, Format, Args), ?LOG(?notice, Tag, Format, Args)).
--define(NOTICE(Format, Args),      ?NOTICE([], Format, Args)).
+-define(NOTICE(Format, Args, Tag), ?LOG(Format, Args, ?notice, Tag)).
+-define(NOTICE(Format, Args),      ?NOTICE(Format, Args, [])).
 -define(NOTICE(Format),            ?NOTICE(Format, [])).
 
 %%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
--define(WARNING(Tag, Format, Args), ?LOG(?warning, Tag, Format, Args)).
--define(WARNING(Format, Args),      ?WARNING([], Format, Args)).
+-define(WARNING(Format, Args, Tag), ?LOG(Format, Args, ?warning, Tag)).
+-define(WARNING(Format, Args),      ?WARNING(Format, Args, [])).
 -define(WARNING(Format),            ?WARNING(Format, [])).
 
 %%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
--define(ERROR(Tag, Format, Args), ?LOG(?error, Tag, Format, Args)).
--define(ERROR(Format, Args),      ?ERROR([], Format, Args)).
+-define(ERROR(Format, Args, Tag), ?LOG(Format, Args, ?error, Tag)).
+-define(ERROR(Format, Args),      ?ERROR(Format, Args, [])).
 -define(ERROR(Format),            ?ERROR(Format, [])).
 
 %%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
