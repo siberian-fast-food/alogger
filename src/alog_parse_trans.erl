@@ -38,22 +38,23 @@ make_proceed_ast(Config) ->
     ChNameAst = change_module_name(alog_if_default:default_mod_ast()),
     insert_clauses(ChNameAst, Clauses).
 
+% to make many many clauses)
 multiply_clauses(Config) ->
     multiply_clauses(Config, [def_clause()]).
-multiply_clauses([{{mod,Mods},Prio, Loggers}|Configs], Acc) ->
-    multiply_clauses(Configs, [make_clause_mod(Mods, Prio, Loggers)|Acc]);
-multiply_clauses([{{tag,Tags},Prio, Loggers}|Configs], Acc) ->
-    multiply_clauses(Configs, [make_clause_tag(Tags, Prio, Loggers)|Acc]);
+multiply_clauses([{{What,Mods},Prio, Loggers}|Configs], Acc) ->
+    NewAcc = make_clause(What,Mods, Prio, Loggers, Acc),
+    multiply_clauses(Configs, NewAcc);
 multiply_clauses([], Acc) ->
     Acc.
 
-make_clause_mod(Mod, {Guard,Pri}, Loggers)  ->
+make_clause(What, [Mod|Mods], {Guard,Pri}, Loggers, Acc)  ->
     AbsLogs = abstract(Loggers),
-    {clause, 0, get_arity_mod(Mod),[get_guard(Guard, Pri)],AbsLogs}.
-    
-make_clause_tag(Tag, {Guard,Pri}, Loggers) ->
-    AbsLogs = abstract(Loggers),
-    {clause, 0, get_arity_tag(tag),[get_guard(Guard, Pri)],AbsLogs}.
+    make_clause(What,Mods, {Guard,Pri}, Loggers,[{clause, 0, get_arity(What,Mod),[get_guard(Guard, Pri)],AbsLogs}|Acc].   
+make_clause(_,[], _, _, Acc) ->
+    Acc
+
+change_module_name(
+
 
 % Check config. Modules are loaded?
 
@@ -84,9 +85,9 @@ is_loaded(Prio, Loggers) ->
     ok.
 
 
-get_arity_mod(Mod) -> 
+get_arity(mod,Mod) -> 
     [{var,0,'Level'},{atom,0,Mod},{var,0,'Tag'}].
-get_arity_tag(Tag) -> 
+get_arity(tag,Tag) -> 
     [{var,0,'Level'},{var,0,'Module'},{atom,0,Tag}].
 get_guard(G, Level) ->
     [{op,0,G,{var,0,'Level'},{integer,0, Level}}].
@@ -131,6 +132,8 @@ mdma_transform([F|Fs], Ast) ->
     Fs1 = mdma_transform(Fs, Ast),
     [F1|Fs1];
 mdma_transform([], _Ast) -> [].
+
+
 
 mdma_transform_every({function,Line,default_mod_ast,Arity,Clause}, Ast) ->
     NewClause = transform_clause(Clause, Ast),
