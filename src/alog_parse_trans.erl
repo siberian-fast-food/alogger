@@ -1,3 +1,12 @@
+%%%----------------------------------------------------------------------
+%%% File    : alog_parse_trans.erl
+%%% Author  : Artem Golovinsky <artemgolovinsky@gmail.com>
+%%% Purpose :
+%%% Created : 09 Jul 2011 by Artem Golovinsky <artemgolovinsky@gmail.com>
+%%%
+%%% alogger, Copyright (C) 2011  Siberian Fast Food
+%%%----------------------------------------------------------------------
+
 -module(alog_parse_trans).
 
 -export([parse_transform/2, load_config/1]).
@@ -10,23 +19,38 @@
 % Interfaces
 %---------------------------------
 
-% make alog_if_default.
+% make alog_if_default parse transform
 parse_transform(Forms, _Opt) ->
    make_default_ast(Forms).
 
 
+
+% load new config to alog_if
+
 load_config(Config) ->
     case make_ast(Config) of
 	{ok, NewAst} ->
-	    {ok, ModuleName, Bin} = compile:forms(NewAst),
-	    code:load_binary(ModuleName, ?IFACE_SOURCE, Bin); 
+	    try load_config2(NewAst) of
+		Val ->
+		    Val
+	    catch 
+		Class:Exp ->
+		    {error, Class, Exp}
+	    end;
 	Other ->
 	    Other
     end.
 
-% -------------------------------
+
+
+% ------------------------------
 % Internal functions
 % -------------------------------
+load_config2(NewAst) -> 	
+    erl_prettypr:format(erl_syntax:form_list(NewAst)),
+    {ok, ModuleName, Bin} = compile:forms(NewAst),
+    code:load_binary(ModuleName, ?IFACE_SOURCE, Bin).
+	
 make_ast(Config) ->
     case check_config(Config) of 
 	ok ->
@@ -38,11 +62,12 @@ make_ast(Config) ->
 make_proceed_ast(Config) ->
     Clauses = multiply_clauses(Config),
     DefAst = alog_if_default:default_mod_ast(),
-    insert_clauses(DefAst, Clauses).
+    NewAst = insert_clauses(DefAst, Clauses),
+    {ok, NewAst}.
 
-% to make many many clauses)
+% to make many many clauses
 multiply_clauses(Config) ->
-    multiply_clauses(Config, [def_clause()]).
+    multiply_clauses(Config, def_clause()).
 multiply_clauses([{{What,Mods},Prio, Loggers}|Configs], Acc) ->
     NewAcc = make_clause(What,Mods, Prio, Loggers, Acc),
     multiply_clauses(Configs, NewAcc);
@@ -50,7 +75,7 @@ multiply_clauses([], Acc) ->
     Acc.
 
 make_clause(What, [Mod|Mods], {Guard,Pri}, Loggers, Acc)  ->
-    AbsLogs = abstract(Loggers),
+    AbsLogs = [abstract(Loggers)],
     make_clause(What,Mods, {Guard,Pri}, Loggers,[{clause, 0, get_arity(What,Mod),[get_guard(Guard, Pri)],AbsLogs}|Acc]);   
 make_clause(_,[], _, _, Acc) ->
     Acc.
@@ -68,7 +93,7 @@ insert_clauses_every({function,Line,get_mod_logs,Arity,_Clause}, Clauses) ->
 insert_clauses_every(Any, _Clauses) ->
     Any.
 
-% Check config. Modules are loaded?
+% Check config. 
 
 check_config([{{mod,Mods},Prio, Loggers}|Configs]) ->
     case is_loaded(Mods, Prio, Loggers) of
@@ -89,7 +114,7 @@ check_config([{{tag,_},Prio, Loggers}|Configs]) ->
 check_config([]) ->
     ok.
 
-% low check :-)
+% Modules are loaded?
 
 is_loaded(Mods, Prio, Loggers) ->
     is_loaded(Prio, Mods ++ Loggers).
@@ -111,12 +136,24 @@ is_loaded(Prio, AllMods) ->
 	    {error,modules_not_loaded, Other}
     end.
 
+% check of guards :-)
+
 check_prio({'>', Level}) when Level >= ?emergency, Level =< ?debug ->
     ok;
 check_prio({'<', Level}) when Level >= ?emergency, Level =< ?debug ->
     ok;
+check_prio({'=<', Level}) when Level >= ?emergency, Level =< ?debug ->
+    ok;
+check_prio({'>=', Level}) when Level >= ?emergency, Level =< ?debug ->
+    ok;
+check_prio({'==', Level}) when Level >= ?emergency, Level =< ?debug ->
+    ok;
+check_prio({'/=', Level}) when Level >= ?emergency, Level =< ?debug ->
+    ok;
 check_prio(Other) ->
     {error, wrong_level, Other}.
+
+% Compose new AST for get_mod_logs/3
 
 get_arity(mod,Mod) -> 
     [{var,0,'Level'},{atom,0,Mod},{var,0,'Tag'}];
@@ -124,14 +161,14 @@ get_arity(tag,Tag) ->
     [{var,0,'Level'},{var,0,'Module'},{atom,0,Tag}].
 get_guard(G, Level) ->
     [{op,0,G,{var,0,'Level'},{integer,0, Level}}].
-    
+% ---------------------------------   
 def_clause() ->
     {function,_Line,get_mod_logs,_Arity,DefCl} = alog_if_default:default_modlogs_ast(),
     DefCl.
+
 % --------------------------
+% Works during first compilation. AST of alog_if is written to alog_is_default:default_mod_ast/0 
 make_default_ast(Forms) ->
-%    LogModAst = make_def_modlog_ast(Forms),
-%    io:format("LogModAst ~p ~n",[LogModAst]),
     ModAst    = abstract(change_and_remove(Forms)),
     Glm = abstract(find_gml(Forms)),
     mdma_transform(Forms, ModAst, Glm). 
@@ -161,7 +198,8 @@ mdma_transform_every({function,Line,default_modlogs_ast,Arity,Clause}, _Ast, Glm
 
 mdma_transform_every(Node, _Ast, _Glm) ->
     Node.
-% ------------------------------------
+
+% remove default_modlogs_ast/0 and default_mod_ast/0 from alog_if
 
 change_and_remove([{function,_,default_modlogs_ast,_,_}|Fs]) ->
     Fs1 = change_and_remove(Fs),
@@ -179,6 +217,11 @@ cmd_every({attribute,_,file,{_,_}}) ->
     {attribute,1,file,{?IFACE_SOURCE,1}};
 cmd_every({attribute,_,module,_}) ->
     {attribute,1,module,?IFACE_MODE};
+cmd_every({attribute,_, export, Funcs}) ->
+    F1 = proplists:delete(default_mod_ast, Funcs), 
+    F2 = proplists:delete(default_modlogs_ast, F1),
+    {attribute,1, export, F2};
+
 cmd_every(Node) ->
     Node.
 %---------------------------------------
