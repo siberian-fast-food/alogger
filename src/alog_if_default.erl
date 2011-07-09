@@ -2,16 +2,20 @@
 
 -compile([{parse_transform, alog_parse_trans}, nowarn_unused_vars]).
 
--export([get_logs_mod/3, log/6, default_mod_ast/0, default_logsmod_ast/0]).
+-export([get_logs_mod/3, log/7, default_mod_ast/0, default_logsmod_ast/0]).
 
 % will return list of loggers for module/tag
 get_logs_mod(_, _, _) ->
     [].
 
 % main logging function
-log(Level, Tag, Module, Line, Format, Args) ->
+log(Level, Tags, Module, Line, Pid, Format, Args) when is_list(Tags) ->
+    [log(Level, Tag, Module, Line, Pid, Format, Args) || Tag <- Tags];
+
+% main logging function
+log(Level, Tag, Module, Line, Pid, Format, Args) ->
         [begin                          
-         Formatted = Mod:format(Format, Args, Tag, Module, Line),
+         Formatted = Mod:format(Format, Args, Tag, Module, Line, Pid),
          Mod:log(Level, Formatted)   
 	 end || Mod <- get_logs_mod(Level, Module, Tag)].
 

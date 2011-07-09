@@ -13,13 +13,14 @@
 %%              format = "" :: string(),
 %%              args   = [] :: list(),
 %%              level,
-%%              line        :: non_neg_integer()
+%%              line,       :: non_neg_integer()
+%%              pid          
 %%             }
 %%        ).
 
 
 -define(LOG(Level, Tags, Format, Args),
-        alog_if:log(Level, Tags, ?MODULE_STRING, ?LINE, Format, Args)
+        alog_if:log(Level, Tags, ?MODULE, ?LINE, self(), Format, Args)
        ).
 
 %%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
