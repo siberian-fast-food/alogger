@@ -55,20 +55,20 @@
 
 %%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
--define(CRITICAL(Tag, Format, Args), ?LOG(?critical, Tag, Format, Args)).
--define(CRITICAL(Format, Args),      ?CRITICAL([], Format, Args)).
+-define(CRITICAL(Format, Args, Tag), ?LOG(Format, Args, ?critical, Tag)).
+-define(CRITICAL(Format, Args),      ?CRITICAL(Format, Args, [])).
 -define(CRITICAL(Format),            ?CRITICAL(Format, [])).
 
 %%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
--define(ALERT(Tag, Format, Args), ?LOG(?alert, Tag, Format, Args)).
--define(ALERT(Format, Args),      ?ALERT([], Format, Args)).
+-define(ALERT(Format, Args, Tag), ?LOG(Format, Args, ?alert, Tag)).
+-define(ALERT(Format, Args),      ?ALERT(Format, Args, [])).
 -define(ALERT(Format),            ?ALERT(Format, [])).
 
 %%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
--define(EMERGENCY(Tag, Format, Args), ?LOG(?emergency, Tag, Format, Args)).
--define(EMERGENCY(Format, Args),      ?EMERGENCY([], Format, Args)).
+-define(EMERGENCY(Format, Args, Tag), ?LOG(Format, Args, ?emergency, Tag)).
+-define(EMERGENCY(Format, Args),      ?EMERGENCY(Format, Args, [])).
 -define(EMERGENCY(Format),            ?EMERGENCY(Format, [])).
 
 %%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
