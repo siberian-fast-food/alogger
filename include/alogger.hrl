@@ -18,10 +18,10 @@
 %%             }
 %%        ).
 
-
+-define(LOGMOD, alog_if).
+-define(LOGFUN, log).
 -define(LOG(Format, Args, Level, Tags),
-        alog_if:log(Format, Args, Level, Tags, ?MODULE, ?LINE, self())
-       ).
+        ?LOGMOD:?LOGFUN(Format, Args, Level, Tags, ?MODULE, ?LINE, self())).
 
 %%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
