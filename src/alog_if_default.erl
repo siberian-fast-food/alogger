@@ -27,10 +27,6 @@ log(Format, Args, Level, Tag, Module, Line, Pid) ->
 			  Formatted = Mod:format(Format, Args, Tag, Module, Line, Pid),
 			  Mod:log(Level, Formatted)
 		  end, get_mod_logs(Level, Module, Tag)).
-%    [begin
-%         Formatted = Mod:format(Format, Args, Tag, Module, Line, Pid),
-%         Mod:log(Level, Formatted)
-%	 end || Mod <- get_mod_logs(Level, Module, Tag)].
 
 % wille return default AST of this module after parse_transform 
 default_mod_ast() ->
