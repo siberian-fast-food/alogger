@@ -9,14 +9,14 @@ get_mod_logs(_, _, _) ->
     [].
 
 % main logging function
-log(Level, Tags, Module, Line, Pid, Format, Args) when is_list(Tags) ->
-    [log(Level, Tag, Module, Line, Pid, Format, Args) || Tag <- Tags];
+log(Format, Args, Level, Tags, Module, Line, Pid) when is_list(Tags) ->
+    [log(Format, Args, Level, Tag, Module, Line, Pid) || Tag <- Tags];
 
-% main logging function
-log(Level, Tag, Module, Line, Pid, Format, Args) ->
-        [begin                          
+                                                % main logging function
+log(Format, Args, Level, Tag, Module, Line, Pid) ->
+    [begin
          Formatted = Mod:format(Format, Args, Tag, Module, Line, Pid),
-         Mod:log(Level, Formatted)   
+         Mod:log(Level, Formatted)
 	 end || Mod <- get_mod_logs(Level, Module, Tag)].
 
 % wille return default AST of this module after parse_transform
