@@ -14,7 +14,7 @@
 
 -export([start/0,
 	 stop/0,
-	 log/3,
+	 log/2,
 	 format/2]).
 
 -include("alogger.hrl").
@@ -62,7 +62,7 @@ log(ALoggerPrio, Msg) ->
 %%% @end
 %%%----------------------------------------------------------------------
 format(FormatString, Args) ->
-    lists:flatten(io_lib:format(Format, Args)).
+    lists:flatten(io_lib:format(FormatString, Args)).
 
 %%%======================================================================
 %%% internal functions

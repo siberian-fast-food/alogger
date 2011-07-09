@@ -17,7 +17,7 @@
 behaviour_info(callbacks) ->
     [{start, 0},
      {stop, 0},
-     {log, 3},
+     {log, 2},
      {format, 2}];
 behaviour_info(_) ->
     undefined.
