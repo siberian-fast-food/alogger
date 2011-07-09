@@ -2,10 +2,10 @@
 
 -compile([{parse_transform, alog_parse_trans}, nowarn_unused_vars]).
 
--export([get_logs_mod/3, log/7, default_mod_ast/0, default_logsmod_ast/0]).
+-export([get_mod_logs/3, log/7, default_mod_ast/0, default_modlogs_ast/0]).
 
 % will return list of loggers for module/tag
-get_logs_mod(_, _, _) ->
+get_mod_logs(_, _, _) ->
     [].
 
 % main logging function
@@ -17,12 +17,12 @@ log(Level, Tag, Module, Line, Pid, Format, Args) ->
         [begin                          
          Formatted = Mod:format(Format, Args, Tag, Module, Line, Pid),
          Mod:log(Level, Formatted)   
-	 end || Mod <- get_logs_mod(Level, Module, Tag)].
+	 end || Mod <- get_mod_logs(Level, Module, Tag)].
 
 % wille return default AST of this module after parse_transform
 default_mod_ast() ->
     ok.
 
 % will return default AST of get_logs_mod/3
-default_logsmod_ast() ->
+default_modlogs_ast() ->
     ok.

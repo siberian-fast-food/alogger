@@ -2,27 +2,114 @@
 
 -export([parse_transform/2]).
 
+-define(?IFACE_MODE, alog_if).
+-define(?IFACE_SOURCE, "alog_if.erl").
+
+%---------------------------------
+% Interfaces
+%---------------------------------
+
 % make alog_if_default.
 parse_transform(Forms, _Opt) ->
     make_default_ast(Forms).
 
+
+load_config(Config) ->
+    case make_ast(Config) of
+	{ok, NewAst} ->
+	    {ok, ModuleName, Bin} = compile:forms(NewAst),
+	    code:load_binary(ModuleName, ?IFACE_SOURCE, Bin); 
+	Other ->
+	    Other
+    end.
+
+% -------------------------------
+% Internal functions
+% -------------------------------
+make_ast(Config) ->
+    case check_config(Config) of 
+	ok ->
+	    make_proceed_ast(Config);
+	Other ->
+    end.
+
+make_proceed_ast(Config) ->
+    Clauses = multiply_clauses(Config),
+    ChNameAst = change_module_name(alog_if_default:default_mod_ast()),
+    insert_clauses(ChNameAst, Clauses).
+
+multiply_clauses(Config) ->
+    multiply_clauses(Config, [def_clause()]).
+multiply_clauses([{{mod,Mods},Prio, Loggers}|Configs], Acc) ->
+    multiply_clauses(Configs, [make_clause_mod(Mods, Prio, Loggers)|Acc]);
+multiply_clauses([{{tag,Tags},Prio, Loggers}|Configs], Acc) ->
+    multiply_clauses(Configs, [make_clause_tag(Tags, Prio, Loggers)|Acc]);
+multiply_clauses([], Acc) ->
+    Acc.
+
+make_clause_mod(Mod, {Guard,Pri}, Loggers)  ->
+    AbsLogs = abstract(Loggers),
+    {clause, 0, get_arity_mod(Mod),[get_guard(Guard, Pri)],AbsLogs}.
+    
+make_clause_tag(Tag, {Guard,Pri}, Loggers) ->
+    AbsLogs = abstract(Loggers),
+    {clause, 0, get_arity_tag(tag),[get_guard(Guard, Pri)],AbsLogs}.
+
+% Check config. Modules are loaded?
+
+check_config([{{mod,Mods},Prio, Loggers}|Configs]) ->
+    case is_loaded(Mods, Prio, Loggers) of
+	ok ->
+	    check_config(Configs);
+	Other ->
+	    Other
+    end;
+
+check_config([{{tag,_},Prio, Loggers}|Configs]) ->
+    case is_loaded(Prio, Loggers) of
+	ok ->
+	    check_config(Configs);
+	Other ->
+	    Other
+    end;
+
+check_config([]) ->
+    ok;
+
+% low check :-)
+
+is_loaded(Mods, Prio, Loggers) ->
+    ok.
+is_loaded(Prio, Loggers) ->
+    ok.
+
+
+get_arity_mod(Mod) -> 
+    [{var,0,'Level'},{atom,0,Mod},{var,0,'Tag'}].
+get_arity_tag(Tag) -> 
+    [{var,0,'Level'},{var,0,'Module'},{atom,0,Tag}].
+get_guard(G, Level) ->
+    [{op,0,G,{var,0,'Level'},{integer,0, Level}}].
+    
+def_clause() ->
+    {function,_Line,default_modlogs_ast,_Arity,DefCl} = alog_if_default:default_modlogs_ast(),
+    DefCl.
+% --------------------------
 make_default_ast(Forms) ->
-    LogModAst = make_def_logmod_ast(Forms),
+    LogModAst = make_def_modlog_ast(Forms),
     ModAst    = abstract(LogModAst),
     mdma_transform(LogModAst, ModAst). 
 
 % alog_if_default:default_logsmod_ast/1 should return AST of alog_if_default:get_logs_mod/3
-make_def_logmod_ast(Forms) ->
-    Glm = abstract(find_glm(Forms)),
+make_def_modlog_ast(Forms) ->
+    Glm = abstract(find_gml(Forms)),
     mdl_transform(Forms, Glm).  
 
-find_glm([{function,Line,get_logs_mod,Arity,Clause}|_]) ->
-    {function,Line,get_logs_mod,Arity,Clause};
-
-find_glm([_|Fs]) ->
-    find_glm(Fs);
-
-find_glm([]) ->
+find_gml([{function,Line,get_mod_logs,Arity,Clause}|_]) ->
+    {function,Line,get_mod_logs,Arity,Clause};
+find_gml([_|Fs]) ->
+    find_gml(Fs);
+find_gml([]) ->
     error("default interface is damaged").
 
 % alog_if_default:default_mod_ast/1 should return AST of alog_if_default module
@@ -30,14 +117,12 @@ mdl_transform([F|Fs], Ast) ->
     F1 = mdl_transform_every(F, Ast),
     Fs1 = mdl_transform(Fs, Ast),
     [F1|Fs1];
+mdl_transform([], _Ast) -> 
+    [].
 
-mdl_transform([], _Ast) -> [].
-
-
-mdl_transform_every({function,Line,default_logsmod_ast,Arity,Clause}, Ast) ->
+mdl_transform_every({function,Line,default_modlogs_ast,Arity,Clause}, Ast) ->
     NewClause = transform_clause(Clause, Ast),
-    {function,Line,default_logsmod_ast,Arity,NewClause};
-
+    {function,Line,default_modlogs_ast,Arity,NewClause};
 mdl_transform_every(Node, _Ast) ->
     Node.
 
@@ -45,13 +130,11 @@ mdma_transform([F|Fs], Ast) ->
     F1 = mdma_transform_every(F, Ast),
     Fs1 = mdma_transform(Fs, Ast),
     [F1|Fs1];
-
 mdma_transform([], _Ast) -> [].
 
 mdma_transform_every({function,Line,default_mod_ast,Arity,Clause}, Ast) ->
     NewClause = transform_clause(Clause, Ast),
     {function,Line,default_mod_ast,Arity,NewClause};
-
 mdma_transform_every(Node, _Ast) ->
     Node.
 
