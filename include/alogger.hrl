@@ -1,4 +1,3 @@
-
 -define(emergency, 0). % system is unusable
 -define(alert,     1). % action must be taken immediately
 -define(critical,  2). % critical conditions
