@@ -19,7 +19,7 @@
 
 -export([ install/0]).
 
--include("alogger.hrl").
+-include("alog.hrl").
 
 -define(ERROR_LOGGER_TAG, "$error_logger").
 

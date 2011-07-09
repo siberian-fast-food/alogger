@@ -1,5 +1,5 @@
 -module(alog_pt).
--include_lib("alogger.hrl").
+-include_lib("alog.hrl").
 -export([parse_transform/2]).
 
 -type stxtree() :: tuple().
@@ -13,7 +13,8 @@ parse_transform(Forms, Opts) ->
                                             Forms, Opts),
     parse_trans:revert(NewForms).
 
-%% Finds and replaces function that
+%% Finds and replaces function that is defined as logging function in
+%% alog
 -spec replace_logfun(atom(), stxtree(), _, list()) -> {stxtree(), list()}.
 replace_logfun(application, Form, _Ctxt, Acc) ->
     MFA = erl_syntax_lib:analyze_application(Form),

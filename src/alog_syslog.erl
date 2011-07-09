@@ -1,3 +1,4 @@
+
 %%%----------------------------------------------------------------------
 %%% File    : alog_syslog.erl
 %%% Author  : Alexander Dergachev <alexander.dergachev@gmail.com>
@@ -19,7 +20,7 @@
         , log/2
         , format/6]).
 
--include("alogger.hrl").
+-include("alog.hrl").
 
 -define(IDENT, "alogger").
 -define(LOGOPT, [cons, perror, pid]).
