@@ -15,13 +15,16 @@
 -export([start/0,
 	 stop/0,
 	 log/2,
-	 format/2]).
+	 format/6]).
 
 -include("alogger.hrl").
 
 -define(IDENT, "alogger").
 -define(LOGOPT, [cons, perror, pid]).
 -define(FACILITY, user).
+
+%%% default log message format: module:line [pid]->[tag]: user message
+-define(LOG_MSG_FORMAT, "~p:~p [~p]->[~p]: ~p").
 
 %%%----------------------------------------------------------------------
 %%% @spec start() -> ok
@@ -30,6 +33,8 @@
 %%%      configuration
 %%% @end
 %%%----------------------------------------------------------------------
+-spec start() -> ok.
+
 start() ->
     syslog:start(),
     syslog:open(?IDENT, ?LOGOPT, ?FACILITY),
@@ -41,6 +46,8 @@ start() ->
 %%% @doc
 %%% @end
 %%%----------------------------------------------------------------------
+-spec stop() -> ok.
+
 stop() ->
     ok.
 
@@ -50,6 +57,8 @@ stop() ->
 %%% @doc logs message Msg with apropriate priority
 %%% @end
 %%%----------------------------------------------------------------------
+-spec log(integer(), string()) -> ok.
+
 log(ALoggerPrio, Msg) ->
     SyslogPrio = map_prio(ALoggerPrio),
     syslog:log(SyslogPrio, Msg),
@@ -61,8 +70,14 @@ log(ALoggerPrio, Msg) ->
 %%% @doc returns formated log message
 %%% @end
 %%%----------------------------------------------------------------------
-format(FormatString, Args) ->
-    lists:flatten(io_lib:format(FormatString, Args)).
+-spec format(string(), [term()], string(),
+	     atom(), integer(), pid()) -> string().
+
+format(FormatString, Args, Tag, Module, Line, Pid) ->
+    IoUserMsg = io_lib:format(FormatString, Args),
+    IoLogMsg = io_lib:format(?LOG_MSG_FORMAT, [Module, Line, Pid,
+					       Tag, IoUserMsg]),
+    lists:flatten(IoLogMsg).
 
 %%%======================================================================
 %%% internal functions
@@ -73,6 +88,8 @@ format(FormatString, Args) ->
 %%% @doc maps alogger priorities to syslog priorities
 %%% @end
 %%%----------------------------------------------------------------------
+-spec map_prio(integer()) -> atom().
+
 map_prio(?emergency) -> emerg;
 map_prio(?alert)     -> alert;
 map_prio(?critical)  -> crit;

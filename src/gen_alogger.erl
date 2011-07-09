@@ -14,10 +14,13 @@
 
 -export([behaviour_info/1]).
 
+-spec behaviour_info(callbacks) -> [{atom(), integer()}];
+		    (_) -> undefined.
+
 behaviour_info(callbacks) ->
     [{start, 0},
      {stop, 0},
      {log, 2},
-     {format, 2}];
+     {format, 6}];
 behaviour_info(_) ->
     undefined.
