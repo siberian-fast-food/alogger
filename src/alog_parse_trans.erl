@@ -24,7 +24,6 @@ parse_transform(Forms, _Opt) ->
    make_default_ast(Forms).
 
 
-
 % load new config to alog_if
 
 load_config(Config) ->
@@ -40,8 +39,6 @@ load_config(Config) ->
 	Other ->
 	    Other
     end.
-
-
 
 % ------------------------------
 % Internal functions
