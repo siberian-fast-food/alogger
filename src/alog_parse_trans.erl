@@ -43,8 +43,8 @@ load_config(Config) ->
 % ------------------------------
 % Internal functions
 % -------------------------------
-load_config2(NewAst) ->
-    erl_prettypr:format(erl_syntax:form_list(NewAst)),
+load_config2(NewAst) -> 	
+    _Source = erl_prettypr:format(erl_syntax:form_list(NewAst)),
     {ok, ModuleName, Bin} = compile:forms(NewAst),
     code:load_binary(ModuleName, ?IFACE_SOURCE, Bin).
 
