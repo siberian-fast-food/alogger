@@ -1,8 +1,8 @@
 %%%----------------------------------------------------------------------
 %%% File    : alog_syslog.erl
 %%% Author  : Alexander Dergachev <alexander.dergachev@gmail.com>
-%%% Purpose : 
-%%% Created : 09 Jul 2011 by Alexander Dergachev 
+%%% Purpose :
+%%% Created : 09 Jul 2011 by Alexander Dergachev
 %%%                          <alexander.dergachev@gmail.com>
 %%%
 %%%
@@ -14,15 +14,70 @@
 
 -export([start/0,
 	 stop/0,
-	 log/3]).
+	 log/3,
+	 format/2]).
 
+-include("alogger.hrl").
+
+-define(IDENT, "alogger").
+-define(LOGOPT, [cons, perror, pid]).
+-define(FACILITY, user).
+
+%%%----------------------------------------------------------------------
+%%% @spec start() -> ok
+%%%
+%%% @doc starts syslog driver and opens log with predefined
+%%%      configuration
+%%% @end
+%%%----------------------------------------------------------------------
 start() ->
     syslog:start(),
-    syslog:open("alogger", [cons, perror, pid], daemon).
+    syslog:open(?IDENT, ?LOGOPT, ?FACILITY),
+    ok.
 
+%%%----------------------------------------------------------------------
+%%% @spec stop() -> ok
+%%%
+%%% @doc
+%%% @end
+%%%----------------------------------------------------------------------
 stop() ->
     ok.
 
-log(Prio, Format, Args) ->
-    Msg = lists:flatten(io_lib:format(Format, Args)),
-    syslog:log(Prio, Msg).
+%%%----------------------------------------------------------------------
+%%% @spec log(ALoggerPrio::integer(), Msg::string()) -> ok
+%%%
+%%% @doc logs message Msg with apropriate priority
+%%% @end
+%%%----------------------------------------------------------------------
+log(ALoggerPrio, Msg) ->
+    SyslogPrio = map_prio(ALoggerPrio),
+    syslog:log(SyslogPrio, Msg),
+    ok.
+
+%%%----------------------------------------------------------------------
+%%% @spec format(FormatString::string(), [term()]) -> string()
+%%%
+%%% @doc returns formated log message
+%%% @end
+%%%----------------------------------------------------------------------
+format(FormatString, Args) ->
+    lists:flatten(io_lib:format(Format, Args)).
+
+%%%======================================================================
+%%% internal functions
+%%%======================================================================
+%%%----------------------------------------------------------------------
+%%% @spec map_prio(ALoggerPrio::integer()) -> atom()
+%%%
+%%% @doc maps alogger priorities to syslog priorities
+%%% @end
+%%%----------------------------------------------------------------------
+map_prio(?emergency) -> emerg;
+map_prio(?alert)     -> alert;
+map_prio(?critical)  -> crit;
+map_prio(?error)     -> err;
+map_prio(?warning)   -> warning;
+map_prio(?notice)    -> notice;
+map_prio(?info)      -> info;
+map_prio(?debug)     -> debug.
