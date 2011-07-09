@@ -5,7 +5,8 @@
   {registered, []},
   {applications, [
                   kernel,
-                  stdlib
+                  stdlib,
+                  eunit
                  ]},
   {mod, { alog_app, []}},
   {env, []}
