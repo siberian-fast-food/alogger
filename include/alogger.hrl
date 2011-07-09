@@ -8,19 +8,18 @@
 -define(info,      6). % informational
 -define(debug,     7). % debug-level messages
 
--record(lr, {tags   = [] :: list(),
-             module      :: atom(),
-             format = "" :: string(),
-             args   = [] :: list(),
-             level,
-             line        :: non_neg_integer()
-            }
-       ).
+%% -record(lr, {tags   = [] :: list(),
+%%              module      :: string(),
+%%              format = "" :: string(),
+%%              args   = [] :: list(),
+%%              level,
+%%              line        :: non_neg_integer()
+%%             }
+%%        ).
 
 
--define(LOG(L, T, F, A),
-        elogi_main_iface:log(#lr{level = L , tags = T, module = ?MODULE_STRING,
-                                 line = ?LINE, args = A, format = F})
+-define(LOG(Level, Tags, Format, Args),
+        alog_if:log(Level, Tags, ?MODULE_STRING, ?LINE, Format, Args)
        ).
 
 %%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
