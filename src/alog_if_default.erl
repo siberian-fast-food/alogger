@@ -8,11 +8,11 @@
 get_mod_logs(_, _, _) ->
     [].
 
-% main logging function
+% main logging function  
 log(Format, Args, Level, Tags, Module, Line, Pid) when is_list(Tags) ->
     [log(Format, Args, Level, Tag, Module, Line, Pid) || Tag <- Tags];
 
-                                                % main logging function
+% main logging function 
 log(Format, Args, Level, Tag, Module, Line, Pid) ->
     [begin
          Formatted = Mod:format(Format, Args, Tag, Module, Line, Pid),
