@@ -24,7 +24,7 @@ Log levels
 
 
 <table>
-<tr><td>Level</td><td>Description</td></tr>
+<th><td>Level</td><td>Description</td></th>
 <tr><td>emergency</td><td>system is unusable</td></tr>
 </table>
 
