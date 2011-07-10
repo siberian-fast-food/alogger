@@ -26,6 +26,13 @@ Log levels
 <table>
 <tr><th>Level</th><th>Description</th></tr>
 <tr><td>emergency</td><td>system is unusable</td></tr>
+<tr><td>alert</td><td>action must be taken immediately</td></tr>
+<tr><td>critical</td><td>critical conditions</td></tr>
+<tr><td>error</td><td>error conditions</td></tr>
+<tr><td>warning</td><td>warning conditions</td></tr>
+<tr><td>notice</td><td>normal but significant condition</td></tr>
+<tr><td>info</td><td>informational</td></tr>
+<tr><td>debug</td><td>debug-level messages</td></tr>
 </table>
 
 
