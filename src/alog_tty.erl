@@ -17,7 +17,7 @@
 -spec start(term()) -> ok.
 
 start(Options) ->
-    io:format("start alog_tty with ptions ~p", [Options]),
+    io:format("start alog_tty with options ~p", [Options]),
     ok.
 
 %%%----------------------------------------------------------------------

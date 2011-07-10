@@ -85,7 +85,7 @@ process_event(Event = {ReportType, _, _}) ->
 %%%----------------------------------------------------------------------
 -spec map_prio(atom()) -> integer().
 
-map_prio(error_repo)     -> ?error;
+map_prio(error_report)   -> ?error;
 map_prio(error)          -> ?error;
 map_prio(info_report)    -> ?info;
 map_prio(info_msg)       -> ?info;
