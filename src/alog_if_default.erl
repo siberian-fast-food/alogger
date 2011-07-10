@@ -39,7 +39,7 @@ log(Format, Args, Level, Tags, Module, Line, Pid) when is_list(Tags), Tags /= []
     ok;
 log(Format, Args, Level, Tag, Module, Line, Pid) ->
     lists:foreach(fun(Mod) ->
-			  Formatted = Mod:format(Format, Args, Tag, Module, Line, Pid),
+			  Formatted = Mod:format(Format, Args, Level, Tag, Module, Line, Pid),
 			  Mod:log(Level, Formatted)
 		  end, get_mod_logs(Level, Module, Tag)),
     ok.
