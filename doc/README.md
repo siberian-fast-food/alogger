@@ -5,6 +5,9 @@
 The alog application
 ====================
 
+this is [_link_](alog_examples.md#run_examples-0).
+this is [_link_](alog_examples.md#run_examples-0)
+
 
 <h2 class="indextitle">Modules</h2>
 
