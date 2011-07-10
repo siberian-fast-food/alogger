@@ -3,13 +3,13 @@
 -behaviour(gen_alogger).
 
 -export([
-         start/0,
+         start/1,
          stop/0,
          log/2,
          format/6
         ]).
 
-start() -> ok.
+start(_) -> ok.
 stop()  -> ok.
 
 format(_FormatString, [RequestRef], Tag, Module, Line, Pid) ->
