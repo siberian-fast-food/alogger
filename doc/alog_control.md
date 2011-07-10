@@ -20,7 +20,7 @@ __Behaviours:__ [`gen_server`](gen_server.md).
 
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#add_new_flow-3">add_new_flow/3</a></td><td></td></tr><tr><td valign="top"><a href="#code_change-3">code_change/3</a></td><td></td></tr><tr><td valign="top"><a href="#delete_all_flows-0">delete_all_flows/0</a></td><td></td></tr><tr><td valign="top"><a href="#delete_flow-1">delete_flow/1</a></td><td></td></tr><tr><td valign="top"><a href="#disable_flow-1">disable_flow/1</a></td><td></td></tr><tr><td valign="top"><a href="#dump_to_config-0">dump_to_config/0</a></td><td></td></tr><tr><td valign="top"><a href="#enable_flow-1">enable_flow/1</a></td><td></td></tr><tr><td valign="top"><a href="#get_flows-0">get_flows/0</a></td><td></td></tr><tr><td valign="top"><a href="#handle_call-3">handle_call/3</a></td><td></td></tr><tr><td valign="top"><a href="#handle_cast-2">handle_cast/2</a></td><td></td></tr><tr><td valign="top"><a href="#handle_info-2">handle_info/2</a></td><td></td></tr><tr><td valign="top"><a href="#init-1">init/1</a></td><td></td></tr><tr><td valign="top"><a href="#init_loggers-0">init_loggers/0</a></td><td></td></tr><tr><td valign="top"><a href="#print_flows-0">print_flows/0</a></td><td></td></tr><tr><td valign="top"><a href="#replase_flows-1">replase_flows/1</a></td><td></td></tr><tr><td valign="top"><a href="#set_flow_filter-2">set_flow_filter/2</a></td><td></td></tr><tr><td valign="top"><a href="#set_flow_loggers-2">set_flow_loggers/2</a></td><td></td></tr><tr><td valign="top"><a href="#set_flow_priority-2">set_flow_priority/2</a></td><td></td></tr><tr><td valign="top"><a href="#start_link-0">start_link/0</a></td><td></td></tr><tr><td valign="top"><a href="#terminate-2">terminate/2</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#add_new_flow-3">add_new_flow/3</a></td><td></td></tr><tr><td valign="top"><a href="#code_change-3">code_change/3</a></td><td></td></tr><tr><td valign="top"><a href="#delete_all_flows-0">delete_all_flows/0</a></td><td></td></tr><tr><td valign="top"><a href="#delete_flow-1">delete_flow/1</a></td><td></td></tr><tr><td valign="top"><a href="#disable_flow-1">disable_flow/1</a></td><td></td></tr><tr><td valign="top"><a href="#dump_to_config-1">dump_to_config/1</a></td><td></td></tr><tr><td valign="top"><a href="#enable_flow-1">enable_flow/1</a></td><td></td></tr><tr><td valign="top"><a href="#get_flows-0">get_flows/0</a></td><td></td></tr><tr><td valign="top"><a href="#handle_call-3">handle_call/3</a></td><td></td></tr><tr><td valign="top"><a href="#handle_cast-2">handle_cast/2</a></td><td></td></tr><tr><td valign="top"><a href="#handle_info-2">handle_info/2</a></td><td></td></tr><tr><td valign="top"><a href="#init-1">init/1</a></td><td></td></tr><tr><td valign="top"><a href="#init_loggers-0">init_loggers/0</a></td><td></td></tr><tr><td valign="top"><a href="#print_flows-0">print_flows/0</a></td><td></td></tr><tr><td valign="top"><a href="#replase_flows-1">replase_flows/1</a></td><td></td></tr><tr><td valign="top"><a href="#set_flow_filter-2">set_flow_filter/2</a></td><td></td></tr><tr><td valign="top"><a href="#set_flow_loggers-2">set_flow_loggers/2</a></td><td></td></tr><tr><td valign="top"><a href="#set_flow_priority-2">set_flow_priority/2</a></td><td></td></tr><tr><td valign="top"><a href="#start_link-0">start_link/0</a></td><td></td></tr><tr><td valign="top"><a href="#terminate-2">terminate/2</a></td><td></td></tr></table>
 
 
 
@@ -78,15 +78,15 @@ __Behaviours:__ [`gen_server`](gen_server.md).
 
 `disable_flow(Id) -> any()`
 
-<a name="dump_to_config-0"></a>
+<a name="dump_to_config-1"></a>
 
-<h3>dump_to_config/0</h3>
-
-
+<h3>dump_to_config/1</h3>
 
 
 
-`dump_to_config() -> any()`
+
+
+`dump_to_config(File) -> any()`
 
 <a name="enable_flow-1"></a>
 
