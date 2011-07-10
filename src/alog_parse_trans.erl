@@ -29,8 +29,8 @@ load_config(Config) ->
     case make_ast(Config) of
 	{ok, NewAst} ->
 	    try load_config2(NewAst) of
-		Val ->
-		    Val
+		_ ->
+		    ok
 	    catch 
 		Class:Exp ->
 		    {error, Class, Exp}
