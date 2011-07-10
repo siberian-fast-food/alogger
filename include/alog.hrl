@@ -7,16 +7,6 @@
 -define(info,      6). % informational
 -define(debug,     7). % debug-level messages
 
-%% -record(lr, {tags   = [] :: list(),
-%%              module      :: string(),
-%%              format = "" :: string(),
-%%              args   = [] :: list(),
-%%              level,
-%%              line,       :: non_neg_integer()
-%%              pid
-%%             }
-%%        ).
-
 -define(LOGMOD, alog_if).
 -define(LOGFUN, log).
 -define(LOG(Format, Args, Level, Tags),
