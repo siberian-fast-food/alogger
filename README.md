@@ -131,12 +131,9 @@ This way you can use _tuple expression_ (like ?DBG({A, B})) which are translated
 **Using runtime API:**
 this API consists of pure function calls. Functions are defined in [`alog`](https://github.com/spawnfest/alogger/blob/master/doc/alog.md) module.
 
-
-
 Configuration
 -------------
-
-alogger may be configured to write different flows (or streams of log messages) to different loggers.
+alogger can be configured to write different flows (or streams of log messages) to different loggers. It can be done in config or in runtime with [`alog_config`](https://github.com/spawnfest/alogger/blob/master/doc/alog_config.md) module.
 It is configured in alog.config.
 <pre>
         [{alog, [
@@ -229,7 +226,7 @@ For example, emergency < error, and debug > warning.
 
 Last updated
 ------------
-Jul 11 2011 02:46:54
+Jul 11 2011 02:50:10
 
 
 <h2 class="indextitle">Packages</h2>

@@ -104,8 +104,7 @@ this API consists of pure function calls. Functions are defined in {@link alog} 
 
 Configuration
 -------------
-
-alogger may be configured to write different flows (or streams of log messages) to different loggers.
+alogger can be configured to write different flows (or streams of log messages) to different loggers. It can be done in config or in runtime with {@link alog_config} module.
 It is configured in alog.config.
 <pre>
         [{alog, [
