@@ -14,7 +14,7 @@
 
 -export([behaviour_info/1]).
 
--spec behaviour_info(callbacks) -> [{atom(), integer()}];
+-spec behaviour_info(callbacks) -> [{atom(), integer()}, ...];
                     (_) -> undefined.
 
 behaviour_info(callbacks) ->
