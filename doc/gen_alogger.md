@@ -16,7 +16,7 @@ Module gen_alogger
 
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#behaviour_info-1">behaviour_info/1</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#behaviour_info-1">behaviour_info/1</a></td><td></td></tr><tr><td valign="top"><a href="#get_opt-2">get_opt/2</a></td><td></td></tr><tr><td valign="top"><a href="#get_opt-3">get_opt/3</a></td><td></td></tr></table>
 
 
 
@@ -32,7 +32,27 @@ Module gen_alogger
 
 
 
-<pre>behaviour_info(X1::callbacks) -> [{atom(), integer()}]</pre>
+<pre>behaviour_info(X1::callbacks) -> [{atom(), integer()}, ...]</pre>
 <br></br>
 
+
+<a name="get_opt-2"></a>
+
+<h3>get_opt/2</h3>
+
+
+
+
+
+`get_opt(Opt, Opts) -> any()`
+
+<a name="get_opt-3"></a>
+
+<h3>get_opt/3</h3>
+
+
+
+
+
+`get_opt(Opt, Opts, Default) -> any()`
 
