@@ -73,6 +73,16 @@ start(Opts) ->
 ...
 </pre>
 
+How to run examples
+-------------------
+We prepared some simple logging examples, so you could check how it works. You can run it by the following command from the Erlang shell:
+
+<pre>
+> alog_examples:run_examples().
+</pre>
+
+NOTE: if you have enabled alog_scribe logger interface, you should have Scribe log daemon installed and configured (an configuration example you can find in the priv directory). For more information about Scribe installation procedure see Scribe documentation.
+
 Configuration
 -------------
 
