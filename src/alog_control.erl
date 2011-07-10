@@ -9,6 +9,7 @@
         ]).
 
 -export([
+         print_flows/0,
          get_flows/0,
          set_flow_priority/2,
          set_flow_filter/2,
@@ -17,7 +18,6 @@
          enable_flow/1,
          delete_flow/1,
          add_new_flow/3,
-         update_flow/2,
          dump_to_config/0
         ]).
 
@@ -53,6 +53,9 @@
 get_flows() ->
     gen_server:call(?SERVER, get_flows).
 
+print_flows() ->
+    gen_server:call(?SERVER, print_flows).
+
 set_flow_priority(Id, Priority) ->
     gen_server:call(?SERVER, {set_flow_priority, Id, Priority}).
 
@@ -73,9 +76,6 @@ delete_flow(Id) ->
 
 add_new_flow(Filter, Priority, Loggers) ->
     gen_server:call(?SERVER, {add_new_flow, Filter, Priority, Loggers}).
-
-update_flow(Id, Flow) ->
-    gen_server:call(?SERVER, {update_flow, Id, Flow}).
 
 dump_to_config() ->
     gen_server:call(?SERVER, dump_to_config).
@@ -103,7 +103,18 @@ handle_cast(_Msg, State) ->
 handle_info(_Info, State) ->
     {noreply, State}.
 
-terminate(_Reason, _State) ->
+terminate(_Reason, #config{enabled_loggers = EnabledLoggers} = Config) ->
+
+    apply_config(Config#config{flows = []}),
+
+    [
+     begin
+         LoggerConfig = alog_config:get_conf(Logger, []),
+         ok = Logger:stop([{sup_ref, alog_sup} | LoggerConfig])
+     end
+     || Logger <- EnabledLoggers
+    ],
+    
     ok.
 
 code_change(_OldVsn, State, _Extra) ->
@@ -132,6 +143,23 @@ do_request(init_loggers, #config{enabled_loggers = EnabledLoggers} = Config) ->
 
 do_request(get_flows, #config{flows = Flows} = Config) ->
     {{ok, Flows}, Config};
+
+do_request(print_flows, #config{flows = Flows} = Config) ->
+    
+    FormatFun = fun(#flow{id = Id, filter = Filter,
+                          loggers = Loggers, enabled = Enabled
+                         }, {FormatString, Vars}) ->
+                        F = "id = ~w filter = ~w loggers = ~w enabled = ~w~n",
+                        {FormatString ++ F,
+                         Vars ++ [Id, Filter, Loggers, Enabled]
+                        }
+                end,
+
+    {Format, Args} = lists:foldl(FormatFun, {"",[]}, Flows),
+    
+    io:format(Format, Args),
+    
+    {ok, Config};
 
 do_request({add_new_flow, Filter, Priority, Loggers},
            #config{flows = Flows} = Config) ->
