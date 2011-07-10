@@ -1,5 +1,6 @@
+%% @private
 %% @doc
-%% FIXME
+%% This module is used while testing with EUnit.
 %% @end
 %% ----------------------------------------------------------------------
 %% Copyright (c) 2011 Siberian Fast Food
@@ -28,13 +29,18 @@
          log/2,
          format/6]).
 
+%% @private
 start(_) -> ok.
+
+%% @private
 stop(_)  -> ok.
 
+%% @private
 format(_FormatString, [RequestRef], Tag, Module, Line, Pid) ->
     Pid ! {format, RequestRef, Tag, Module, Line, Pid},
     {RequestRef, Tag, Module, Line, Pid}.
 
+%% @private
 log(Level, {RequestRef, Tag, Module, Line, Pid}) ->
     Pid ! {log, Level, RequestRef, Tag, Module, Line, Pid}.
 

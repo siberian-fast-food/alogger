@@ -63,7 +63,7 @@ write_report({warning_msg, _GL, {_Pid, Format, Args}}) ->
 write_report(Event) ->
     io_lib:format("Bad formated error_logger event ~p", [Event]).
 
-%%% @private
+%% @private
 -spec write_head(atom(), pid()) -> iolist().
 write_head(supervisor_report, Pid) ->
     write_head1("SUPERVISOR REPORT", Pid);
