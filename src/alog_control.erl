@@ -31,6 +31,8 @@
          code_change/3
         ]).
 
+-include("alog.hrl").
+
 -define(SERVER, ?MODULE).
 
 -type filter() :: {mod, atom()} | {mod, [atom()]} |
