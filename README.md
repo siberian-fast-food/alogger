@@ -21,23 +21,29 @@ There are a lot of loggers in the wild
 
 Log levels
 ----------
+Log levels are arranged in the following order.
 
 
 <table>
 <tr><th>Level</th><th>Description</th></tr>
-<tr><td>emergency</td><td>system is unusable</td></tr>
-<tr><td>alert</td><td>action must be taken immediately</td></tr>
-<tr><td>critical</td><td>critical conditions</td></tr>
-<tr><td>error</td><td>error conditions</td></tr>
-<tr><td>warning</td><td>warning conditions</td></tr>
-<tr><td>notice</td><td>normal but significant condition</td></tr>
-<tr><td>info</td><td>informational</td></tr>
-<tr><td>debug</td><td>debug-level messages</td></tr>
+<tr><td>0. emergency</td><td>system is unusable</td></tr>
+<tr><td>1. alert</td><td>action must be taken immediately</td></tr>
+<tr><td>2. critical</td><td>critical conditions</td></tr>
+<tr><td>3. error</td><td>error conditions</td></tr>
+<tr><td>4. warning</td><td>warning conditions</td></tr>
+<tr><td>5. notice</td><td>normal but significant condition</td></tr>
+<tr><td>6. info</td><td>informational</td></tr>
+<tr><td>7. debug</td><td>debug-level messages</td></tr>
 </table>
 
 
 
-Last updated: Jul 10 2011
+
+For example, emergency < error, and debug > warning.
+
+Last updated
+------------
+Jul 10 2011 22:51:05
 
 
 <h2 class="indextitle">Packages</h2>
