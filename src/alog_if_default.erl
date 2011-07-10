@@ -18,7 +18,7 @@ get_mod_logs(_, _, _) ->
     [].
 
 % main logging function
-log(Format, Args, Level, Tags, Module, Line, Pid) when is_list(Tags) ->
+log(Format, Args, Level, Tags, Module, Line, Pid) when is_list(Tags), Tags /= [] ->
     [log(Format, Args, Level, Tag, Module, Line, Pid) || Tag <- Tags],
     ok;
 
