@@ -2,11 +2,27 @@
 
 <h1>The alog application</h1>
 
-The alog application
-====================
+Overview
+========
 
-this is [_link_](alog_examples.md#run_examples-0).
-this is [_link_](alog_examples.md#run_examples-0)
+License
+-------
+This software is licensed under Erlang Public License [`http://www.erlang.org/EPLICENSE`](http://www.erlang.org/EPLICENSE)
+
+__Authors:__ Alexander Dergachev ([`alexander.dergachev@gmail.com`](mailto:alexander.dergachev@gmail.com)), Artem Golovinsky ([`artemgolovinsky@gmail.com`](mailto:artemgolovinsky@gmail.com)), Igor Karymov ([`ingham.k@gmail.com`](mailto:ingham.k@gmail.com)), Dmitry Groshev ([`lambdadmitry@gmail.com`](mailto:lambdadmitry@gmail.com)).
+
+
+License
+-------
+This software is licensed under Erlang Public License [`http://www.erlang.org/EPLICENSE`](http://www.erlang.org/EPLICENSE)
+
+
+
+Rationale
+---------
+
+
+Last updated: Jul 10 2011
 
 
 <h2 class="indextitle">Modules</h2>

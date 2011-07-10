@@ -1,2 +1,16 @@
+@title Overview
+@author Alexander Dergachev <alexander.dergachev@gmail.com>
+@author Artem Golovinsky <artemgolovinsky@gmail.com>
+@author Igor Karymov <ingham.k@gmail.com>
+@author Dmitry Groshev <lambdadmitry@gmail.com>
+
 @doc
-this is {@link alog_examples:run_examples/0. <em>link</em>}
+License
+-------
+This software is licensed under Erlang Public License [http://www.erlang.org/EPLICENSE]
+
+Rationale
+---------
+
+
+Last updated: {@date}
