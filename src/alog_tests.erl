@@ -91,11 +91,14 @@ priority_work(?emergency)   ->
 check_priority_work(Level, Ref) ->
     receive
         {format, Ref, _Tag, _Module, _Line, _Pid} ->
-            receive {log, Level, Ref, _Tag, _Module, _Line, _Pid} ->
-                    ok
+            receive
+                {log, Level, Ref, _Tag, _Module, _Line, _Pid} -> ok;
+                _ -> error
             after 100 ->
                     error
-            end
+            end;
+        _ ->
+            error
     after 100 ->
             error
     end.
