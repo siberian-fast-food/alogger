@@ -1,92 +1,89 @@
-%%%----------------------------------------------------------------------
-%%% File    : alog_error_logger_handler.erl
-%%% Author  : Igor Karymov <ingham.ka@gmail.com>
-%%% Purpose :
-%%% Created : 09 Jul 2011 by Igor Karymov <ingham.ka@gmail.com>
-%%%
-%%%
-%%% alogger, Copyright (C) 2011  Siberian Fast Food
-%%%----------------------------------------------------------------------
+%% @doc
+%% This module contains a handler for standart error_logger that allows
+%% to log them too.
+%% @end
+%% ----------------------------------------------------------------------
+%% Copyright (c) 2011 Siberian Fast Food
+%% Authors: Alexander Dergachev <alexander.dergachev@gmail.com>
+%%          Artem Golovinsky    <artemgolovinsky@gmail.com>
+%%          Igor Karymov        <ingham.k@gmail.com>
+%%          Dmitry Groshev      <lambdadmitry@gmail.com>
+%
+%% The contents of this file are subject to the Erlang Public License,
+%% Version 1.1, (the "License"); you may not use this file except in
+%% compliance with the License. You should have received a copy of the
+%% Erlang Public License along with this software. If not, it can be
+%% retrieved online at http://www.erlang.org/.
+%%
+%% Software distributed under the License is distributed on an "AS IS"
+%% basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+%% the License for the specific language governing rights and limitations
+%% under the License.
+%% ----------------------------------------------------------------------
 
 -module(alog_error_logger_handler).
--author('ingham.ka@gmail.com').
+-include_lib("alog.hrl").
 
--export([ init/1
-        , handle_event/2
-        , handle_call/2
-        , handle_info/2
-        , terminate/2]).
-
--export([ install/0]).
-
--include("alog.hrl").
+%% API
+-export([install/0]).
+%% Callbacks
+-export([init/1,
+         handle_event/2,
+         handle_call/2,
+         handle_info/2,
+         terminate/2]).
 
 -define(ERROR_LOGGER_TAG, '$error_logger').
 
-%%%----------------------------------------------------------------------
-%%% @spec install() -> ok
-%%%
-%%% @doc installs new log handler
-%%% @end
-%%%----------------------------------------------------------------------
+%% @doc Installs new log handler
 -spec install() -> ok.
-
 install() ->
     gen_event:add_handler(error_logger, alog_error_logger_handler, []),
     ok.
 
-%%%======================================================================
-%%% callback functions
-%%%======================================================================
+%%% Callback functions
+%% @private
 init(_Args) ->
     {ok, []}.
 
+%% @private
 handle_event(Event = {_ReportType, _, _}, State) ->
     process_event(Event),
     {ok, State};
 
+%% @private
 handle_event(_Event , State) ->
     {ok, State}.
 
+%% @private
 handle_call(_Request, State) ->
     {ok, ok, State}.
 
+%% @private
 handle_info(_Info, State) ->
     {ok, State}.
 
+%% @private
 terminate(_Args, _State) ->
     ok.
 
-%%%======================================================================
 %%% internal functions
-%%%======================================================================
-%%%----------------------------------------------------------------------
-%%% @spec process_event(Event::tuple()) -> ok
-%%%
-%%% @doc
-%%% @end
-%%%----------------------------------------------------------------------
+%% @private
 -spec process_event(tuple()) -> ok.
-
 process_event(Event = {ReportType, _, _}) ->
     ALoggerPrio = map_prio(ReportType),
     alog_if:log(Event,
 		[],
-		ALoggerPrio,       %% comments to be added...
-		?ERROR_LOGGER_TAG, %%
+		ALoggerPrio,       %% FIXME
+		?ERROR_LOGGER_TAG,
 		"",
 		"",
 		""),
     ok.
 
-%%%----------------------------------------------------------------------
-%%% @spec map_prio(ReportType::atom()) -> integer()
-%%%
-%%% @doc maps error_logger report types to alogger priorities
-%%% @end
-%%%----------------------------------------------------------------------
+%% @private
+%% @doc Maps error_logger report types to alogger priorities
 -spec map_prio(atom()) -> integer().
-
 map_prio(error_report)   -> ?error;
 map_prio(error)          -> ?error;
 map_prio(info_report)    -> ?info;

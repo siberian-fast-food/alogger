@@ -1,35 +1,51 @@
-%%%----------------------------------------------------------------------
-%%% File    : alog_scribe.erl
-%%% Author  : Alexander Dergachev <alexander.dergachev@gmail.com>
-%%% Purpose :
-%%% Created : 09 Jul 2011 by Alexander Dergachev
-%%%                          <alexander.dergachev@gmail.com>
-%%%
-%%%
-%%% alogger, Copyright (C) 2011  Siberian Fast Food
-%%%----------------------------------------------------------------------
+%% @doc
+%% This module is a main alog module. It serves start/0 and
+%% stop/0 functions as a user API and implements appication behaviour.
+%% It also contains runtime logging API that mimics macroses defined in
+%% alog.hrl. There are 7 log levels (emergency, alert, critical, error,
+%% warning, notice, info and debug) and 3 functions for each log
+%% level - the one that accepts format string, arguments and list of tags,
+%% the one without tags and the one with string only.
+%% @end
+%% ----------------------------------------------------------------------
+%% Copyright (c) 2011 Siberian Fast Food
+%% Authors: Alexander Dergachev <alexander.dergachev@gmail.com>
+%%          Artem Golovinsky    <artemgolovinsky@gmail.com>
+%%          Igor Karymov        <ingham.k@gmail.com>
+%%          Dmitry Groshev      <lambdadmitry@gmail.com>
+%
+%% The contents of this file are subject to the Erlang Public License,
+%% Version 1.1, (the "License"); you may not use this file except in
+%% compliance with the License. You should have received a copy of the
+%% Erlang Public License along with this software. If not, it can be
+%% retrieved online at http://www.erlang.org/.
+%%
+%% Software distributed under the License is distributed on an "AS IS"
+%% basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+%% the License for the specific language governing rights and limitations
+%% under the License.
+%% ----------------------------------------------------------------------
 
 -module(alog_scribe).
--author('alexander.dergachev@gmail.com').
-
 -behaviour(gen_alogger).
 -behaviour(gen_server).
+-include_lib("alog.hrl").
+-include_lib("scribe_types.hrl").
 
--export([ start/1
-        , stop/1
-        , log/2
-        , format/6]).
-
--export([ start_link/1
-        , init/1
-        , handle_call/3
-        , handle_cast/2
-        , handle_info/2
-        , terminate/2
-        , code_change/3]).
-
--include("alog.hrl").
--include("scribe_types.hrl").
+%% API
+-export([start_link/1]).
+%% gen_alogger callbacks
+-export([start/1,
+         stop/1,
+         log/2,
+         format/6]).
+%% gen_server callbacks
+-export([init/1,
+         handle_call/3,
+         handle_cast/2,
+         handle_info/2,
+         terminate/2,
+         code_change/3]).
 
 -record(state, {connection}).
 -define(DEF_SUP_REF, alog_sup).
@@ -40,77 +56,44 @@
 -define(DEF_STRICT_WRITE, false).
 -define(DEF_FRAMED, true).
 
-
-%%====================================================================
-%% API
-%%====================================================================
-%%%----------------------------------------------------------------------
-%%% @spec start_link(Opts::list()) -> pid()
-%%%
-%%% @doc
-%%% @end
-%%%----------------------------------------------------------------------
+%%% API
+%% @Starts logger
 -spec start_link(list()) -> pid().
-
 start_link(Opts) ->
     gen_server:start_link({local, ?MODULE}, ?MODULE, [Opts], []).
 
-%%%----------------------------------------------------------------------
-%%% @spec start(Opts::list()) -> ok
-%%%
-%%% @doc
-%%% @end
-%%%----------------------------------------------------------------------
+%%% gen_alogger callbacks
+%% @private
 -spec start(list()) -> ok.
-
 start(Opts) ->
     SupRef = gen_alogger:get_opt(sup_ref, Opts, ?DEF_SUP_REF),
     attach_to_supervisor(SupRef, Opts),
     ok.
 
-%%%----------------------------------------------------------------------
-%%% @spec stop(Opts::list()) -> ok
-%%%
-%%% @doc
-%%% @end
-%%%----------------------------------------------------------------------
+%% @private
 -spec stop(list()) -> ok.
-
 stop(_) ->
     ok.
 
-%%%----------------------------------------------------------------------
-%%% @spec log(ALoggerPrio::integer(), Msg::string()) -> ok
-%%%
-%%% @doc logs message Msg with apropriate priority
-%%% @end
-%%%----------------------------------------------------------------------
+%% @private
 -spec log(integer(), string()) -> ok.
-
 log(ALoggerPrio, Msg) ->
     ScribePrio = map_prio(ALoggerPrio),
     gen_server:cast(?MODULE, {log, ScribePrio, Msg}),
     ok.
 
-%%%----------------------------------------------------------------------
-%%% @spec format(FormatString::string(), [term()], Tag::string(),
-%%%              Module::atom(), Line::integer(), Pid::pid()) -> string()
-%%%
-%%% @doc returns formated log message
-%%% @end
-%%%----------------------------------------------------------------------
+%% @private
+%% @doc returns formated log message
 -spec format(string(), [term()], string(),
              atom(), integer(), pid()) -> string().
-
 format(FormatString, Args, Tag, Module, Line, Pid) ->
     Msg = alog_common_formatter:format(FormatString, Args,
                                        Tag, Module, Line, Pid),
     lists:flatten(Msg).
 
-%%=======================================================================
-%% gen_server callbacks
-%%=======================================================================
-%%-----------------------------------------------------------------------
+
+%%% gen_server callbacks
+%% @private
 init([Opts]) ->
     Addr = gen_alogger:get_opt(addr, Opts, ?DEF_ADDR),
     Port = gen_alogger:get_opt(port, Opts, ?DEF_PORT),
@@ -123,11 +106,11 @@ init([Opts]) ->
                                       {framed, Framed}]),
     {ok, #state{connection=C}}.
 
-%%-----------------------------------------------------------------------
+%% @private
 handle_call(_Msg, _From, State) ->
     {reply, ok, State}.
 
-%%-----------------------------------------------------------------------
+%% @private
 handle_cast({log, ScribePrio, Msg},
             #state{connection = Connection} = State) ->
     thrift_client:send_call(Connection,
@@ -138,29 +121,22 @@ handle_cast({log, ScribePrio, Msg},
 handle_cast(_Msg, State) ->
     {noreply, State}.
 
-%%-----------------------------------------------------------------------
+%% @private
 handle_info(_Msg, StateData) ->
     {noreply, StateData}.
 
-%%-----------------------------------------------------------------------
+%% @private
 terminate(_Reason, _State) ->
     ok.
 
-%%-----------------------------------------------------------------------
+%% @private
 code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
 
-%%%======================================================================
 %%% Internal functions
-%%%======================================================================
-%%%----------------------------------------------------------------------
-%%% @spec map_prio(ALoggerPrio::integer()) -> string()
-%%%
-%%% @doc maps alogger priorities to scribe priorities
-%%% @end
-%%%----------------------------------------------------------------------
+%% @private
+%% @doc Maps alogger priorities to scribe priorities
 -spec map_prio(integer()) -> string().
-
 map_prio(?emergency) -> "emergency";
 map_prio(?alert)     -> "alert";
 map_prio(?critical)  -> "critical";
@@ -170,6 +146,7 @@ map_prio(?notice)    -> "notice";
 map_prio(?info)      -> "info";
 map_prio(?debug)     -> "debug".
 
+%% @private
 attach_to_supervisor(SupRef, Opts) ->
     Restart = permanent,
     Shutdown = 2000,
