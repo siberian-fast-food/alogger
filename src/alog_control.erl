@@ -11,6 +11,8 @@
 -export([
          get_flows/0,
          set_flow_priority/2,
+         set_flow_filter/2,
+         set_flow_loggers/2,
          disable_flow/1,
          enable_flow/1,
          delete_flow/1,
@@ -52,6 +54,12 @@ get_flows() ->
 
 set_flow_priority(Id, Priority) ->
     gen_server:call(?SERVER, {set_flow_priority, Id, Priority}).
+
+set_flow_filter(Id, Filter) ->
+    gen_server:call(?SERVER, {set_flow_filter, Id, Filter}).
+
+set_flow_loggers(Id, Loggers) ->
+    gen_server:call(?SERVER, {set_flow_loggers, Id, Loggers}).
 
 disable_flow(Id) ->
     gen_server:call(?SERVER, {disable_flow, Id}).
@@ -131,15 +139,23 @@ do_request({set_flow_priority, Id, Priority},
            #config{flows = Flows} = Config) ->
 
     ModFun = fun(Flow) ->
-                     NewPriority =
-                         case Priority of
-                             {_P, _Pr}           -> Priority;
-                             Pr when is_list(Pr) -> Priority;
-                             _Pr       ->
-                                 {P, _OldP} = Flow#flow.priority,
-                                 {P, Priority}
-                         end,
-                     Flow#flow{priority = NewPriority}
+                     {mod_flow, Flow#flow{priority = Priority}}
+             end,
+    modify_flow_if_exist(Id, Flows, ModFun, Config);
+
+do_request({set_flow_filter, Id, Filter},
+           #config{flows = Flows} = Config) ->
+
+    ModFun = fun(Flow) ->
+                     {mod_flow, Flow#flow{filter = Filter}}
+             end,
+    modify_flow_if_exist(Id, Flows, ModFun, Config);
+
+do_request({set_flow_loggers, Id, Loggers},
+           #config{flows = Flows} = Config) ->
+
+    ModFun = fun(Flow) ->
+                     {mod_flow, Flow#flow{loggers = Loggers}}
              end,
     modify_flow_if_exist(Id, Flows, ModFun, Config);
 
@@ -147,7 +163,7 @@ do_request({enable_flow, Id},
            #config{flows = Flows} = Config) ->
 
     ModFun = fun(Flow) ->
-                     Flow#flow{enabled = true}
+                     {mod_flow, Flow#flow{enabled = true}}
              end,
     modify_flow_if_exist(Id, Flows, ModFun, Config);
 
@@ -155,7 +171,15 @@ do_request({disable_flow, Id},
            #config{flows = Flows} = Config) ->
 
     ModFun = fun(Flow) ->
-                     Flow#flow{enabled = false}
+                     {mod_flow, Flow#flow{enabled = false}}
+             end,
+    modify_flow_if_exist(Id, Flows, ModFun, Config);
+
+do_request({delete_flow, Id},
+           #config{flows = Flows} = Config) ->
+
+    ModFun = fun(_Flow) ->
+                     {mod_flows, lists:keydelete(Id, #flow.id, Flows)}
              end,
     modify_flow_if_exist(Id, Flows, ModFun, Config);
 
@@ -166,15 +190,32 @@ modify_flow_if_exist(Id, Flows, ModFun, Config) ->
         false ->
             {{error, {undefined_flow, Id}}, Config};
         Flow ->
-            ModFlow  = ModFun(Flow),
-            NewFlows = lists:keyreplace(Id, #flow.id, Flows, ModFlow),
-            NewConfig = Config#config{flows = NewFlows},
-            apply_config(NewConfig),
-            {ok, NewConfig}
+            case ModFun(Flow) of
+                {mod_flow, ModFlow} ->
+                    NewFlows = lists:keyreplace(Id, #flow.id, Flows, ModFlow),
+                    NewConfig = Config#config{flows = NewFlows},
+                    new_config_if_successfully_applied(NewConfig, Config);
+                {mod_flows, ModFlows} ->
+                    NewConfig = Config#config{flows = ModFlows},
+                    new_config_if_successfully_applied(NewConfig, Config);
+                {config, ModConfig}->
+                    new_config_if_successfully_applied(ModConfig, Config);
+                Error ->
+                    {{error, Error}, Config}
+            end
+    end.
+
+new_config_if_successfully_applied(NewConfig, OldConfig) ->
+    try apply_config(NewConfig) of
+        ok    -> {ok, NewConfig};
+        Error -> {{error, Error}, OldConfig}
+    catch
+        E:W ->
+            {{E, W}, OldConfig}
     end.
 
 apply_config(#config{flows = Flows}) ->
-    ok = alog_parse_trans:load_config(configs_to_internal_form(Flows)).
+    alog_parse_trans:load_config(configs_to_internal_form(Flows)).
 
 configs_to_internal_form(Flows) ->
     ToInternaFlow = 
