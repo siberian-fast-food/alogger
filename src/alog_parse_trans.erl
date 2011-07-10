@@ -1,12 +1,3 @@
-%%%----------------------------------------------------------------------
-%%% File    : alog_parse_trans.erl
-%%% Author  : Artem Golovinsky <artemgolovinsky@gmail.com>
-%%% Purpose :
-%%% Created : 09 Jul 2011 by Artem Golovinsky <artemgolovinsky@gmail.com>
-%%%
-%%% alogger, Copyright (C) 2011  Siberian Fast Food
-%%%----------------------------------------------------------------------
-
 -module(alog_parse_trans).
 
 -export([parse_transform/2, load_config/1]).
@@ -25,7 +16,6 @@ parse_transform(Forms, _Opt) ->
 
 
 % load new config to alog_if
-
 load_config(Config) ->
     case make_ast(Config) of
 	{ok, NewAst} ->
