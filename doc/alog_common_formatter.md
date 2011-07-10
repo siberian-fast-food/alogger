@@ -4,11 +4,13 @@ Module alog_common_formatter
 
 <h1>Module alog_common_formatter</h1>
 
+* [Description](#description)
 * [Function Index](#index)
 * [Function Details](#functions)
 
 
 
+FIXME.
 
 
 
@@ -32,7 +34,7 @@ Module alog_common_formatter
 
 
 
-<pre>format(FormatString::string(), Args::[term()], Tag::string(), Module::atom(), Line::integer(), Pid::pid()) -> iolist()</pre>
+<pre>format(Msg::string(), Args::[term()], Tag::string(), Module::atom(), Line::integer(), Pid::pid()) -> iolist()</pre>
 <br></br>
 
 

@@ -27,7 +27,25 @@ under the License.
 
 Rationale
 ---------
-There are a lot of loggers in the wild
+There is a lot of loggers in the wild. You can consider to use one of them in your new project. After a while there a new cool logger appears, and you want it, so, you have to change lots of places in you code, and definitely you have to recompile the entire project. That sucks, doesn't it?
+
+The Abstract Logger Interface (alogger) brings completely new opportunities of logging. Here you go:
+
+<ul>
+  <li>the possibility to introduce any new logger to your project without a need to change the project code at all</li>
+  <li>the interface will provide some neat features which are not exist in most of the existent loggers, like these:
+    <ul>
+    <li>the possibility to change the logging priority "on the fly" without any significant overhead</li>
+    <li>the possibility to change the logging priority by modules or by special tags</li>
+    </ul>
+  </li>
+  <li>Milk</li>
+</ul>
+
+So, basically, with alogger you'll be able to add any new logger to you project, you even won't have to recompile your code. You'll be able to control all your log flows 
+from the shell or through the config file.
+
+We don't invent a wheel, there's nothing like this around!
 
 Log levels
 ----------
