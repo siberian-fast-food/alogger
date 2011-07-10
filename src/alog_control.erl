@@ -120,10 +120,53 @@ do_request({add_new_flow, Filter, Priority, Loggers},
 
     {ok, Config#config{flows = NewFlows}};
 
+do_request({set_flow_priority, Id, Priority},
+           #config{flows = Flows} = Config) ->
+
+    ModFun = fun(Flow) ->
+                     NewPriority =
+                         case Priority of
+                             {_P, _Pr} -> Priority;
+                             _Pr       ->
+                                 {P, _OldP} = Flow#flow.priority,
+                                 {P, Priority}
+                         end,
+                     Flow#flow{priority = NewPriority}
+             end,
+    modify_flow_if_exist(Id, Flows, ModFun, Config);
+
+do_request({enable_flow, Id},
+           #config{flows = Flows} = Config) ->
+
+    ModFun = fun(Flow) ->
+                     Flow#flow{enabled = true}
+             end,
+    modify_flow_if_exist(Id, Flows, ModFun, Config);
+
+do_request({disable_flow, Id},
+           #config{flows = Flows} = Config) ->
+
+    ModFun = fun(Flow) ->
+                     Flow#flow{enabled = false}
+             end,
+    modify_flow_if_exist(Id, Flows, ModFun, Config);
+
 do_request(_Req, State) -> {{error, badreq}, State}.
 
+modify_flow_if_exist(Id, Flows, ModFun, Config) ->
+    case lists:keyfind(Id, #flow.id, Flows) of
+        false ->
+            {{error, {undefined_flow, Id}}, Config};
+        Flow ->
+            ModFlow  = ModFun(Flow),
+            NewFlows = lists:keyreplace(Id, #flow.id, Flows, ModFlow),
+            NewConfig = Config#config{flows = NewFlows},
+            apply_config(NewConfig),
+            {ok, NewConfig}
+    end.
+
 apply_config(#config{flows = Flows}) ->
-    alog_parse_trans:load_config(configs_to_internal_form(Flows)).
+    ok = alog_parse_trans:load_config(configs_to_internal_form(Flows)).
 
 configs_to_internal_form(Flows) ->
     ToInternaFlow = 
