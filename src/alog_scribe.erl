@@ -15,9 +15,8 @@
 -behaviour(gen_alogger).
 -behaviour(gen_server).
 
--export([ start/0
-        , start/1
-        , stop/0
+-export([ start/1
+        , stop/1
         , log/2
         , format/6]).
 
@@ -33,6 +32,7 @@
 -include("scribe_types.hrl").
 
 -record(state, {connection}).
+-define(DEF_SUP_REF, alog_sup).
 
 %%====================================================================
 %% API
@@ -57,24 +57,19 @@ start_link() ->
 -spec start(list()) -> ok.
 
 start(Opts) ->
-    SupRef = gen_alogger:get_opts(sup_ref, Opts),
-    Pid = start_link(),
-    attach_to_supervisor(SupRef, Pid),
-    ok.
-
-start() ->
-    start_link(),
+    SupRef = gen_alogger:get_opts(sup_ref, Opts, ?DEF_SUP_REF),
+    attach_to_supervisor(SupRef),
     ok.
 
 %%%----------------------------------------------------------------------
-%%% @spec stop() -> ok
+%%% @spec stop(Opts::list()) -> ok
 %%%
 %%% @doc
 %%% @end
 %%%----------------------------------------------------------------------
--spec start() -> ok.
+-spec stop(list()) -> ok.
 
-stop() ->
+stop(_) ->
     ok.
 
 %%%----------------------------------------------------------------------
@@ -163,5 +158,14 @@ map_prio(?notice)    -> "notice";
 map_prio(?info)      -> "info";
 map_prio(?debug)     -> "debug".
 
-attach_to_supervisor(_SupRef, _Pid) ->
+attach_to_supervisor(SupRef) ->
+    Restart = permanent,
+    Shutdown = 2000,
+    ChildSpec = {?MODULE,
+		 {?MODULE, start_link, []},
+		 Restart,
+		 Shutdown,
+		 worker,
+		 [?MODULE]},
+    supervisor:start_child(SupRef, ChildSpec),
     ok.
