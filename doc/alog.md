@@ -9,6 +9,7 @@ Module alog
 * [Function Details](#functions)
 
 
+
 This module is a main alog module.
 
 
