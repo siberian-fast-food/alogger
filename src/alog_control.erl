@@ -38,6 +38,7 @@
          delete_flow/1,
          delete_all_flows/0,
          add_new_flow/3,
+         replase_flows/1,
          dump_to_config/0]).
 
 %% gen_server callbacks
@@ -96,6 +97,9 @@ delete_all_flows() ->
 
 add_new_flow(Filter, Priority, Loggers) ->
     gen_server:call(?SERVER, {add_new_flow, Filter, Priority, Loggers}).
+
+replase_flows(Flows) ->
+    gen_server:call(?SERVER, {replase_flows, Flows}).
 
 dump_to_config() ->
     gen_server:call(?SERVER, dump_to_config).
@@ -177,8 +181,8 @@ do_request({add_new_flow, Filter, Priority, Loggers},
     Id = length(Flows) + 1,
     NewFlows = [#flow{id = Id, filter = Filter, priority = Priority,
                       loggers = Loggers} | Flows],
-
-    {ok, Config#config{flows = NewFlows}};
+    NewConfig = Config#config{flows = NewFlows},
+    new_config_if_successfully_applied(NewConfig, Config);
 
 do_request({set_flow_priority, Id, Priority},
            #config{flows = Flows} = Config) ->
@@ -230,6 +234,10 @@ do_request({delete_flow, Id},
 
 do_request(delete_all_flows, Config) ->
     NewConfig = Config#config{flows = []},
+    new_config_if_successfully_applied(NewConfig, Config);
+
+do_request({replase_flows, NewFlows}, Config) ->
+    NewConfig = Config#config{flows = NewFlows},
     new_config_if_successfully_applied(NewConfig, Config);
 
 do_request(_Req, State) -> {{error, badreq}, State}.
@@ -293,7 +301,10 @@ priority_to_internal(error)     -> ?error;
 priority_to_internal(warning)   -> ?warning;
 priority_to_internal(notice)    -> ?notice;
 priority_to_internal(info)      -> ?info;
-priority_to_internal(debug)     -> ?debug.
+priority_to_internal(debug)     -> ?debug;
+priority_to_internal(P) when is_integer(P) -> P.
+
+
 
 filter_to_internal({app, AppName}) ->
     Modules =

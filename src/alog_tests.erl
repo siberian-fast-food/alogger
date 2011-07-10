@@ -55,12 +55,17 @@ base_test_() ->
                end || CP <- ?all_priorities])}]}.
 
 install_test_logger_iface() ->
+    alog:start(),
+    {ok, BackupFlows} = alog_control:get_flows(),
+    ok = alog_control:delete_all_flows(),
     MaxPr = get_max_priotity(),
-    alog_parse_trans:load_config(
-      [{{mod,[?MODULE]}, {'=<', MaxPr},[alog_test_logger_iface]}]),
-    ok.
+    ok = alog_control:add_new_flow({mod,[?MODULE]}, {'=<', MaxPr},
+                                   [alog_test_logger_iface]),
+    BackupFlows.
 
-remove_test_logger_iface(State) ->
+remove_test_logger_iface(BackupFlows) ->
+    ok = alog_control:replase_flows(BackupFlows),
+    alog:stop(),
     ok.
 
 get_great_priorities(P) -> [Rp || Rp <- ?all_priorities, Rp > P].
@@ -72,9 +77,7 @@ get_max_priotity() -> lists:max(?all_priorities).
 set_max_priority() -> set_priority(get_max_priotity()).
 
 set_priority(P) ->
-    alog_parse_trans:load_config([{{mod,[?MODULE]},
-                                   {'=<', P},
-                                   [alog_test_logger_iface]}]),
+    ok = alog_control:set_flow_priority(1, {'=<', P}),
     ok.
 
 priority_work(?debug)   ->
