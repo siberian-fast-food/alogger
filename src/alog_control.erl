@@ -34,7 +34,8 @@
 -define(SERVER, ?MODULE).
 
 -type filter() :: {mod, atom()} | {mod, [atom()]} |
-                  {tag, atom()} | {tag, [atom()]}.
+                  {tag, atom()} | {tag, [atom()]} |
+                  {app, atom()}.
 
 -type priority() :: list() | tuple() | integer().
 
@@ -87,7 +88,7 @@ start_link() ->
 %%% gen_server callbacks
 init([]) ->
     EnabledLoggers = alog_config:get_conf(enabled_loggers, []),
-    FlowsConfig      = alog_config:get_conf(flows, []),
+    FlowsConfig    = alog_config:get_conf(flows, []),
     {ok, #config{enabled_loggers = EnabledLoggers,
                  flows = parse_flows_config(FlowsConfig)
                 }}.
@@ -120,6 +121,12 @@ do_request(init_loggers, #config{enabled_loggers = EnabledLoggers} = Config) ->
     ],
 
     apply_config(Config),
+
+    case alog_config:get_conf(install_error_logger_handler, true) of
+        true ->
+            ok = alog_error_logger_handler:install();
+        _ -> pass
+    end,
 
     {ok, Config};
 
