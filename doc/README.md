@@ -110,22 +110,20 @@ We prepared some simple logging examples, so you could check how it works. You c
 
 NOTE: if you have enabled alog_scribe logger interface, you should have Scribe log daemon installed and configured (an configuration example you can find in the priv directory). For more information about Scribe installation procedure see Scribe documentation.
 
+
+
 How to use alogger and feel some magic
 --------------------------------------
 You can use alogger in different ways.
-**Using macroses**
-        
-                * Using only .hrl <pre>-include_lib("alog.hrl").</pre> - you will get standart ?DBG/?INFO/?ERROR/... (you can find out more information in [`alog`](alog.md))
 
-                * Using our parse transformation:
-                          <pre>
+**Using macroses**
+You can use only .hrl file (<pre>-include_lib("alog.hrl").</pre>) - this way you will get standart ?DBG/?INFO/?ERROR/... (you can find out more information in [`alog`](alog.md)).
+Or you can also engage our parse transformation:
+<pre>
 -include_lib("alog.hrl").
 -compile({parse_transform, alog_pt}).
-                          </pre>
-                    This way you can use _tuple expression_ (like ?DBG({A, B})) which are translated to debug message with both names and values of A and B. Tuple expression can contain strings (like ?DBG({A, "string", B})).
-               
-
-        
+</pre>
+This way you can use _tuple expression_ (like ?DBG({A, B})) which are translated to debug message with both names and values of A and B. Tuple expression can contain strings (like ?DBG({A, "string", B})); a log message will contain something like <pre>alog_examples:42 [<0.52.0>]->[[]]: A: "foo" string B: bar</pre>
 
 
 
@@ -230,7 +228,7 @@ For example, emergency < error, and debug > warning.
 
 Last updated
 ------------
-Jul 11 2011 02:37:04
+Jul 11 2011 02:41:27
 
 
 <h2 class="indextitle">Packages</h2>

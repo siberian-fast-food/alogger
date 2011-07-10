@@ -88,17 +88,15 @@ NOTE: if you have enabled alog_scribe logger interface, you should have Scribe l
 How to use alogger and feel some magic
 --------------------------------------
 You can use alogger in different ways.
+
 **Using macroses**
-        <ul>
-                <li>Using only .hrl <pre>-include_lib("alog.hrl").</pre> - you will get standart ?DBG/?INFO/?ERROR/... (you can find out more information in {@link alog})</li>
-                <li>Using our parse transformation:
-                          <pre>
+You can use only .hrl file (<pre>-include_lib("alog.hrl").</pre>) - this way you will get standart ?DBG/?INFO/?ERROR/... (you can find out more information in {@link alog}).
+Or you can also engage our parse transformation:
+<pre>
 -include_lib("alog.hrl").
 -compile({parse_transform, alog_pt}).
-                          </pre>
-                    This way you can use <em>tuple expression</em> (like ?DBG({A, B})) which are translated to debug message with both names and values of A and B. Tuple expression can contain strings (like ?DBG({A, "string", B})).
-                </li>
-        </ul>
+</pre>
+This way you can use <em>tuple expression</em> (like ?DBG({A, B})) which are translated to debug message with both names and values of A and B. Tuple expression can contain strings (like ?DBG({A, "string", B})); a log message will contain something like <pre>alog_examples:42 [&lt;0.52.0&gt;]->[[]]: A: "foo" string B: bar</pre>
 
 **Using runtime API**
 This API consists of pure function calls. Functions are defined in {@link alog} module.
