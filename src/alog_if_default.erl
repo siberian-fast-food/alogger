@@ -19,14 +19,16 @@ get_mod_logs(_, _, _) ->
 
 % main logging function
 log(Format, Args, Level, Tags, Module, Line, Pid) when is_list(Tags) ->
-    [log(Format, Args, Level, Tag, Module, Line, Pid) || Tag <- Tags];
+    [log(Format, Args, Level, Tag, Module, Line, Pid) || Tag <- Tags],
+    ok;
 
 % main logging function
 log(Format, Args, Level, Tag, Module, Line, Pid) ->
     lists:foreach(fun(Mod) ->
 			  Formatted = Mod:format(Format, Args, Tag, Module, Line, Pid),
 			  Mod:log(Level, Formatted)
-		  end, get_mod_logs(Level, Module, Tag)).
+		  end, get_mod_logs(Level, Module, Tag)),
+    ok.
 
 % wille return default AST of this module after parse_transform
 default_mod_ast() ->
