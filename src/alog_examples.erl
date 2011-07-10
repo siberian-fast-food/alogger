@@ -32,7 +32,7 @@ run_examples() ->
 
     {ok, BackupFlows} = alog_control:get_flows(),
     ok = alog_control:delete_all_flows(),
-    ok = alog_control:add_new_flow({mod,[?MODULE]}, {'>=', debug}, [alog_tty]),
+    ok = alog_control:add_new_flow({mod,[?MODULE]}, {'=<', debug}, [alog_tty]),
     
     A = "foo",
     B = bar,
@@ -61,7 +61,5 @@ run_examples() ->
     ?CRITICAL("test critical ~p", [TestVar]),
     ?EMERGENCY("test emergency ~p", [TestVar]),
 
-    ok = alog_control:delete_all_flows(),
-    [ok = alog_control:add_new_flow(F, P, L) ||
-        {flow, _Id, F, P, L, _E} <- BackupFlows],
+    ok = alog_control:replase_flows(BackupFlows),
     ok.
