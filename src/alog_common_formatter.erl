@@ -1,5 +1,5 @@
 %%%----------------------------------------------------------------------
-%%% File    : alog_common_formater.erl
+%%% File    : alog_common_formatter.erl
 %%% Author  : Alexander Dergachev <alexander.dergachev@gmail.com>
 %%% Purpose :
 %%% Created : 09 Jul 2011 by Alexander Dergachev
@@ -9,13 +9,13 @@
 %%% alogger, Copyright (C) 2011  Siberian Fast Food
 %%%----------------------------------------------------------------------
 
--module(alog_common_formater).
+-module(alog_common_formatter).
 -author('alexander.dergachev@gmail.com').
 
 -export([format/6]).
 
 %%% default log message format: module:line [pid]->[tag]: user message
--define(LOG_MSG_FORMAT, "~p:~p [~p]->[~p]: ~p").
+-define(LOG_MSG_FORMAT, "~p:~p [~p]->[~p]: ~s~n").
 
 %%%----------------------------------------------------------------------
 %%% @spec format(FormatString::string(), [term()], Tag::string(),

@@ -1,4 +1,3 @@
-
 -define(emergency, 0). % system is unusable
 -define(alert,     1). % action must be taken immediately
 -define(critical,  2). % critical conditions
@@ -18,10 +17,10 @@
 %%             }
 %%        ).
 
-
+-define(LOGMOD, alog_if).
+-define(LOGFUN, log).
 -define(LOG(Format, Args, Level, Tags),
-        alog_if:log(Format, Args, Level, Tags, ?MODULE, ?LINE, self())
-       ).
+        ?LOGMOD:?LOGFUN(Format, Args, Level, Tags, ?MODULE, ?LINE, self())).
 
 %%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

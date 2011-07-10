@@ -1,3 +1,4 @@
+
 %%%----------------------------------------------------------------------
 %%% File    : alog_syslog.erl
 %%% Author  : Alexander Dergachev <alexander.dergachev@gmail.com>
@@ -14,27 +15,27 @@
 
 -behaviour(gen_alogger).
 
--export([ start/0
+-export([ start/1
         , stop/0
         , log/2
         , format/6]).
 
--include("alogger.hrl").
+-include("alog.hrl").
 
 -define(IDENT, "alogger").
 -define(LOGOPT, [cons, perror, pid]).
 -define(FACILITY, user).
 
 %%%----------------------------------------------------------------------
-%%% @spec start() -> ok
+%%% @spec start(SupRef::term()) -> ok
 %%%
 %%% @doc starts syslog driver and opens log with predefined
 %%%      configuration
 %%% @end
 %%%----------------------------------------------------------------------
--spec start() -> ok.
+-spec start(term()) -> ok.
 
-start() ->
+start(_) ->
     syslog:start(),
     syslog:open(?IDENT, ?LOGOPT, ?FACILITY),
     ok.
@@ -74,7 +75,7 @@ log(ALoggerPrio, Msg) ->
              atom(), integer(), pid()) -> iolist().
 
 format(FormatString, Args, Tag, Module, Line, Pid) ->
-    alog_common_formater:format(FormatString, Args,
+    alog_common_formatter:format(FormatString, Args,
                                 Tag, Module, Line, Pid).
 
 %%%======================================================================

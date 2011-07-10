@@ -3,19 +3,19 @@
 -behaviour(gen_alogger).
 
 -export([
-         start/0,
+         start/1,
          stop/0,
          log/2,
          format/6
         ]).
 
-start() -> ok.
+start(_) -> ok.
 stop()  -> ok.
 
-format(FormatString, [RequestRef], Tag, Module, Line, Pid) ->
-    Pid ! {format, RequestRef},
-    {Pid, RequestRef}.
+format(_FormatString, [RequestRef], Tag, Module, Line, Pid) ->
+    Pid ! {format, RequestRef, Tag, Module, Line, Pid},
+    {RequestRef, Tag, Module, Line, Pid}.
 
-log(Level, {Pid, RequestRef}) ->
-    Pid ! {log, RequestRef, Level}.
+log(Level, {RequestRef, Tag, Module, Line, Pid}) ->
+    Pid ! {log, Level, RequestRef, Tag, Module, Line, Pid}.
     
