@@ -159,9 +159,12 @@ check_prio(Other) ->
     {error, wrong_level, Other}.
 
 % Compose new AST for get_mod_logs/3
-
+get_arity(mod, '_') ->
+    [{var,0,'Level'},{var,0,'_'},{var,0,'Tag'}];   
 get_arity(mod,Mod) -> 
     [{var,0,'Level'},{atom,0,Mod},{var,0,'Tag'}];
+get_arity(tag,'_') -> 
+    [{var,0,'Level'},{var,0,'Module'},{var,0,'_'}];
 get_arity(tag,Tag) -> 
     [{var,0,'Level'},{var,0,'Module'},{atom,0,Tag}].
 
