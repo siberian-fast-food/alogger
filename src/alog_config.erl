@@ -1,5 +1,5 @@
 %% @doc
-%% FIXME
+%% Inner wrapper allows to abstract from a particular source of configuration.
 %% @end
 %% ----------------------------------------------------------------------
 %% Copyright (c) 2011 Siberian Fast Food
@@ -27,10 +27,12 @@
 
 -define(app, alog).
 
-%% @doc FIXME
+%% @doc Returns the value of the configuration property Prop.
+%% if configuration parameter does not exist, the function returns undefined
 get_conf(Prop) -> get_conf(Prop, undefined).
 
-%% @doc FIXME
+%% @doc Returns the value of the configuration property Prop.
+%% if configuration parameter does not exist, the function returns DefVal
 get_conf(Prop, DefVal) ->
     Mod = get_config_module(),
     get_conf(Mod, Prop, DefVal).
