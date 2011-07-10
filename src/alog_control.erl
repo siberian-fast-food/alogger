@@ -258,14 +258,21 @@ configs_to_internal_form(Flows) ->
     ToInternaFlow = 
         fun(#flow{enabled = false}, Acc) -> Acc;
            (#flow{filter = Filter, loggers = Loggers,
-                  priority = {P, Priority}}, Acc) ->
+                  priority = PriorityPattern}, Acc) ->
                 NewFlow =
                     {filter_to_internal(Filter),
-                     {P, priority_to_internal(Priority)},
+                     priority_pattern_to_internal(PriorityPattern),
                      Loggers},
                 [NewFlow | Acc]
         end,
     lists:foldl(ToInternaFlow, [], Flows).
+
+priority_pattern_to_internal(PriorityPattern) when is_list(PriorityPattern) ->
+    [priority_pattern_to_internal(Pp) || Pp <- PriorityPattern];
+priority_pattern_to_internal({Exp, Priority}) ->
+    {Exp, priority_to_internal(Priority)};
+priority_pattern_to_internal(Priority) ->
+    priority_to_internal(Priority).
 
 priority_to_internal(emergency) -> ?emergency;
 priority_to_internal(alert)     -> ?alert;

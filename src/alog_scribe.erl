@@ -20,7 +20,7 @@
         , log/2
         , format/6]).
 
--export([ start_link/0
+-export([ start_link/1
         , init/1
         , handle_call/3
         , handle_cast/2
@@ -34,19 +34,26 @@
 -record(state, {connection}).
 -define(DEF_SUP_REF, alog_sup).
 
+-define(DEF_ADDR, "localhost").
+-define(DEF_PORT, 1463).
+-define(DEF_STRICT_READ, false).
+-define(DEF_STRICT_WRITE, false).
+-define(DEF_FRAMED, true).
+
+
 %%====================================================================
 %% API
 %%====================================================================
 %%%----------------------------------------------------------------------
-%%% @spec start_link() -> pid()
+%%% @spec start_link(Opts::list()) -> pid()
 %%%
 %%% @doc
 %%% @end
 %%%----------------------------------------------------------------------
--spec start_link() -> pid().
+-spec start_link(list()) -> pid().
 
-start_link() ->
-    gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
+start_link(Opts) ->
+    gen_server:start_link({local, ?MODULE}, ?MODULE, [Opts], []).
 
 %%%----------------------------------------------------------------------
 %%% @spec start(Opts::list()) -> ok
@@ -58,7 +65,7 @@ start_link() ->
 
 start(Opts) ->
     SupRef = gen_alogger:get_opt(sup_ref, Opts, ?DEF_SUP_REF),
-    attach_to_supervisor(SupRef),
+    attach_to_supervisor(SupRef, Opts),
     ok.
 
 %%%----------------------------------------------------------------------
@@ -104,11 +111,16 @@ format(FormatString, Args, Tag, Module, Line, Pid) ->
 %% gen_server callbacks
 %%=======================================================================
 %%-----------------------------------------------------------------------
-init([]) ->
-    {ok, C} = thrift_client_util:new("localhost", 1463, scribe_thrift,
-                                     [{strict_read, false}, 
-                                      {strict_write, false}, 
-                                      {framed, true}]),
+init([Opts]) ->
+    Addr = gen_alogger:get_opt(addr, Opts, ?DEF_ADDR),
+    Port = gen_alogger:get_opt(port, Opts, ?DEF_PORT),
+    StrictRead = gen_alogger:get_opt(strict_read, Opts, ?DEF_STRICT_READ),
+    StrictWrite = gen_alogger:get_opt(strict_write, Opts, ?DEF_STRICT_WRITE),
+    Framed = gen_alogger:get_opt(framed, Opts, ?DEF_FRAMED),
+    {ok, C} = thrift_client_util:new(Addr, Port, scribe_thrift,
+                                     [{strict_read, StrictRead},
+                                      {strict_write, StrictWrite},
+                                      {framed, Framed}]),
     {ok, #state{connection=C}}.
 
 %%-----------------------------------------------------------------------
@@ -158,11 +170,11 @@ map_prio(?notice)    -> "notice";
 map_prio(?info)      -> "info";
 map_prio(?debug)     -> "debug".
 
-attach_to_supervisor(SupRef) ->
+attach_to_supervisor(SupRef, Opts) ->
     Restart = permanent,
     Shutdown = 2000,
     ChildSpec = {?MODULE,
-		 {?MODULE, start_link, []},
+		 {?MODULE, start_link, [Opts]},
 		 Restart,
 		 Shutdown,
 		 worker,
