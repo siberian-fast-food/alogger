@@ -10,7 +10,7 @@ Module alog_syslog
 
 
 
-FIXME.
+The log interface towards system Syslog daemon.
 
 
 

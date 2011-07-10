@@ -18,7 +18,7 @@ FIXME.
 
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#get_conf-1">get_conf/1</a></td><td></td></tr><tr><td valign="top"><a href="#get_conf-2">get_conf/2</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#get_conf-1">get_conf/1</a></td><td>FIXME.</td></tr><tr><td valign="top"><a href="#get_conf-2">get_conf/2</a></td><td>FIXME.</td></tr></table>
 
 
 
@@ -36,7 +36,9 @@ FIXME.
 
 `get_conf(Prop) -> any()`
 
-<a name="get_conf-2"></a>
+
+
+FIXME<a name="get_conf-2"></a>
 
 <h3>get_conf/2</h3>
 
@@ -46,3 +48,6 @@ FIXME.
 
 `get_conf(Prop, DefVal) -> any()`
 
+
+
+FIXME
