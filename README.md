@@ -5,9 +5,6 @@
 Overview
 ========
 
-License
--------
-This software is licensed under Erlang Public License [`http://www.erlang.org/EPLICENSE`](http://www.erlang.org/EPLICENSE)
 
 __Authors:__ Alexander Dergachev ([`alexander.dergachev@gmail.com`](mailto:alexander.dergachev@gmail.com)), Artem Golovinsky ([`artemgolovinsky@gmail.com`](mailto:artemgolovinsky@gmail.com)), Igor Karymov ([`ingham.k@gmail.com`](mailto:ingham.k@gmail.com)), Dmitry Groshev ([`lambdadmitry@gmail.com`](mailto:lambdadmitry@gmail.com)).
 
@@ -25,6 +22,14 @@ Rationale
 Last updated: Jul 10 2011
 
 
+<h2 class="indextitle">Packages</h2>
+
+
+
+<table width="100%" border="0" summary="list of packages"><tr><td><a href="https://github.com/spawnfest/alogger/blob/master/scribe/package-summary.md" class="package">scribe</a></td></tr></table>
+
+
+
 <h2 class="indextitle">Modules</h2>
 
 
@@ -39,6 +44,7 @@ Last updated: Jul 10 2011
 <tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_if_default.md" class="module">alog_if_default</a></td></tr>
 <tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_parse_trans.md" class="module">alog_parse_trans</a></td></tr>
 <tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_pt.md" class="module">alog_pt</a></td></tr>
+<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_scribe.md" class="module">alog_scribe</a></td></tr>
 <tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_sup.md" class="module">alog_sup</a></td></tr>
 <tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_syslog.md" class="module">alog_syslog</a></td></tr>
 <tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_test_logger_iface.md" class="module">alog_test_logger_iface</a></td></tr>
