@@ -11,10 +11,10 @@ License
 -------
 <pre>
 Copyright (c) 2011 Siberian Fast Food
-Authors: Alexander Dergachev < alexander.dergachev@gmail.com >
-         Artem Golovinsky    < artemgolovinsky@gmail.com >
-         Igor Karymov        < ingham.k@gmail.com >
-         Dmitry Groshev      < lambdadmitry@gmail.com >
+Authors: Alexander Dergachev alexander.dergachev@gmail.com
+         Artem Golovinsky    artemgolovinsky@gmail.com
+         Igor Karymov        ingham.k@gmail.com
+         Dmitry Groshev      lambdadmitry@gmail.com
 The contents of this file are subject to the Erlang Public License,
 Version 1.1, (the "License"); you may not use this file except in
 compliance with the License. You should have received a copy of the
@@ -134,7 +134,7 @@ It is configured in alog.config.
 **PriorityPattern** = [{Exp, PrioName}] | [PrioName] | {Exp, PrioName} | PrioName
 
 
-* Exp -  arithmetic expression filter for priority. >=, =<, >, <, ==, /= are possible.
+* Exp -  arithmetic expression filter for priority. >=, =<, >, <, =:=, /= are possible.
 
 * PrioName - name of priority. Possible: emergency, critical, error, warning, notice, info, debug
 
@@ -226,7 +226,7 @@ For example, emergency < error, and debug > warning.
 
 Last updated
 ------------
-Jul 11 2011 03:04:44
+Jul 11 2011 03:12:21
 
 
 <h2 class="indextitle">Packages</h2>
