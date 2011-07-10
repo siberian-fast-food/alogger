@@ -60,6 +60,139 @@ from the shell or through the config file.
 
 We don't invent a wheel, there's nothing like this around!
 
+
+
+Implemented logger interfaces
+-----------------------------
+At he moment there're three logger interfaces out of the box:
+- __alog_tty__: a simple one, it prints logs by io:format
+- __alog_syslog__: an interface towards Syslog daemon
+- __alog_scribe__an interface towards Scribe log daemon through thrift protocol
+
+
+
+How to implement your own interface
+-----------------------------------
+To implement your own interface you should introduce a module which implements the gen_alogger behaviour. It's possible to configure your interface modules through priv/alog.config file. For each log interface module there's a configuration entry, for example:
+
+<pre>
+{alog_syslog, [{ident, "alogger"},
+               {logopt, [cons, perror, pid]},
+               {facility, user}]}
+</pre>
+
+
+
+Also, gen_logger behaviour provides two helper functions: get_opt/2 and get_opt/3, you can use it in your start/1 function to get neccessary configuration, for example:
+
+<pre>
+start(Opts) ->
+    Ident = gen_alogger:get_opt(ident, Opts, ?DEF_IDENT),
+    Logopt = gen_alogger:get_opt(logopt, Opts, ?DEF_LOGOPT),
+    Facility = gen_alogger:get_opt(facility, Opts, ?DEF_FACILITY),
+...
+</pre>
+
+
+
+How to run examples
+-------------------
+We prepared some simple logging examples, so you could check how it works. You can run it by the following command from the Erlang shell:
+
+<pre>
+> alog_examples:run_examples().
+</pre>
+
+
+
+NOTE: if you have enabled alog_scribe logger interface, you should have Scribe log daemon installed and configured (an configuration example you can find in the priv directory). For more information about Scribe installation procedure see Scribe documentation.
+
+
+
+Configuration
+-------------
+
+
+
+alogger may be configured to write different flows to different loggers.
+It is configured in alog.config.
+
+        
+
+[{alog, [                  
+{enabled_loggers, Loggers},                  
+{flows, [                          
+{Filter,PriorityPattern, Loggers},                  
+]},  		
+{LoggerName,ListOfSettings}                
+]}         
+].
+
+
+
+
+**enabled_loggers** - list of loggers, enabled by default.
+
+
+
+**flows** - every flow is represented as tuple of setting.
+
+
+
+
+'{Filter, PriorityPattern, Loggers}'
+
+
+
+**Filter** = {tag, TagList} | {mod, ModList}
+
+
+
+* TagList is list of tags, Every tag is atom. If you set tag as filter, printouts with pointed tags is sent to loggers. Name of modules are  no matter in this case.
+
+
+
+* ModList is list of modules which should be logged to loggers. Tags are no matter.
+
+
+
+**PriorityPattern** = [{Exp, PrioName}] | [PrioName] | {Exp, PrioName} | PrioName
+
+
+
+* Exp -  arithmetic expression filter for priority. >=, =<, >, <, =:=, /= are possible.
+
+
+
+* PrioName - name of priority. Possible: emergency, critical, error, warning, notice, info, debug
+
+
+
+**Loggers** = [Logger]
+
+
+
+* Logger is atom. Name of logger.
+
+
+
+
+
+'{LoggerName, ListOfSettings}'
+
+
+
+
+**LoggerName** - name of logger module.
+
+
+
+**ListOfSettings** = [Setting]
+
+
+
+* Setting is for logger.
+
 Log levels
 ----------
 Log levels are arranged in the following order.
@@ -84,7 +217,7 @@ For example, emergency < error, and debug > warning.
 
 Last updated
 ------------
-Jul 11 2011 01:27:12
+Jul 11 2011 02:05:41
 
 
 <h2 class="indextitle">Packages</h2>
