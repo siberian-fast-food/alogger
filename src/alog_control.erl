@@ -4,48 +4,40 @@
 
 %% API
 -export([start_link/0]).
-
--export([
-         get_flows/0,
+-export([get_flows/0,
          set_flow_priority/2,
          disable_flow/1,
          enable_flow/1,
          delete_flow/1,
          add_new_flow/3,
          update_flow/2,
-         dump_to_config/0
-        ]).
+         dump_to_config/0]).
 
 %% gen_server callbacks
--export([
-         init/1,
+-export([init/1,
          handle_call/3,
          handle_cast/2,
          handle_info/2,
          terminate/2,
-         code_change/3
-        ]).
+         code_change/3]).
 
 -define(SERVER, ?MODULE).
 
--type filter() :: {mod, atom()} | {mod, [atom()]} | {tag, atom()} | {tag, [atom()]}.
+-type filter() :: {mod, atom()} | {mod, [atom()]} |
+                  {tag, atom()} | {tag, [atom()]}.
 
 -type priority() :: list() | tuple() | integer().
 
 -record(flow, {id       :: non_neg_integer(),
                filter   :: filter(),
                priority :: priority(),
-               loggers  :: list(atom())
-                           }).
+               loggers  :: list(atom())}).
 
 -record(config, {flows           = [] :: list(#flow{}),
-                 enabled_loggers = [] :: list(atom())
-                                         }).
+                 enabled_loggers = [] :: list(atom())}).
 
-%%====================================================================
-%% API
-%%====================================================================
 
+%%% API
 get_flows() ->
     gen_server:call(?SERVER, get_flows).
 
@@ -73,10 +65,7 @@ dump_to_config() ->
 start_link() ->
     gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
 
-%%====================================================================
-%% gen_server callbacks
-%%====================================================================
-
+%%% gen_server callbacks
 init([]) ->
     {ok, #config{}}.
 
@@ -96,10 +85,7 @@ terminate(_Reason, _State) ->
 code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
 
-%%--------------------------------------------------------------------
 %%% Internal functions
-%%--------------------------------------------------------------------
-
 do_request(get_flows, #config{flows = Flows} = Config) ->
     {{ok, Flows}, Config};
 
@@ -112,4 +98,4 @@ do_request({add_new_flow, Filter, Priority, Loggers},
 
     {ok, Config#config{flows = NewFlows}};
 
-do_request(Req, State) -> {{error, badreq}, State}.
+do_request(_Req, State) -> {{error, badreq}, State}.
