@@ -16,39 +16,42 @@
 -behaviour(gen_alogger).
 
 -export([ start/1
-        , stop/0
+        , stop/1
         , log/2
         , format/6]).
 
 -include("alog.hrl").
 
--define(IDENT, "alogger").
--define(LOGOPT, [cons, perror, pid]).
--define(FACILITY, user).
+-define(DEF_IDENT, "alogger").
+-define(DEF_LOGOPT, [cons, perror, pid]).
+-define(DEF_FACILITY, user).
 
 %%%----------------------------------------------------------------------
-%%% @spec start(SupRef::term()) -> ok
+%%% @spec start(Opts::list()) -> ok
 %%%
 %%% @doc starts syslog driver and opens log with predefined
 %%%      configuration
 %%% @end
 %%%----------------------------------------------------------------------
--spec start(term()) -> ok.
+-spec start(list()) -> ok.
 
-start(_) ->
+start(Opts) ->
+    Ident = gen_alogger:get_opt(ident, Opts, ?DEF_IDENT),
+    Logopt = gen_alogger:get_opt(logopt, Opts, ?DEF_LOGOPT),
+    Facility = gen_alogger:get_opt(facility, Opts, ?DEF_FACILITY),
     syslog:start(),
-    syslog:open(?IDENT, ?LOGOPT, ?FACILITY),
+    syslog:open(Ident, Logopt, Facility),
     ok.
 
 %%%----------------------------------------------------------------------
-%%% @spec stop() -> ok
+%%% @spec stop(Opts::list()) -> ok
 %%%
 %%% @doc
 %%% @end
 %%%----------------------------------------------------------------------
--spec stop() -> ok.
+-spec stop(list()) -> ok.
 
-stop() ->
+stop(_) ->
     ok.
 
 %%%----------------------------------------------------------------------

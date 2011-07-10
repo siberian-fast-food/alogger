@@ -4,13 +4,13 @@
 
 -export([
          start/1,
-         stop/0,
+         stop/1,
          log/2,
          format/6
         ]).
 
 start(_) -> ok.
-stop()  -> ok.
+stop(_)  -> ok.
 
 format(_FormatString, [RequestRef], Tag, Module, Line, Pid) ->
     Pid ! {format, RequestRef, Tag, Module, Line, Pid},

@@ -12,7 +12,6 @@ run_examples() ->
     B = bar,
 
     io:format("*** all priorities~n", []),
-
     TestVar = test_var_value,
     ?DBG({A, B}),
     ?DBG({A, B, "testvar is ~p", foobar, [1, 2, 3]}, [TestVar]),
