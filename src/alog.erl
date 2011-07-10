@@ -1,5 +1,10 @@
 %%% @doc This module is a main alog module. It serves start/0 and
 %%% stop/0 functions as a user API and implements appication behaviour.
+%%% It also contains runtime logging API that mimics macroses defined in
+%%% alog.hrl. There are 7 log levels (emergency, alert, critical, error,
+%%% warning, notice, info and debug) and 3 functions for each log
+%%% level - the one that accepts format string, arguments and list of tags,
+%%% the one without tags and the one with string only.
 -module(alog).
 -behaviour(application).
 -include_lib("alog.hrl").
@@ -42,37 +47,94 @@ stop(_State) ->
     ok.
 
 %%% Runtime logging API
+-spec log(nonempty_string(), list(), integer(), list(atom())) -> ok.
 log(Format, Args, Level, Tags) ->
     ?LOGMOD:?LOGFUN(Format, Args, Level, Tags, runtime, 0, self()).
 
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-spec dbg(Format :: nonempty_string(), Args :: list(), Tag :: list(atom())) -> ok.
 dbg(Format, Args, Tag) -> log(Format, Args, ?debug, Tag).
+
+-spec dbg(Format :: nonempty_string(), Args :: list()) -> ok.
 dbg(Format, Args)      -> log(Format, Args, ?debug, []).
+
+-spec dbg(Format :: nonempty_string()) -> ok.
 dbg(Format)            -> log(Format, [], ?debug, []).
 
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-spec info(Format :: nonempty_string(), Args :: list(), Tag :: list(atom())) -> ok.
 info(Format, Args, Tag) -> log(Format, Args, ?info, Tag).
+
+-spec info(Format :: nonempty_string(), Args :: list()) -> ok.
 info(Format, Args)      -> log(Format, Args, ?info, []).
+
+-spec info(Format :: nonempty_string()) -> ok.
 info(Format)            -> log(Format, [], ?info, []).
 
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-spec notice(Format :: nonempty_string(), Args :: list(), Tag :: list(atom())) -> ok.
 notice(Format, Args, Tag) -> log(Format, Args, ?notice, Tag).
+
+-spec notice(Format :: nonempty_string(), Args :: list()) -> ok.
 notice(Format, Args)      -> log(Format, Args, ?notice, []).
+
+-spec notice(Format :: nonempty_string()) -> ok.
 notice(Format)            -> log(Format, [], ?notice, []).
 
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-spec warning(Format :: nonempty_string(), Args :: list(), Tag :: list(atom())) -> ok.
 warning(Format, Args, Tag) -> log(Format, Args, ?warning, Tag).
+
+-spec warning(Format :: nonempty_string(), Args :: list()) -> ok.
 warning(Format, Args)      -> log(Format, Args, ?warning, []).
+
+-spec warning(Format :: nonempty_string()) -> ok.
 warning(Format)            -> log(Format, [], ?warning, []).
 
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-spec error(Format :: nonempty_string(), Args :: list(), Tag :: list(atom())) -> ok.
 error(Format, Args, Tag) -> log(Format, Args, ?error, Tag).
+
+-spec error(Format :: nonempty_string(), Args :: list()) -> ok.
 error(Format, Args)      -> log(Format, Args, ?error, []).
+
+-spec error(Format :: nonempty_string()) -> ok.
 error(Format)            -> log(Format, [], ?error, []).
 
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-spec critical(Format :: nonempty_string(), Args :: list(), Tag :: list(atom())) -> ok.
 critical(Format, Args, Tag) -> log(Format, Args, ?critical, Tag).
+
+-spec critical(Format :: nonempty_string(), Args :: list()) -> ok.
 critical(Format, Args)      -> log(Format, Args, ?critical, []).
+
+-spec critical(Format :: nonempty_string()) -> ok.
 critical(Format)            -> log(Format, [], ?critical, []).
 
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-spec alert(Format :: nonempty_string(), Args :: list(), Tag :: list(atom())) -> ok.
 alert(Format, Args, Tag) -> log(Format, Args, ?alert, Tag).
+
+-spec alert(Format :: nonempty_string(), Args :: list()) -> ok.
 alert(Format, Args)      -> log(Format, Args, ?alert, []).
+
+-spec alert(Format :: nonempty_string()) -> ok.
 alert(Format)            -> log(Format, [], ?alert, []).
 
+%%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-spec emergency(Format :: nonempty_string(), Args :: list(), Tag :: list(atom())) -> ok.
 emergency(Format, Args, Tag) -> log(Format, Args, ?emergency, Tag).
+
+-spec emergency(Format :: nonempty_string(), Args :: list()) -> ok.
 emergency(Format, Args)      -> log(Format, Args, ?emergency, []).
+
+-spec emergency(Format :: nonempty_string()) -> ok.
 emergency(Format)            -> log(Format, [], ?emergency, []).
