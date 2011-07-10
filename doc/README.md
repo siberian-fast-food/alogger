@@ -12,7 +12,6 @@ The alog application
 
 <table width="100%" border="0" summary="list of modules">
 <tr><td><a href="alog.md" class="module">alog</a></td></tr>
-<tr><td><a href="alog_app.md" class="module">alog_app</a></td></tr>
 <tr><td><a href="alog_common_formatter.md" class="module">alog_common_formatter</a></td></tr>
 <tr><td><a href="alog_config.md" class="module">alog_config</a></td></tr>
 <tr><td><a href="alog_control.md" class="module">alog_control</a></td></tr>
