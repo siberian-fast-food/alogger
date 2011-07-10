@@ -248,7 +248,7 @@ new_config_if_successfully_applied(NewConfig, OldConfig) ->
         Error -> {{error, Error}, OldConfig}
     catch
         E:W ->
-            {{E, W}, OldConfig}
+            {{E, {W, erlang:get_stacktrace()}}, OldConfig}
     end.
 
 apply_config(#config{flows = Flows}) ->
