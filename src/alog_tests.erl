@@ -2,7 +2,7 @@
 
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
--include("alogger.hrl").
+-include("alog.hrl").
 
 -define(all_prioritys, [
                        ?emergency, 
@@ -42,6 +42,9 @@ base_test_() ->
     }.
 
 install_test_logger_iface() ->
+    MaxPr = get_max_priotity(),
+    alog_parse_trans:load_config(
+      [{{mod,[?MODULE]}, {'=<', MaxPr},[alog_test_logger_iface]}]),
     ok.
 
 remove_test_logger_iface(State) ->
@@ -49,8 +52,12 @@ remove_test_logger_iface(State) ->
 
 get_great_prioritys(P) -> [Rp || Rp <- ?all_prioritys, Rp > P].
 get_low_prioritys(P)   -> [Rp || Rp <- ?all_prioritys, Rp < P].
-set_max_priority() -> set_priority(lists:max(?all_prioritys)).
-set_priority(P)    -> ok. 
+get_max_priotity()     -> lists:max(?all_prioritys).
+set_max_priority() -> set_priority(get_max_priotity()).
+set_priority(P)    -> 
+    alog_parse_trans:load_config(
+      [{{mod,[?MODULE]}, {'=<', P},[alog_test_logger_iface]}]),
+    ok.
 
 priority_work(?debug)   ->
     Ref = make_ref(),
@@ -83,8 +90,8 @@ priority_work(?emergency)   ->
 
 check_priority_work(Level, Ref) ->
     receive
-        {format, Ref} ->
-            receive {log, Ref, Level} ->
+        {format, Ref, _Tag, _Module, _Line, _Pid} ->
+            receive {log, Level, Ref, _Tag, _Module, _Line, _Pid} ->
                     ok
             after 100 ->
                     error
