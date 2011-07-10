@@ -31,6 +31,8 @@
          code_change/3
         ]).
 
+-include("alog.hrl").
+
 -define(SERVER, ?MODULE).
 
 -type filter() :: {mod, atom()} | {mod, [atom()]} |
@@ -265,14 +267,14 @@ configs_to_internal_form(Flows) ->
         end,
     lists:foldl(ToInternaFlow, [], Flows).
 
-priority_to_internal(emergency)-> 0;
-priority_to_internal(alert)->     1;
-priority_to_internal(critical)->  2;
-priority_to_internal(error)->     3;
-priority_to_internal(warning)->   4;
-priority_to_internal(notice)->    5;
-priority_to_internal(info)->      6;
-priority_to_internal(debug)->     7.
+priority_to_internal(emergency) -> ?emergency;
+priority_to_internal(alert)     -> ?alert;
+priority_to_internal(critical)  -> ?critical;
+priority_to_internal(error)     -> ?error;
+priority_to_internal(warning)   -> ?warning;
+priority_to_internal(notice)    -> ?notice;
+priority_to_internal(info)      -> ?info;
+priority_to_internal(debug)     -> ?debug.
 
 filter_to_internal({app, AppName}) ->
     Modules =
