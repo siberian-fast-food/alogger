@@ -1,3 +1,4 @@
+%% @private
 %% @doc
 %% This module containts tests for alogger. It uses eunit to make tests.
 %% @end
@@ -63,12 +64,17 @@ remove_test_logger_iface(State) ->
     ok.
 
 get_great_priorities(P) -> [Rp || Rp <- ?all_priorities, Rp > P].
-get_low_priorities(P)   -> [Rp || Rp <- ?all_priorities, Rp < P].
-get_max_priotity()     -> lists:max(?all_priorities).
+
+get_low_priorities(P) -> [Rp || Rp <- ?all_priorities, Rp < P].
+
+get_max_priotity() -> lists:max(?all_priorities).
+
 set_max_priority() -> set_priority(get_max_priotity()).
-set_priority(P)    ->
-    alog_parse_trans:load_config(
-      [{{mod,[?MODULE]}, {'=<', P},[alog_test_logger_iface]}]),
+
+set_priority(P) ->
+    alog_parse_trans:load_config([{{mod,[?MODULE]},
+                                   {'=<', P},
+                                   [alog_test_logger_iface]}]),
     ok.
 
 priority_work(?debug)   ->
