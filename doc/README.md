@@ -116,9 +116,10 @@ How to use alogger and feel some magic
 --------------------------------------
 You can use alogger in different ways.
 
-**Using macroses**
-You can use only .hrl file (<pre>-include_lib("alog.hrl").</pre>) - this way you will get standart ?DBG/?INFO/?ERROR/... (you can find out more information in [`alog`](alog.md)).
-Or you can also engage our parse transformation:
+**Using macroses:**
+you can use only .hrl file like this
+<pre>-include_lib("alog.hrl")</pre>
+and you will get standart ?DBG/?INFO/?ERROR/... (you can find out more information in [`alog`](alog.md)). Or you can also engage our parse transformation:
 <pre>
 -include_lib("alog.hrl").
 -compile({parse_transform, alog_pt}).
@@ -127,8 +128,8 @@ This way you can use _tuple expression_ (like ?DBG({A, B})) which are translated
 
 
 
-**Using runtime API**
-This API consists of pure function calls. Functions are defined in [`alog`](alog.md) module.
+**Using runtime API:**
+this API consists of pure function calls. Functions are defined in [`alog`](alog.md) module.
 
 
 
@@ -228,7 +229,7 @@ For example, emergency < error, and debug > warning.
 
 Last updated
 ------------
-Jul 11 2011 02:41:40
+Jul 11 2011 02:43:04
 
 
 <h2 class="indextitle">Packages</h2>
