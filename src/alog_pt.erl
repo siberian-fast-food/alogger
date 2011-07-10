@@ -1,19 +1,21 @@
 -module(alog_pt).
+-include_lib("alog.hrl").
 -export([parse_transform/2]).
 
--define(LOGMOD, alog_app).
--define(LOGFUN, testlog).
-
--type form()    :: any().
--type forms()   :: [form()].
+-type stxtree() :: tuple().
+-type forms()   :: [stxtree()].
 -type options() :: [{atom(), any()}].
 
+%% This API function makes actual parse transformation
 -spec parse_transform(forms(), options()) -> forms().
 parse_transform(Forms, Opts) ->
     {NewForms, _} = parse_trans:depth_first(fun replace_logfun/4, [],
                                             Forms, Opts),
     parse_trans:revert(NewForms).
 
+%% Finds and replaces function that is defined as logging function in
+%% alog
+-spec replace_logfun(atom(), stxtree(), _, list()) -> {stxtree(), list()}.
 replace_logfun(application, Form, _Ctxt, Acc) ->
     MFA = erl_syntax_lib:analyze_application(Form),
     case MFA of
@@ -31,6 +33,7 @@ replace_logfun(application, Form, _Ctxt, Acc) ->
 replace_logfun(_, Form, _Ctxt, Acc) ->
     {Form, Acc}.
 
+-spec update_args([stxtree(), ...]) -> [stxtree(), ...].
 update_args([Format|Args]) ->
     Format2 = case erl_syntax:type(Format) of
                   tuple ->
@@ -39,6 +42,7 @@ update_args([Format|Args]) ->
               end,
     [Format2|Args].
 
+-spec build_format(stxtree()) -> stxtree().
 build_format(Format) ->
     Elems = erl_syntax:tuple_elements(Format),
     {FStrsR, VarsR} = lists:foldl(fun elems_folder/2, {[], []}, Elems),
@@ -52,6 +56,8 @@ build_format(Format) ->
     OperatorT = erl_syntax:module_qualifier(ModT, FunT),
     erl_syntax:application(OperatorT, [FStrT, VarsT]).
 
+-spec (elems_folder(stxtree(), Acc) ->
+              Acc when Acc :: {list(nonempty_string()), list(atom())}).
 elems_folder(Elem, {FStrs, Vars}) ->
     case erl_syntax:type(Elem) of
         variable ->
