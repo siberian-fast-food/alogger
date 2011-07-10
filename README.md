@@ -119,7 +119,7 @@ You can use alogger in different ways.
 **Using macroses:**
 you can use only .hrl file like this
 <pre>-include_lib("alog.hrl")</pre>
-and you will get standart ?DBG/?INFO/?ERROR/... (you can find out more information in [`alog`](https://github.com/spawnfest/alogger/blob/master/doc/alog.md)). Or you can also engage our parse transformation:
+and you will get standart ?DBG/?INFO/?ERROR/... (you can find out more information in [`alog.hrl`](https://github.com/spawnfest/alogger/blob/master/alog/hrl.md)). Or you can also engage our parse transformation:
 <pre>
 -include_lib("alog.hrl").
 -compile({parse_transform, alog_pt}).
@@ -229,7 +229,7 @@ For example, emergency < error, and debug > warning.
 
 Last updated
 ------------
-Jul 11 2011 02:43:04
+Jul 11 2011 02:46:00
 
 
 <h2 class="indextitle">Packages</h2>
