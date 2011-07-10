@@ -27,7 +27,7 @@
 -export([start/1,
          stop/1,
          log/2,
-         format/6]).
+         format/7]).
 
 %% @private
 start(_) -> ok.
@@ -36,12 +36,12 @@ start(_) -> ok.
 stop(_)  -> ok.
 
 %% @private
-format(_FormatString, [RequestRef], Tag, Module, Line, Pid) ->
-    Pid ! {format, RequestRef, Tag, Module, Line, Pid},
-    {RequestRef, Tag, Module, Line, Pid}.
+format(_FormatString, [RequestRef], Level, Tag, Module, Line, Pid) ->
+    Pid ! {format, RequestRef, Level, Tag, Module, Line, Pid},
+    {RequestRef, Level, Tag, Module, Line, Pid}.
 
 %% @private
-log(Level, {RequestRef, Tag, Module, Line, Pid}) ->
+log(Level, {RequestRef, Level, Tag, Module, Line, Pid}) ->
     Pid ! {log, Level, RequestRef, Tag, Module, Line, Pid}.
 
 
