@@ -39,7 +39,7 @@
          delete_all_flows/0,
          add_new_flow/3,
          replase_flows/1,
-         dump_to_config/0]).
+         dump_to_config/1]).
 
 %% gen_server callbacks
 -export([init/1,
@@ -101,8 +101,8 @@ add_new_flow(Filter, Priority, Loggers) ->
 replase_flows(Flows) ->
     gen_server:call(?SERVER, {replase_flows, Flows}).
 
-dump_to_config() ->
-    gen_server:call(?SERVER, dump_to_config).
+dump_to_config(File) ->
+    gen_server:call(?SERVER, {dump_to_config, File}).
 
 init_loggers() ->
     gen_server:call(?SERVER, init_loggers).
@@ -240,6 +240,9 @@ do_request({replase_flows, NewFlows}, Config) ->
     NewConfig = Config#config{flows = NewFlows},
     new_config_if_successfully_applied(NewConfig, Config);
 
+do_request({dump_to_config, File},#config{flows = Flows} = Config) ->
+    {dump_to_config_low(File, Flows), Config};
+
 do_request(_Req, State) -> {{error, badreq}, State}.
 
 modify_flow_if_exist(Id, Flows, ModFun, Config) ->
@@ -327,3 +330,38 @@ parse_flows_config(FlowsConfig) ->
         end,
     {_Id, ParsedFlows} = lists:foldl(ParseFun, {1, []}, FlowsConfig),
     ParsedFlows.
+
+dump_to_config_low(File, Flow) ->
+    case file:consult(File) of
+	{ok, Terms} ->
+	    update_terms(Terms, File, Flow);
+	Error ->
+	    Error
+    end.
+
+update_terms(Terms, File, Flow) ->
+    [[{alog, ListOfConf}]] = Terms,
+    WriteToConf = [{alog, new_flow(ListOfConf, Flow)}], 
+    write_to_config(WriteToConf, File).
+
+new_flow(ListOfConf, Flow) ->
+    new_flow(ListOfConf, [], Flow).
+new_flow([{flows, _}|Other], Acc, Flow) ->
+    new_flow(Other, [{flows,compose_new_flow(Flow)}|Acc], Flow);
+new_flow([N|Other],Acc, Flow) ->
+    new_flow(Other, [N|Acc], Flow);
+new_flow([], Acc, _Flow) ->
+    lists:reverse(Acc).
+
+compose_new_flow(Flow) ->
+    remove_id(Flow, []).
+
+remove_id([{flow,_, Filter, Exp, Loggers,_}|Other], Acc) ->
+    remove_id(Other, [{Filter, Exp, Loggers}|Acc]);
+remove_id([N|Oth], Acc) ->
+    remove_id(Oth, [N|Acc]);
+remove_id([], Acc) ->
+    lists:reverse(Acc).
+
+write_to_config(Terms, File) ->
+    file:write_file(File,io_lib:fwrite("~p.\n",[Terms])).
