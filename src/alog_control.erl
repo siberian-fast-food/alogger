@@ -1,5 +1,5 @@
 %% @doc
-%% FIXME
+%% Main interface for work with log flows.
 %% @end
 %% ----------------------------------------------------------------------
 %% Copyright (c) 2011 Siberian Fast Food
@@ -55,11 +55,17 @@
                   {tag, atom()} | {tag, [atom()]} |
                   {app, atom()}.
 
--type priority() :: list() | tuple() | integer().
+-type priority() :: debug | info | notice | warning | error 
+                    | critical | alert | emergency | integer().
+
+-type priority_expr() :: '<' | '>' | '=<' | '>=' | '==' | '/='.
+
+-type priority_pattern() :: list({priority_expr(), priority()}) |
+                            {priority_expr(), priority()} | priority().
 
 -record(flow, {id              :: non_neg_integer(),
                filter          :: filter(),
-               priority        :: priority(),
+               priority        :: priority_pattern(),
                loggers  = []   :: list(atom()),
                enabled  = true :: boolean()}).
 
@@ -67,37 +73,62 @@
                  enabled_loggers = [] :: list(atom())}).
 
 
-%%% API
+%% @doc Return all flows.
+-spec get_flows() -> {ok, [#flow{}]} | {error, term()}.
 get_flows() ->
     gen_server:call(?SERVER, get_flows).
 
+%% @doc Print all flows.
+-spec print_flows() -> ok.
 print_flows() ->
     gen_server:call(?SERVER, print_flows).
 
+%% @doc Set new priority_pattern for existing flow.
+-spec  set_flow_priority(non_neg_integer(), priority_pattern()) ->
+                                ok | {error, term()}.
 set_flow_priority(Id, Priority) ->
     gen_server:call(?SERVER, {set_flow_priority, Id, Priority}).
 
+%% @doc Set new filter for existing flow.
+-spec  set_flow_filter(non_neg_integer(), filter()) ->
+                                ok | {error, term()}.
 set_flow_filter(Id, Filter) ->
     gen_server:call(?SERVER, {set_flow_filter, Id, Filter}).
 
+%% @doc Set new loggers for existing flow.
+-spec  set_flow_loggers(non_neg_integer(), list(atom())) ->
+                                ok | {error, term()}.
 set_flow_loggers(Id, Loggers) ->
     gen_server:call(?SERVER, {set_flow_loggers, Id, Loggers}).
 
+%% @doc Temporary disable existing flow.
+-spec  disable_flow(non_neg_integer()) -> ok | {error, term()}.
 disable_flow(Id) ->
     gen_server:call(?SERVER, {disable_flow, Id}).
 
+%% @doc Enable existing flow.
+-spec  enable_flow(non_neg_integer()) -> ok | {error, term()}.
 enable_flow(Id) ->
     gen_server:call(?SERVER, {enable_flow, Id}).
 
+%% @doc Delete existing flow.
+-spec  delete_flow(non_neg_integer()) -> ok | {error, term()}.
 delete_flow(Id) ->
     gen_server:call(?SERVER, {delete_flow, Id}).
 
+%% @doc Delete all flows.
+-spec  delete_all_flows() -> ok | {error, term()}.
 delete_all_flows() ->
     gen_server:call(?SERVER, delete_all_flows).
 
+%% @doc Add new flow.
+-spec  add_new_flow(filter(), priority_pattern(), [atom()])
+                   -> ok | {error, term()}.
 add_new_flow(Filter, Priority, Loggers) ->
     gen_server:call(?SERVER, {add_new_flow, Filter, Priority, Loggers}).
 
+%% @doc Replase all flows on new.
+-spec  replase_flows([#flow{}]) -> ok | {error, term()}.
 replase_flows(Flows) ->
     gen_server:call(?SERVER, {replase_flows, Flows}).
 
