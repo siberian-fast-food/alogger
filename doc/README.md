@@ -86,7 +86,7 @@ and you will get standart ?DBG/?INFO/?ERROR/... (you can find out more informati
 -include_lib("alog.hrl").
 -compile({parse_transform, alog_pt}).
 </pre>
-This way you can use _tuple expression_ (like ?DBG({A, B})) which are translated to debug message with both names and values of A and B. Tuple expression can contain strings (like ?DBG({A, "string", B})); a log message will contain something like <pre>alog_examples:42 [<0.52.0>]->[[]]: A: "foo" string B: bar</pre>
+This way you can use _tuple expression_ (like ?DBG({A, B})) which are translated to debug message with both names and values of A and B. Tuple expression can contain strings (like ?DBG({A, "string", B})); a log message will contain something like <pre>alog_examples:42:debug [< 0.52.0 >]->[]: A: "foo" B: bar</pre>
 
 
 
@@ -95,7 +95,7 @@ this API consists of pure function calls. Functions are defined in [`alog`](alog
 
 Configuration
 -------------
-alogger can be configured to write different flows (or streams of log messages) to different loggers. It can be done in config or in runtime with [`alog_config`](alog_config.md) module.
+alogger can be configured to write different flows (or streams of log messages) to different loggers. It can be done in config or in runtime with [`alog_control`](alog_control.md) module.
 It is configured in alog.config.
 <pre>
         [{alog, [
@@ -226,7 +226,7 @@ For example, emergency < error, and debug > warning.
 
 Last updated
 ------------
-Jul 11 2011 02:58:42
+Jul 11 2011 03:02:16
 
 
 <h2 class="indextitle">Packages</h2>
