@@ -1,5 +1,5 @@
 %%%----------------------------------------------------------------------
-%%% File    : alog_common_formater.erl
+%%% File    : alog_common_formatter.erl
 %%% Author  : Alexander Dergachev <alexander.dergachev@gmail.com>
 %%% Purpose :
 %%% Created : 09 Jul 2011 by Alexander Dergachev

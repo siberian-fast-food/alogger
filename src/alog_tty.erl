@@ -52,5 +52,5 @@ log(_ALoggerPrio, Msg) ->
              atom(), integer(), pid()) -> iolist().
 
 format(FormatString, Args, Tag, Module, Line, Pid) ->
-    alog_common_formater:format(FormatString, Args,
+    alog_common_formatter:format(FormatString, Args,
                                 Tag, Module, Line, Pid).
