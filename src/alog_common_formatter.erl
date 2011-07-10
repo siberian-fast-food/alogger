@@ -9,7 +9,7 @@
 %%% alogger, Copyright (C) 2011  Siberian Fast Food
 %%%----------------------------------------------------------------------
 
--module(alog_common_formater).
+-module(alog_common_formatter).
 -author('alexander.dergachev@gmail.com').
 
 -export([format/6]).
