@@ -74,68 +74,28 @@ At he moment there're three logger interfaces out of the box:
 
 
 
-How to implement your own interface
------------------------------------
-To implement your own interface you should introduce a module which implements the gen_alogger behaviour. It's possible to configure your interface modules through priv/alog.config file. For each log interface module there's a configuration entry, for example:
-
-<pre>
-{alog_syslog, [{ident, "alogger"},
-               {logopt, [cons, perror, pid]},
-               {facility, user}]}
-</pre>
-
-
-
-Also, gen_logger behaviour provides two helper functions: get_opt/2 and get_opt/3, you can use it in your start/1 function to get neccessary configuration, for example:
-
-<pre>
-start(Opts) ->
-    Ident = gen_alogger:get_opt(ident, Opts, ?DEF_IDENT),
-    Logopt = gen_alogger:get_opt(logopt, Opts, ?DEF_LOGOPT),
-    Facility = gen_alogger:get_opt(facility, Opts, ?DEF_FACILITY),
-...
-</pre>
-
-
-
-How to run examples
--------------------
-We prepared some simple logging examples, so you could check how it works. You can run it by the following command from the Erlang shell:
-
-<pre>
-> alog_examples:run_examples().
-</pre>
-
-
-
-NOTE: if you have enabled alog_scribe logger interface, you should have Scribe log daemon installed and configured (an configuration example you can find in the priv directory). For more information about Scribe installation procedure see Scribe documentation.
-
-
-
 How to use alogger and feel some magic
 --------------------------------------
 You can use alogger in different ways.
 
-**Using macroses**
-You can use only .hrl file (<pre>-include_lib("alog.hrl").</pre>) - this way you will get standart ?DBG/?INFO/?ERROR/... (you can find out more information in [`alog`](https://github.com/spawnfest/alogger/blob/master/doc/alog.md)).
-Or you can also engage our parse transformation:
+**Using macroses:**
+you can use only .hrl file like this
+<pre>-include_lib("alog.hrl")</pre>
+and you will get standart ?DBG/?INFO/?ERROR/... (you can find out more information in [`alog`](https://github.com/spawnfest/alogger/blob/master/doc/alog.md) module, which contains function that mimic macroses names and arguments). Or you can also engage our parse transformation:
 <pre>
 -include_lib("alog.hrl").
 -compile({parse_transform, alog_pt}).
 </pre>
-This way you can use _tuple expression_ (like ?DBG({A, B})) which are translated to debug message with both names and values of A and B. Tuple expression can contain strings (like ?DBG({A, "string", B})); a log message will contain something like <pre>alog_examples:42 [<0.52.0>]->[[]]: A: "foo" string B: bar</pre>
+This way you can use _tuple expression_ (like ?DBG({A, B})) which are translated to debug message with both names and values of A and B. Tuple expression can contain strings (like ?DBG({A, "string", B})); a log message will contain something like <pre>alog_examples:42:debug [< 0.52.0 >]->[]: A: "foo" B: bar</pre>
 
 
 
-**Using runtime API**
-This API consists of pure function calls. Functions are defined in [`alog`](https://github.com/spawnfest/alogger/blob/master/doc/alog.md) module.
-
-
+**Using runtime API:**
+this API consists of pure function calls. Functions are defined in [`alog`](https://github.com/spawnfest/alogger/blob/master/doc/alog.md) module.
 
 Configuration
 -------------
-
-alogger may be configured to write different flows (or streams of log messages) to different loggers.
+alogger can be configured to write different flows (or streams of log messages) to different loggers. It can be done in config or in runtime with [`alog_control`](https://github.com/spawnfest/alogger/blob/master/doc/alog_control.md) module.
 It is configured in alog.config.
 <pre>
         [{alog, [
@@ -204,6 +164,44 @@ It is configured in alog.config.
 
 
 
+
+
+How to run examples
+-------------------
+We prepared some simple logging examples, so you could check how it works. You can run it by the following command from the Erlang shell:
+
+<pre>
+> alog_examples:run_examples().
+</pre>
+
+
+
+NOTE: if you have enabled alog_scribe logger interface, you should have Scribe log daemon installed and configured (an configuration example you can find in the priv directory). For more information about Scribe installation procedure see Scribe documentation.
+
+
+
+How to implement your own interface
+-----------------------------------
+To implement your own interface you should introduce a module which implements the gen_alogger behaviour. It's possible to configure your interface modules through priv/alog.config file. For each log interface module there's a configuration entry, for example:
+
+<pre>
+{alog_syslog, [{ident, "alogger"},
+               {logopt, [cons, perror, pid]},
+               {facility, user}]}
+</pre>
+
+
+
+Also, gen_logger behaviour provides two helper functions: get_opt/2 and get_opt/3, you can use it in your start/1 function to get neccessary configuration, for example:
+
+<pre>
+start(Opts) ->
+    Ident = gen_alogger:get_opt(ident, Opts, ?DEF_IDENT),
+    Logopt = gen_alogger:get_opt(logopt, Opts, ?DEF_LOGOPT),
+    Facility = gen_alogger:get_opt(facility, Opts, ?DEF_FACILITY),
+...
+</pre>
+
 Log levels
 ----------
 Log levels are arranged in the following order.
@@ -228,7 +226,7 @@ For example, emergency < error, and debug > warning.
 
 Last updated
 ------------
-Jul 11 2011 02:41:40
+Jul 11 2011 03:02:16
 
 
 <h2 class="indextitle">Packages</h2>
