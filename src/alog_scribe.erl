@@ -32,7 +32,7 @@
 -export([start/1,
          stop/1,
          log/2,
-         format/6]).
+         format/7]).
 %% gen_server callbacks
 -export([init/1,
          handle_call/3,
@@ -78,10 +78,10 @@ log(ALoggerPrio, Msg) ->
 
 %% @private
 %% @doc returns formated log message
--spec format(string(), [term()], string(),
+-spec format(string(), [term()], integer(), list(),
              atom(), integer(), pid()) -> string().
-format(FormatString, Args, Tag, Module, Line, Pid) ->
-    Msg = alog_common_formatter:format(FormatString, Args,
+format(FormatString, Args, Level, Tag, Module, Line, Pid) ->
+    Msg = alog_common_formatter:format(FormatString, Args, Level,
                                        Tag, Module, Line, Pid),
     lists:flatten(Msg).
 

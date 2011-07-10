@@ -107,12 +107,34 @@ We prepared some simple logging examples, so you could check how it works. You c
 
 NOTE: if you have enabled alog_scribe logger interface, you should have Scribe log daemon installed and configured (an configuration example you can find in the priv directory). For more information about Scribe installation procedure see Scribe documentation.
 
+How to use alogger and feel some magic
+--------------------------------------
+You can use alogger in different ways.
+**Using macroses**
+        
+                * Using only .hrl <pre>-include_lib("alog.hrl").</pre> - you will get standart ?DBG/?INFO/?ERROR/... (you can find out more information in [`alog`](alog.md))
+
+                * Using our parse transformation:
+                          <pre>
+-include_lib("alog.hrl").
+-compile({parse_transform, alog_pt}).
+                          </pre>
+                    This way you can use _tuple expression_ (like ?DBG({A, B})) which are translated to debug message with both names and values of A and B. Tuple expression can contain strings (like ?DBG({A, "string", B})).
+               
+
+        
+
+
+
+**Using runtime API**
+This API consists of pure function calls. Functions are defined in [`alog`](alog.md) module.
+
 
 
 Configuration
 -------------
 
-alogger may be configured to write different flows to different loggers.
+alogger may be configured to write different flows (or streams of log messages) to different loggers.
 It is configured in alog.config.
 <pre>
         [{alog, [
@@ -205,7 +227,7 @@ For example, emergency < error, and debug > warning.
 
 Last updated
 ------------
-Jul 11 2011 02:16:25
+Jul 11 2011 02:33:41
 
 
 <h2 class="indextitle">Packages</h2>

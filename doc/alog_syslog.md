@@ -20,7 +20,7 @@ __Behaviours:__ [`gen_alogger`](gen_alogger.md).
 
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#format-6">format/6</a></td><td>returns formated log message.</td></tr><tr><td valign="top"><a href="#log-2">log/2</a></td><td>logs message Msg with apropriate priority.</td></tr><tr><td valign="top"><a href="#start-1">start/1</a></td><td>starts syslog driver and opens log with predefined
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#format-7">format/7</a></td><td>returns formated log message.</td></tr><tr><td valign="top"><a href="#log-2">log/2</a></td><td>logs message Msg with apropriate priority.</td></tr><tr><td valign="top"><a href="#start-1">start/1</a></td><td>starts syslog driver and opens log with predefined
 configuration.</td></tr><tr><td valign="top"><a href="#stop-1">stop/1</a></td><td></td></tr></table>
 
 
@@ -29,15 +29,15 @@ configuration.</td></tr><tr><td valign="top"><a href="#stop-1">stop/1</a></td><t
 <h2><a name="functions">Function Details</a></h2>
 
 
-<a name="format-6"></a>
+<a name="format-7"></a>
 
-<h3>format/6</h3>
-
-
+<h3>format/7</h3>
 
 
 
-<pre>format(FormatString::string(), Args::[term()], Tag::string(), Module::atom(), Line::integer(), Pid::pid()) -> iolist()</pre>
+
+
+<pre>format(FormatString::string(), Args::[term()], Level::integer(), Tag::list(), Module::atom(), Line::integer(), Pid::pid()) -> iolist()</pre>
 <br></br>
 
 

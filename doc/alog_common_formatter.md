@@ -24,7 +24,7 @@ alog_syslog, alog_tty and alog_scribe.
 
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#format-6">format/6</a></td><td>returns formated log message.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#format-7">format/7</a></td><td>returns formated log message.</td></tr></table>
 
 
 
@@ -32,15 +32,15 @@ alog_syslog, alog_tty and alog_scribe.
 <h2><a name="functions">Function Details</a></h2>
 
 
-<a name="format-6"></a>
+<a name="format-7"></a>
 
-<h3>format/6</h3>
-
-
+<h3>format/7</h3>
 
 
 
-<pre>format(Msg::string(), Args::[term()], Tag::string(), Module::atom(), Line::integer(), Pid::pid()) -> iolist()</pre>
+
+
+<pre>format(Msg::string(), Args::[term()], Level::integer(), Tag::list(), Module::atom(), Line::integer(), Pid::pid()) -> iolist()</pre>
 <br></br>
 
 
