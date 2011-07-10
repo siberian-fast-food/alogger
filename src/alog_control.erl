@@ -9,13 +9,15 @@
         ]).
 
 -export([
+         print_flows/0,
          get_flows/0,
          set_flow_priority/2,
+         set_flow_filter/2,
+         set_flow_loggers/2,
          disable_flow/1,
          enable_flow/1,
          delete_flow/1,
          add_new_flow/3,
-         update_flow/2,
          dump_to_config/0
         ]).
 
@@ -29,10 +31,13 @@
          code_change/3
         ]).
 
+-include("alog.hrl").
+
 -define(SERVER, ?MODULE).
 
 -type filter() :: {mod, atom()} | {mod, [atom()]} |
-                  {tag, atom()} | {tag, [atom()]}.
+                  {tag, atom()} | {tag, [atom()]} |
+                  {app, atom()}.
 
 -type priority() :: list() | tuple() | integer().
 
@@ -50,8 +55,17 @@
 get_flows() ->
     gen_server:call(?SERVER, get_flows).
 
+print_flows() ->
+    gen_server:call(?SERVER, print_flows).
+
 set_flow_priority(Id, Priority) ->
     gen_server:call(?SERVER, {set_flow_priority, Id, Priority}).
+
+set_flow_filter(Id, Filter) ->
+    gen_server:call(?SERVER, {set_flow_filter, Id, Filter}).
+
+set_flow_loggers(Id, Loggers) ->
+    gen_server:call(?SERVER, {set_flow_loggers, Id, Loggers}).
 
 disable_flow(Id) ->
     gen_server:call(?SERVER, {disable_flow, Id}).
@@ -65,9 +79,6 @@ delete_flow(Id) ->
 add_new_flow(Filter, Priority, Loggers) ->
     gen_server:call(?SERVER, {add_new_flow, Filter, Priority, Loggers}).
 
-update_flow(Id, Flow) ->
-    gen_server:call(?SERVER, {update_flow, Id, Flow}).
-
 dump_to_config() ->
     gen_server:call(?SERVER, dump_to_config).
 
@@ -79,7 +90,7 @@ start_link() ->
 %%% gen_server callbacks
 init([]) ->
     EnabledLoggers = alog_config:get_conf(enabled_loggers, []),
-    FlowsConfig      = alog_config:get_conf(flows, []),
+    FlowsConfig    = alog_config:get_conf(flows, []),
     {ok, #config{enabled_loggers = EnabledLoggers,
                  flows = parse_flows_config(FlowsConfig)
                 }}.
@@ -94,7 +105,18 @@ handle_cast(_Msg, State) ->
 handle_info(_Info, State) ->
     {noreply, State}.
 
-terminate(_Reason, _State) ->
+terminate(_Reason, #config{enabled_loggers = EnabledLoggers} = Config) ->
+
+    apply_config(Config#config{flows = []}),
+
+    [
+     begin
+         LoggerConfig = alog_config:get_conf(Logger, []),
+         ok = Logger:stop([{sup_ref, alog_sup} | LoggerConfig])
+     end
+     || Logger <- EnabledLoggers
+    ],
+    
     ok.
 
 code_change(_OldVsn, State, _Extra) ->
@@ -113,10 +135,33 @@ do_request(init_loggers, #config{enabled_loggers = EnabledLoggers} = Config) ->
 
     apply_config(Config),
 
+    case alog_config:get_conf(install_error_logger_handler, true) of
+        true ->
+            ok = alog_error_logger_handler:install();
+        _ -> pass
+    end,
+
     {ok, Config};
 
 do_request(get_flows, #config{flows = Flows} = Config) ->
     {{ok, Flows}, Config};
+
+do_request(print_flows, #config{flows = Flows} = Config) ->
+    
+    FormatFun = fun(#flow{id = Id, filter = Filter,
+                          loggers = Loggers, enabled = Enabled
+                         }, {FormatString, Vars}) ->
+                        F = "id = ~w filter = ~w loggers = ~w enabled = ~w~n",
+                        {FormatString ++ F,
+                         Vars ++ [Id, Filter, Loggers, Enabled]
+                        }
+                end,
+
+    {Format, Args} = lists:foldl(FormatFun, {"",[]}, Flows),
+    
+    io:format(Format, Args),
+    
+    {ok, Config};
 
 do_request({add_new_flow, Filter, Priority, Loggers},
            #config{flows = Flows} = Config) ->
@@ -131,15 +176,23 @@ do_request({set_flow_priority, Id, Priority},
            #config{flows = Flows} = Config) ->
 
     ModFun = fun(Flow) ->
-                     NewPriority =
-                         case Priority of
-                             {_P, _Pr}           -> Priority;
-                             Pr when is_list(Pr) -> Priority;
-                             _Pr       ->
-                                 {P, _OldP} = Flow#flow.priority,
-                                 {P, Priority}
-                         end,
-                     Flow#flow{priority = NewPriority}
+                     {mod_flow, Flow#flow{priority = Priority}}
+             end,
+    modify_flow_if_exist(Id, Flows, ModFun, Config);
+
+do_request({set_flow_filter, Id, Filter},
+           #config{flows = Flows} = Config) ->
+
+    ModFun = fun(Flow) ->
+                     {mod_flow, Flow#flow{filter = Filter}}
+             end,
+    modify_flow_if_exist(Id, Flows, ModFun, Config);
+
+do_request({set_flow_loggers, Id, Loggers},
+           #config{flows = Flows} = Config) ->
+
+    ModFun = fun(Flow) ->
+                     {mod_flow, Flow#flow{loggers = Loggers}}
              end,
     modify_flow_if_exist(Id, Flows, ModFun, Config);
 
@@ -147,7 +200,7 @@ do_request({enable_flow, Id},
            #config{flows = Flows} = Config) ->
 
     ModFun = fun(Flow) ->
-                     Flow#flow{enabled = true}
+                     {mod_flow, Flow#flow{enabled = true}}
              end,
     modify_flow_if_exist(Id, Flows, ModFun, Config);
 
@@ -155,7 +208,15 @@ do_request({disable_flow, Id},
            #config{flows = Flows} = Config) ->
 
     ModFun = fun(Flow) ->
-                     Flow#flow{enabled = false}
+                     {mod_flow, Flow#flow{enabled = false}}
+             end,
+    modify_flow_if_exist(Id, Flows, ModFun, Config);
+
+do_request({delete_flow, Id},
+           #config{flows = Flows} = Config) ->
+
+    ModFun = fun(_Flow) ->
+                     {mod_flows, lists:keydelete(Id, #flow.id, Flows)}
              end,
     modify_flow_if_exist(Id, Flows, ModFun, Config);
 
@@ -166,37 +227,61 @@ modify_flow_if_exist(Id, Flows, ModFun, Config) ->
         false ->
             {{error, {undefined_flow, Id}}, Config};
         Flow ->
-            ModFlow  = ModFun(Flow),
-            NewFlows = lists:keyreplace(Id, #flow.id, Flows, ModFlow),
-            NewConfig = Config#config{flows = NewFlows},
-            apply_config(NewConfig),
-            {ok, NewConfig}
+            case ModFun(Flow) of
+                {mod_flow, ModFlow} ->
+                    NewFlows = lists:keyreplace(Id, #flow.id, Flows, ModFlow),
+                    NewConfig = Config#config{flows = NewFlows},
+                    new_config_if_successfully_applied(NewConfig, Config);
+                {mod_flows, ModFlows} ->
+                    NewConfig = Config#config{flows = ModFlows},
+                    new_config_if_successfully_applied(NewConfig, Config);
+                {config, ModConfig}->
+                    new_config_if_successfully_applied(ModConfig, Config);
+                Error ->
+                    {{error, Error}, Config}
+            end
+    end.
+
+new_config_if_successfully_applied(NewConfig, OldConfig) ->
+    try apply_config(NewConfig) of
+        ok    -> {ok, NewConfig};
+        Error -> {{error, Error}, OldConfig}
+    catch
+        E:W ->
+            {{E, W}, OldConfig}
     end.
 
 apply_config(#config{flows = Flows}) ->
-    ok = alog_parse_trans:load_config(configs_to_internal_form(Flows)).
+    alog_parse_trans:load_config(configs_to_internal_form(Flows)).
 
 configs_to_internal_form(Flows) ->
     ToInternaFlow = 
         fun(#flow{enabled = false}, Acc) -> Acc;
            (#flow{filter = Filter, loggers = Loggers,
-                  priority = {P, Priority}}, Acc) ->
+                  priority = PriorityPattern}, Acc) ->
                 NewFlow =
                     {filter_to_internal(Filter),
-                     {P, priority_to_internal(Priority)},
+                     priority_pattern_to_internal(PriorityPattern),
                      Loggers},
                 [NewFlow | Acc]
         end,
     lists:foldl(ToInternaFlow, [], Flows).
 
-priority_to_internal(emergency)-> 0;
-priority_to_internal(alert)->     1;
-priority_to_internal(critical)->  2;
-priority_to_internal(error)->     3;
-priority_to_internal(warning)->   4;
-priority_to_internal(notice)->    5;
-priority_to_internal(info)->      6;
-priority_to_internal(debug)->     7.
+priority_pattern_to_internal(PriorityPattern) when is_list(PriorityPattern) ->
+    [priority_pattern_to_internal(Pp) || Pp <- PriorityPattern];
+priority_pattern_to_internal({Exp, Priority}) ->
+    {Exp, priority_to_internal(Priority)};
+priority_pattern_to_internal(Priority) ->
+    priority_to_internal(Priority).
+
+priority_to_internal(emergency) -> ?emergency;
+priority_to_internal(alert)     -> ?alert;
+priority_to_internal(critical)  -> ?critical;
+priority_to_internal(error)     -> ?error;
+priority_to_internal(warning)   -> ?warning;
+priority_to_internal(notice)    -> ?notice;
+priority_to_internal(info)      -> ?info;
+priority_to_internal(debug)     -> ?debug.
 
 filter_to_internal({app, AppName}) ->
     Modules =

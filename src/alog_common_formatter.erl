@@ -28,7 +28,7 @@
              atom(), integer(), pid()) -> iolist().
 
 %this is a special case for error_logger messages
-format(Msg, _, "$error_logger", _, _, _) ->
+format(Msg, _, '$error_logger', _, _, _) ->
     write_report(Msg);
 format(FormatString, Args, Tag, Module, Line, Pid) ->
     IoUserMsg = io_lib:format(FormatString, Args),

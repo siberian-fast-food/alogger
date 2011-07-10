@@ -21,7 +21,7 @@
 
 -include("alog.hrl").
 
--define(ERROR_LOGGER_TAG, "$error_logger").
+-define(ERROR_LOGGER_TAG, '$error_logger').
 
 %%%----------------------------------------------------------------------
 %%% @spec install() -> ok
@@ -70,11 +70,13 @@ terminate(_Args, _State) ->
 
 process_event(Event = {ReportType, _, _}) ->
     ALoggerPrio = map_prio(ReportType),
-    alog_if_default:log(ALoggerPrio,       %% comments to be added...
-                        ?ERROR_LOGGER_TAG, %%
-                        "", "", "",        %%
-                        Event,             %%
-                        ""),               %%
+    alog_if:log(Event,
+		[],
+		ALoggerPrio,       %% comments to be added...
+		?ERROR_LOGGER_TAG, %%
+		"",
+		"",
+		""),
     ok.
 
 %%%----------------------------------------------------------------------
