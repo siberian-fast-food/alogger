@@ -1,28 +1,42 @@
-%%%----------------------------------------------------------------------
-%%% File    : alog_if_logger.erl
-%%% Author  : Artem Golovinsky <artemgolovinsky@gmail.com>
-%%% Purpose :
-%%% Created : 09 Jul 2011 by Artem Golovinsky <artemgolovinsky@gmail.com>
-%%%
-%%% alogger, Copyright (C) 2011  Siberian Fast Food
-%%%----------------------------------------------------------------------
+%% @doc
+%% This module is a blank for constructing parse_transformed module that
+%% makes actual logging.
+%% @end
+%% ----------------------------------------------------------------------
+%% Copyright (c) 2011 Siberian Fast Food
+%% Authors: Alexander Dergachev <alexander.dergachev@gmail.com>
+%%          Artem Golovinsky    <artemgolovinsky@gmail.com>
+%%          Igor Karymov        <ingham.k@gmail.com>
+%%          Dmitry Groshev      <lambdadmitry@gmail.com>
+%
+%% The contents of this file are subject to the Erlang Public License,
+%% Version 1.1, (the "License"); you may not use this file except in
+%% compliance with the License. You should have received a copy of the
+%% Erlang Public License along with this software. If not, it can be
+%% retrieved online at http://www.erlang.org/.
+%%
+%% Software distributed under the License is distributed on an "AS IS"
+%% basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+%% the License for the specific language governing rights and limitations
+%% under the License.
+%% ----------------------------------------------------------------------
 
 -module(alog_if_default).
 
 -compile([{parse_transform, alog_parse_trans}, nowarn_unused_vars]).
 -include("alog.hrl").
--export([log/7, default_mod_ast/0, default_modlogs_ast/0]).
+-export([log/7,
+         default_mod_ast/0,
+         default_modlogs_ast/0]).
 
-% will return list of loggers for module/tag
+%% @doc Will return list of loggers for module/tag
 get_mod_logs(_, _, _) ->
     [].
 
-% main logging function
+%% @doc Main logging function
 log(Format, Args, Level, Tags, Module, Line, Pid) when is_list(Tags), Tags /= [] ->
     [log(Format, Args, Level, Tag, Module, Line, Pid) || Tag <- Tags],
     ok;
-
-% main logging function
 log(Format, Args, Level, Tag, Module, Line, Pid) ->
     lists:foreach(fun(Mod) ->
 			  Formatted = Mod:format(Format, Args, Tag, Module, Line, Pid),
@@ -30,10 +44,10 @@ log(Format, Args, Level, Tag, Module, Line, Pid) ->
 		  end, get_mod_logs(Level, Module, Tag)),
     ok.
 
-% wille return default AST of this module after parse_transform
+%% @doc Will return default AST of this module after parse_transform
 default_mod_ast() ->
     ok.
 
-% will return default AST of get_logs_mod/3
+%% @doc Will return default AST of get_logs_mod/3
 default_modlogs_ast() ->
     ok.
