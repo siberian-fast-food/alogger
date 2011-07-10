@@ -27,15 +27,15 @@
 -define(FACILITY, user).
 
 %%%----------------------------------------------------------------------
-%%% @spec start() -> ok
+%%% @spec start(SupRef::term()) -> ok
 %%%
 %%% @doc starts syslog driver and opens log with predefined
 %%%      configuration
 %%% @end
 %%%----------------------------------------------------------------------
--spec start() -> ok.
+-spec start(term()) -> ok.
 
-start() ->
+start(_) ->
     syslog:start(),
     syslog:open(?IDENT, ?LOGOPT, ?FACILITY),
     ok.
