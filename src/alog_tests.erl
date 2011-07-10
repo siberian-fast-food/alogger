@@ -4,6 +4,7 @@
 -include_lib("eunit/include/eunit.hrl").
 -include("alog.hrl").
 
+
 -define(all_priorities, [
                        ?emergency,
                        ?alert,
@@ -83,6 +84,10 @@ priority_work(?critical)   ->
     Ref = make_ref(),
     ?CRITICAL("test critical ~p", [Ref]),
     check_priority_work(?critical, Ref);
+priority_work(?alert)   ->
+    Ref = make_ref(),
+    ?ALERT("test alert ~p", [Ref]),
+    check_priority_work(?alert, Ref);
 priority_work(?emergency)   ->
     Ref = make_ref(),
     ?EMERGENCY("test emergency ~p", [Ref]),
@@ -91,17 +96,17 @@ priority_work(?emergency)   ->
 check_priority_work(Level, Ref) ->
     receive
         {format, Ref, _Tag, _Module, _Line, _Pid} ->
-            receive
-                {log, Level, Ref, _Tag, _Module, _Line, _Pid} -> ok;
-                _ -> error
+	    receive
+                {log, Level, Ref, _Tag2, _Module2, _Line2, _Pid2} -> ok;
+                _ ->
+		    error
             after 100 ->
                     error
             end;
-        _ ->
+         _ ->
             error
     after 100 ->
             error
     end.
-
 
 -endif.

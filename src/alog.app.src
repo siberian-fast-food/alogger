@@ -5,6 +5,6 @@
   {registered, []},
   {applications, [kernel,
                   stdlib]},
-  {mod, { alog_app, []}},
+  {mod, { alog, []}},
   {env, []}
  ]}.

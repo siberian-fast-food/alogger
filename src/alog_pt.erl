@@ -6,20 +6,21 @@
 -type forms()   :: [stxtree()].
 -type options() :: [{atom(), any()}].
 
-%% This API function makes actual parse transformation
+%% @doc This API function makes actual parse transformation
 -spec parse_transform(forms(), options()) -> forms().
 parse_transform(Forms, Opts) ->
     {NewForms, _} = parse_trans:depth_first(fun replace_logfun/4, [],
                                             Forms, Opts),
     parse_trans:revert(NewForms).
 
-%% Finds and replaces function that is defined as logging function in
-%% alog
+%% @private
+%% @doc Finds and replaces function that is defined as logging function in
+%% alog.hrl (by ?LOGMOD/?LOGFUN macroses)
 -spec replace_logfun(atom(), stxtree(), _, list()) -> {stxtree(), list()}.
 replace_logfun(application, Form, _Ctxt, Acc) ->
     MFA = erl_syntax_lib:analyze_application(Form),
     case MFA of
-        {?LOGMOD, {?LOGFUN, 1}} ->
+        {?LOGMOD, {?LOGFUN, _}} ->
             Args = erl_syntax:application_arguments(Form),
             NewArgs = update_args(Args),
             FunT = erl_syntax:atom(?LOGFUN),
@@ -33,6 +34,9 @@ replace_logfun(application, Form, _Ctxt, Acc) ->
 replace_logfun(_, Form, _Ctxt, Acc) ->
     {Form, Acc}.
 
+%% @private
+%% @doc Updates arguments of logging function (in fact, just first
+%% argument)
 -spec update_args([stxtree(), ...]) -> [stxtree(), ...].
 update_args([Format|Args]) ->
     Format2 = case erl_syntax:type(Format) of
@@ -42,6 +46,8 @@ update_args([Format|Args]) ->
               end,
     [Format2|Args].
 
+%% @private
+%% @doc Builds io_lib:format() and constructs its arguments
 -spec build_format(stxtree()) -> stxtree().
 build_format(Format) ->
     Elems = erl_syntax:tuple_elements(Format),
@@ -50,12 +56,19 @@ build_format(Format) ->
     Vars = lists:reverse(VarsR),
 
     FStrT = erl_syntax:string(FStr),
-    VarsT = erl_syntax:list([erl_syntax:variable(X) || X <- Vars]),
-    FunT = erl_syntax:atom(format),
-    ModT = erl_syntax:atom(io_lib),
-    OperatorT = erl_syntax:module_qualifier(ModT, FunT),
-    erl_syntax:application(OperatorT, [FStrT, VarsT]).
+    VarsT = erl_syntax:list([case X of
+                                 X when is_atom(X) ->
+                                     erl_syntax:variable(X);
+                                 X when is_list(X) ->
+                                     erl_syntax:string(X);
+                                 X -> X
+                             end || X <- Vars]),
+    IoFormatT = build_application(io_lib, format, [FStrT, VarsT]),
+    build_application(lists, flatten, [IoFormatT]).
 
+%% @private
+%% This functions is used in fold in build_format. It accumulates variables
+%% and strings that are used in tuple expression
 -spec (elems_folder(stxtree(), Acc) ->
               Acc when Acc :: {list(nonempty_string()), list(atom())}).
 elems_folder(Elem, {FStrs, Vars}) ->
@@ -65,9 +78,19 @@ elems_folder(Elem, {FStrs, Vars}) ->
             Var = erl_syntax:variable_name(Elem),
             {[FStr|FStrs], [Var|Vars]};
         string ->
+            FStr = "~s",
             Str = erl_syntax:string_value(Elem),
-            {[Str|FStrs], Vars};
-        T ->
-            parse_trans:error(badarg_in_tupleexpr,
-                              ?LINE, [{type, T}])
+            {[FStr|FStrs], [Str|Vars]};
+        _ ->
+            FStr = "~p",
+            {[FStr|FStrs], [Elem|Vars]}
     end.
+
+%% @private
+%% Builds application of M:F function to Args
+-spec build_application(atom(), atom(), [stxtree()]) -> stxtree().
+build_application(Mod, Fun, Args) ->
+    ModT = erl_syntax:atom(Mod),
+    FunT = erl_syntax:atom(Fun),
+    OperatorT = erl_syntax:module_qualifier(ModT, FunT),
+    erl_syntax:application(OperatorT, Args).
