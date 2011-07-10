@@ -19,6 +19,17 @@ Rationale
 ---------
 There are a lot of loggers in the wild
 
+Log levels
+----------
+
+
+<table>
+<tr><td>Level</td><td>Description</td></tr>
+<tr><td>emergency</td><td>system is unusable</td></tr>
+</table>
+
+
+
 Last updated: Jul 10 2011
 
 
