@@ -12,7 +12,9 @@
 -module(gen_alogger).
 -author('alexander.dergachev@gmail.com').
 
--export([behaviour_info/1]).
+-export([ behaviour_info/1
+	, get_opt/2
+	, get_opt/3]).
 
 -spec behaviour_info(callbacks) -> [{atom(), integer()}, ...];
                     (_) -> undefined.
@@ -24,3 +26,20 @@ behaviour_info(callbacks) ->
     , {format, 6}];
 behaviour_info(_) ->
     undefined.
+
+get_opt(Opt, Opts) ->
+    case lists:keysearch(Opt, 1, Opts) of
+	false ->
+	    % TODO: replace with more appropriate function
+	    throw({undefined_option, Opt});
+	{value, {_, Val}} ->
+	    Val
+    end.
+
+get_opt(Opt, Opts, Default) ->
+    case lists:keysearch(Opt, 1, Opts) of
+	false ->
+	    Default;
+	{value, {_, Val}} ->
+	    Val
+    end.
