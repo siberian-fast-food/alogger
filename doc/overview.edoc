@@ -88,7 +88,7 @@ Configuration
 
 alogger may be configured to write different flows to different loggers.
 It is configured in alog.config.
-
+<pre>
         [{alog, [
                   {enabled_loggers, Loggers},
                   {flows, [
@@ -97,41 +97,43 @@ It is configured in alog.config.
 		  {LoggerName,ListOfSettings}
                 ]}
          ].
-
+</pre>
 
 **enabled_loggers** - list of loggers, enabled by default.
 
 **flows** - every flow is represented as tuple of setting.
 
-
-'{Filter, PriorityPattern, Loggers}'
+<pre>{Filter, PriorityPattern, Loggers}</pre>
 
 **Filter** = {tag, TagList} | {mod, ModList}
 
-* TagList is list of tags, Every tag is atom. If you set tag as filter, printouts with pointed tags is sent to loggers. Name of modules are  no matter in this case.
-
-* ModList is list of modules which should be logged to loggers. Tags are no matter.
+<ul>
+<li>TagList is list of tags, Every tag is atom. If you set tag as filter, printouts with pointed tags is sent to loggers. Name of modules are  no matter in this case.</li>
+<li>ModList is list of modules which should be logged to loggers. Tags are no matter.</li>
+</ul>
 
 **PriorityPattern** = [{Exp, PrioName}] | [PrioName] | {Exp, PrioName} | PrioName
 
-* Exp -  arithmetic expression filter for priority. &gt;=, =&lt;, &gt;, &lt;, =:=, /= are possible.
-
-* PrioName - name of priority. Possible: emergency, critical, error, warning, notice, info, debug
+<ul>
+<li>Exp -  arithmetic expression filter for priority. &gt;=, =&lt;, &gt;, &lt;, =:=, /= are possible.</li>
+<li>PrioName - name of priority. Possible: emergency, critical, error, warning, notice, info, debug</li>
+</ul>
 
 **Loggers** = [Logger]
 
-* Logger is atom. Name of logger.
+<ul>
+<li>Logger is atom. Name of logger.</li>
+</ul>
 
-
-
-'{LoggerName, ListOfSettings}'
-
+<pre>{LoggerName, ListOfSettings}</pre>
 
 **LoggerName** - name of logger module.
 
 **ListOfSettings** = [Setting]
 
-* Setting is for logger.
+<ul>
+<li>Setting is for logger.</li>
+</ul>
 
 Log levels
 ----------
