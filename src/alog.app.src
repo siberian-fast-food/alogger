@@ -1,13 +1,10 @@
 {application, alog,
  [
-  {description, ""},
+  {description, "Abstract logger (alog)"},
   {vsn, "1"},
   {registered, []},
-  {applications, [
-                  kernel,
-                  stdlib,
-                  eunit
-                 ]},
+  {applications, [kernel,
+                  stdlib]},
   {mod, { alog_app, []}},
   {env, []}
  ]}.
