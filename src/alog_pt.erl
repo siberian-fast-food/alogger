@@ -19,7 +19,7 @@ parse_transform(Forms, Opts) ->
 replace_logfun(application, Form, _Ctxt, Acc) ->
     MFA = erl_syntax_lib:analyze_application(Form),
     case MFA of
-        {?LOGMOD, {?LOGFUN, 1}} ->
+        {?LOGMOD, {?LOGFUN, _}} ->
             Args = erl_syntax:application_arguments(Form),
             NewArgs = update_args(Args),
             FunT = erl_syntax:atom(?LOGFUN),
