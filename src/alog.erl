@@ -1,10 +1,31 @@
-%%% @doc This module is a main alog module. It serves start/0 and
-%%% stop/0 functions as a user API and implements appication behaviour.
-%%% It also contains runtime logging API that mimics macroses defined in
-%%% alog.hrl. There are 7 log levels (emergency, alert, critical, error,
-%%% warning, notice, info and debug) and 3 functions for each log
-%%% level - the one that accepts format string, arguments and list of tags,
-%%% the one without tags and the one with string only.
+%% @doc
+%% This module is a main alog module. It serves start/0 and
+%% stop/0 functions as a user API and implements appication behaviour.
+%% It also contains runtime logging API that mimics macroses defined in
+%% alog.hrl. There are 7 log levels (emergency, alert, critical, error,
+%% warning, notice, info and debug) and 3 functions for each log
+%% level - the one that accepts format string, arguments and list of tags,
+%% the one without tags and the one with string only.
+%% @end
+%% ----------------------------------------------------------------------
+%% Copyright (c) 2011 Siberian Fast Food
+%% Authors: Alexander Dergachev <alexander.dergachev@gmail.com>
+%%          Artem Golovinsky    <artemgolovinsky@gmail.com>
+%%          Igor Karymov        <ingham.k@gmail.com>
+%%          Dmitry Groshev      <lambdadmitry@gmail.com>
+%
+%% The contents of this file are subject to the Erlang Public License,
+%% Version 1.1, (the "License"); you may not use this file except in
+%% compliance with the License. You should have received a copy of the
+%% Erlang Public License along with this software. If not, it can be
+%% retrieved online at http://www.erlang.org/.
+%%
+%% Software distributed under the License is distributed on an "AS IS"
+%% basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+%% the License for the specific language governing rights and limitations
+%% under the License.
+%% ----------------------------------------------------------------------
+
 -module(alog).
 -behaviour(application).
 -include_lib("alog.hrl").

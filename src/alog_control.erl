@@ -1,15 +1,34 @@
--module(alog_control).
+%% @doc
+%% FIXME
+%% @end
+%% ----------------------------------------------------------------------
+%% Copyright (c) 2011 Siberian Fast Food
+%% Authors: Alexander Dergachev <alexander.dergachev@gmail.com>
+%%          Artem Golovinsky    <artemgolovinsky@gmail.com>
+%%          Igor Karymov        <ingham.k@gmail.com>
+%%          Dmitry Groshev      <lambdadmitry@gmail.com>
+%
+%% The contents of this file are subject to the Erlang Public License,
+%% Version 1.1, (the "License"); you may not use this file except in
+%% compliance with the License. You should have received a copy of the
+%% Erlang Public License along with this software. If not, it can be
+%% retrieved online at http://www.erlang.org/.
+%%
+%% Software distributed under the License is distributed on an "AS IS"
+%% basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+%% the License for the specific language governing rights and limitations
+%% under the License.
+%% ----------------------------------------------------------------------
 
+-module(alog_control).
 -behaviour(gen_server).
+-include_lib("alog.hrl").
 
 %% API
--export([
-         start_link/0,
-         init_loggers/0
-        ]).
+-export([start_link/0,
+         init_loggers/0]).
 
--export([
-         print_flows/0,
+-export([print_flows/0,
          get_flows/0,
          set_flow_priority/2,
          set_flow_filter/2,
@@ -18,20 +37,15 @@
          enable_flow/1,
          delete_flow/1,
          add_new_flow/3,
-         dump_to_config/0
-        ]).
+         dump_to_config/0]).
 
 %% gen_server callbacks
--export([
-         init/1,
+-export([init/1,
          handle_call/3,
          handle_cast/2,
          handle_info/2,
          terminate/2,
-         code_change/3
-        ]).
-
--include("alog.hrl").
+         code_change/3]).
 
 -define(SERVER, ?MODULE).
 
@@ -92,8 +106,7 @@ init([]) ->
     EnabledLoggers = alog_config:get_conf(enabled_loggers, []),
     FlowsConfig    = alog_config:get_conf(flows, []),
     {ok, #config{enabled_loggers = EnabledLoggers,
-                 flows = parse_flows_config(FlowsConfig)
-                }}.
+                 flows = parse_flows_config(FlowsConfig)}}.
 
 handle_call(Request, _From, State) ->
     {Reply, NewState} = do_request(Request, State),
@@ -106,17 +119,13 @@ handle_info(_Info, State) ->
     {noreply, State}.
 
 terminate(_Reason, #config{enabled_loggers = EnabledLoggers} = Config) ->
-
     apply_config(Config#config{flows = []}),
 
-    [
-     begin
+    [begin
          LoggerConfig = alog_config:get_conf(Logger, []),
          ok = Logger:stop([{sup_ref, alog_sup} | LoggerConfig])
-     end
-     || Logger <- EnabledLoggers
-    ],
-    
+     end  || Logger <- EnabledLoggers],
+
     ok.
 
 code_change(_OldVsn, State, _Extra) ->
@@ -125,13 +134,10 @@ code_change(_OldVsn, State, _Extra) ->
 %%% Internal functions
 
 do_request(init_loggers, #config{enabled_loggers = EnabledLoggers} = Config) ->
-    [
-     begin
+    [begin
          LoggerConfig = alog_config:get_conf(Logger, []),
          ok = Logger:start([{sup_ref, alog_sup} | LoggerConfig])
-     end
-     || Logger <- EnabledLoggers
-    ],
+     end || Logger <- EnabledLoggers],
 
     apply_config(Config),
 
@@ -147,20 +153,18 @@ do_request(get_flows, #config{flows = Flows} = Config) ->
     {{ok, Flows}, Config};
 
 do_request(print_flows, #config{flows = Flows} = Config) ->
-    
     FormatFun = fun(#flow{id = Id, filter = Filter,
                           loggers = Loggers, enabled = Enabled
                          }, {FormatString, Vars}) ->
                         F = "id = ~w filter = ~w loggers = ~w enabled = ~w~n",
                         {FormatString ++ F,
-                         Vars ++ [Id, Filter, Loggers, Enabled]
-                        }
+                         Vars ++ [Id, Filter, Loggers, Enabled]}
                 end,
 
     {Format, Args} = lists:foldl(FormatFun, {"",[]}, Flows),
-    
+
     io:format(Format, Args),
-    
+
     {ok, Config};
 
 do_request({add_new_flow, Filter, Priority, Loggers},
@@ -255,7 +259,7 @@ apply_config(#config{flows = Flows}) ->
     alog_parse_trans:load_config(configs_to_internal_form(Flows)).
 
 configs_to_internal_form(Flows) ->
-    ToInternaFlow = 
+    ToInternaFlow =
         fun(#flow{enabled = false}, Acc) -> Acc;
            (#flow{filter = Filter, loggers = Loggers,
                   priority = PriorityPattern}, Acc) ->
@@ -299,8 +303,7 @@ parse_flows_config(FlowsConfig) ->
                 Flow = #flow{id       = CurId,
                              filter   = Filter,
                              priority = Priority,
-                             loggers  = Loggers
-                            },
+                             loggers  = Loggers},
                 {CurId + 1, [Flow | Flows]}
         end,
     {_Id, ParsedFlows} = lists:foldl(ParseFun, {1, []}, FlowsConfig),
