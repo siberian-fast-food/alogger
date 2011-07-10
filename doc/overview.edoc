@@ -99,7 +99,7 @@ You can use alogger in different ways.
         </ul>
 
 **Using runtime API**
-This API consists of pure function calls. Functions are defined in {@ling alog} module.
+This API consists of pure function calls. Functions are defined in {@link alog} module.
 
 Configuration
 -------------

@@ -7,8 +7,127 @@ Overview
 
 
 __Authors:__ Alexander Dergachev ([`alexander.dergachev@gmail.com`](mailto:alexander.dergachev@gmail.com)), Artem Golovinsky ([`artemgolovinsky@gmail.com`](mailto:artemgolovinsky@gmail.com)), Igor Karymov ([`ingham.k@gmail.com`](mailto:ingham.k@gmail.com)), Dmitry Groshev ([`lambdadmitry@gmail.com`](mailto:lambdadmitry@gmail.com)).
+License
+-------
+<pre>
+Copyright (c) 2011 Siberian Fast Food
+Authors: Alexander Dergachev <alexander.dergachev@gmail.com>
+         Artem Golovinsky    <artemgolovinsky@gmail.com>
+         Igor Karymov        <ingham.k@gmail.com>
+         Dmitry Groshev      <lambdadmitry@gmail.com>
+The contents of this file are subject to the Erlang Public License,
+Version 1.1, (the "License"); you may not use this file except in
+compliance with the License. You should have received a copy of the
+Erlang Public License along with this software. If not, it can be
+retrieved online at http://www.erlang.org/.
 
-?? module.
+Software distributed under the License is distributed on an "AS IS"
+basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+the License for the specific language governing rights and limitations
+under the License.
+</pre>
+
+
+
+Rationale
+---------
+There is a lot of loggers in the wild. You can consider to use one of them in your new project. After a while a new cool logger appears, and you want it, so, you have to change lots of places in you code, and definitely you have to recompile the entire project. That sucks, doesn't it?
+
+
+
+The Abstract Logger Interface (alogger) brings completely new opportunities of logging. Here you go:
+
+
+  * the possibility to introduce any new logger to your project without a need to change the project code at all
+
+  * the interface will provide some neat features which are not exist in most of the existent loggers, like these:
+    
+    * the possibility to change the logging priority "on the fly" without any significant overhead thanks to some parse_transform and hot code reloading magic
+
+    * the possibility to change the logging priority by modules or by special tags
+
+    
+ 
+
+
+
+
+
+So, basically, with alogger you'll be able to add any new logger to you project, you even won't have to recompile your code. You'll be able to control all your log flows
+from the shell or through the config file.
+
+
+
+We don't invent a wheel, there's nothing like this around!
+
+
+
+Implemented logger interfaces
+-----------------------------
+At he moment there're three logger interfaces out of the box:
+- __alog_tty__: a simple one, it prints logs by io:format
+- __alog_syslog__: an interface towards Syslog daemon
+- __alog_scribe__an interface towards Scribe log daemon through thrift protocol
+
+
+
+How to implement your own interface
+-----------------------------------
+To implement your own interface you should introduce a module which implements the gen_alogger behaviour. It's possible to configure your interface modules through priv/alog.config file. For each log interface module there's a configuration entry, for example:
+
+<pre>
+{alog_syslog, [{ident, "alogger"},
+               {logopt, [cons, perror, pid]},
+               {facility, user}]}
+</pre>
+
+
+
+Also, gen_logger behaviour provides two helper functions: get_opt/2 and get_opt/3, you can use it in your start/1 function to get neccessary configuration, for example:
+
+<pre>
+start(Opts) ->
+    Ident = gen_alogger:get_opt(ident, Opts, ?DEF_IDENT),
+    Logopt = gen_alogger:get_opt(logopt, Opts, ?DEF_LOGOPT),
+    Facility = gen_alogger:get_opt(facility, Opts, ?DEF_FACILITY),
+...
+</pre>
+
+
+
+How to run examples
+-------------------
+We prepared some simple logging examples, so you could check how it works. You can run it by the following command from the Erlang shell:
+
+<pre>
+> alog_examples:run_examples().
+</pre>
+
+
+
+NOTE: if you have enabled alog_scribe logger interface, you should have Scribe log daemon installed and configured (an configuration example you can find in the priv directory). For more information about Scribe installation procedure see Scribe documentation.
+
+How to use alogger and feel some magic
+--------------------------------------
+You can use alogger in different ways.
+**Using macroses**
+        
+                * Using only .hrl <pre>-include_lib("alog.hrl").</pre> - you will get standart ?DBG/?INFO/?ERROR/... (you can find out more information in [`alog`](alog.md))
+
+                * Using our parse transformation:
+                          <pre>
+-include_lib("alog.hrl").
+-compile({parse_transform, alog_pt}).
+                          </pre>
+                    This way you can use _tuple expression_ (like ?DBG({A, B})) which are translated to debug message with both names and values of A and B. Tuple expression can contain strings (like ?DBG({A, "string", B})).
+               
+
+        
+
+
+
+**Using runtime API**
+This API consists of pure function calls. Functions are defined in [`alog`](alog.md) module.
 
 
 
@@ -108,7 +227,7 @@ For example, emergency < error, and debug > warning.
 
 Last updated
 ------------
-Jul 11 2011 02:33:23
+Jul 11 2011 02:33:41
 
 
 <h2 class="indextitle">Packages</h2>

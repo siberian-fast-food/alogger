@@ -5,22 +5,65 @@ Module alog_control
 <h1>Module alog_control</h1>
 
 * [Description](#description)
+* [Data Types](#types)
 * [Function Index](#index)
 * [Function Details](#functions)
 
 
 
-FIXME.
+Main interface for work with log flows.
 
 
 
 __Behaviours:__ [`gen_server`](gen_server.md).
 
+
+<h2><a name="types">Data Types</a></h2>
+
+
+
+
+
+<h3 class="typedecl"><a name="type-filter">filter()</a></h3>
+
+
+
+
+<pre>filter() = {mod, atom()} | {mod, [atom()]} | {tag, atom()} | {tag, [atom()]} | {app, atom()}</pre>
+
+
+
+<h3 class="typedecl"><a name="type-priority">priority()</a></h3>
+
+
+
+
+<pre>priority() = debug | info | notice | warning | error | critical | alert | emergency | integer()</pre>
+
+
+
+<h3 class="typedecl"><a name="type-priority_expr">priority_expr()</a></h3>
+
+
+
+
+<pre>priority_expr() = '<' | '>' | '=<' | '>=' | '==' | '/='</pre>
+
+
+
+<h3 class="typedecl"><a name="type-priority_pattern">priority_pattern()</a></h3>
+
+
+
+
+<pre>priority_pattern() = [{<a href="#type-priority_expr">priority_expr()</a>, <a href="#type-priority">priority()</a>}] | {<a href="#type-priority_expr">priority_expr()</a>, <a href="#type-priority">priority()</a>} | <a href="#type-priority">priority()</a></pre>
+
+
 <h2><a name="index">Function Index</a></h2>
 
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#add_new_flow-3">add_new_flow/3</a></td><td></td></tr><tr><td valign="top"><a href="#code_change-3">code_change/3</a></td><td></td></tr><tr><td valign="top"><a href="#delete_all_flows-0">delete_all_flows/0</a></td><td></td></tr><tr><td valign="top"><a href="#delete_flow-1">delete_flow/1</a></td><td></td></tr><tr><td valign="top"><a href="#disable_flow-1">disable_flow/1</a></td><td></td></tr><tr><td valign="top"><a href="#dump_to_config-1">dump_to_config/1</a></td><td></td></tr><tr><td valign="top"><a href="#enable_flow-1">enable_flow/1</a></td><td></td></tr><tr><td valign="top"><a href="#get_flows-0">get_flows/0</a></td><td></td></tr><tr><td valign="top"><a href="#handle_call-3">handle_call/3</a></td><td></td></tr><tr><td valign="top"><a href="#handle_cast-2">handle_cast/2</a></td><td></td></tr><tr><td valign="top"><a href="#handle_info-2">handle_info/2</a></td><td></td></tr><tr><td valign="top"><a href="#init-1">init/1</a></td><td></td></tr><tr><td valign="top"><a href="#init_loggers-0">init_loggers/0</a></td><td></td></tr><tr><td valign="top"><a href="#print_flows-0">print_flows/0</a></td><td></td></tr><tr><td valign="top"><a href="#replase_flows-1">replase_flows/1</a></td><td></td></tr><tr><td valign="top"><a href="#set_flow_filter-2">set_flow_filter/2</a></td><td></td></tr><tr><td valign="top"><a href="#set_flow_loggers-2">set_flow_loggers/2</a></td><td></td></tr><tr><td valign="top"><a href="#set_flow_priority-2">set_flow_priority/2</a></td><td></td></tr><tr><td valign="top"><a href="#start_link-0">start_link/0</a></td><td></td></tr><tr><td valign="top"><a href="#terminate-2">terminate/2</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#add_new_flow-3">add_new_flow/3</a></td><td>Add new flow.</td></tr><tr><td valign="top"><a href="#code_change-3">code_change/3</a></td><td></td></tr><tr><td valign="top"><a href="#delete_all_flows-0">delete_all_flows/0</a></td><td>Delete all flows.</td></tr><tr><td valign="top"><a href="#delete_flow-1">delete_flow/1</a></td><td>Delete existing flow.</td></tr><tr><td valign="top"><a href="#disable_flow-1">disable_flow/1</a></td><td>Temporary disable existing flow.</td></tr><tr><td valign="top"><a href="#dump_to_config-1">dump_to_config/1</a></td><td></td></tr><tr><td valign="top"><a href="#enable_flow-1">enable_flow/1</a></td><td>Enable existing flow.</td></tr><tr><td valign="top"><a href="#get_flows-0">get_flows/0</a></td><td>Return all flows.</td></tr><tr><td valign="top"><a href="#handle_call-3">handle_call/3</a></td><td></td></tr><tr><td valign="top"><a href="#handle_cast-2">handle_cast/2</a></td><td></td></tr><tr><td valign="top"><a href="#handle_info-2">handle_info/2</a></td><td></td></tr><tr><td valign="top"><a href="#init-1">init/1</a></td><td></td></tr><tr><td valign="top"><a href="#init_loggers-0">init_loggers/0</a></td><td></td></tr><tr><td valign="top"><a href="#print_flows-0">print_flows/0</a></td><td>Print all flows.</td></tr><tr><td valign="top"><a href="#replase_flows-1">replase_flows/1</a></td><td>Replase all flows on new.</td></tr><tr><td valign="top"><a href="#set_flow_filter-2">set_flow_filter/2</a></td><td>Set new filter for existing flow.</td></tr><tr><td valign="top"><a href="#set_flow_loggers-2">set_flow_loggers/2</a></td><td>Set new loggers for existing flow.</td></tr><tr><td valign="top"><a href="#set_flow_priority-2">set_flow_priority/2</a></td><td>Set new priority_pattern for existing flow.</td></tr><tr><td valign="top"><a href="#start_link-0">start_link/0</a></td><td></td></tr><tr><td valign="top"><a href="#terminate-2">terminate/2</a></td><td></td></tr></table>
 
 
 
@@ -36,9 +79,13 @@ __Behaviours:__ [`gen_server`](gen_server.md).
 
 
 
-`add_new_flow(Filter, Priority, Loggers) -> any()`
+<pre>add_new_flow(Filter::<a href="#type-filter">filter()</a>, Priority::<a href="#type-priority_pattern">priority_pattern()</a>, Loggers::[atom()]) -> ok | {error, term()}</pre>
+<br></br>
 
-<a name="code_change-3"></a>
+
+
+
+Add new flow.<a name="code_change-3"></a>
 
 <h3>code_change/3</h3>
 
@@ -56,9 +103,13 @@ __Behaviours:__ [`gen_server`](gen_server.md).
 
 
 
-`delete_all_flows() -> any()`
+<pre>delete_all_flows() -> ok | {error, term()}</pre>
+<br></br>
 
-<a name="delete_flow-1"></a>
+
+
+
+Delete all flows.<a name="delete_flow-1"></a>
 
 <h3>delete_flow/1</h3>
 
@@ -66,9 +117,13 @@ __Behaviours:__ [`gen_server`](gen_server.md).
 
 
 
-`delete_flow(Id) -> any()`
+<pre>delete_flow(Id::non_neg_integer()) -> ok | {error, term()}</pre>
+<br></br>
 
-<a name="disable_flow-1"></a>
+
+
+
+Delete existing flow.<a name="disable_flow-1"></a>
 
 <h3>disable_flow/1</h3>
 
@@ -76,9 +131,13 @@ __Behaviours:__ [`gen_server`](gen_server.md).
 
 
 
-`disable_flow(Id) -> any()`
+<pre>disable_flow(Id::non_neg_integer()) -> ok | {error, term()}</pre>
+<br></br>
 
-<a name="dump_to_config-1"></a>
+
+
+
+Temporary disable existing flow.<a name="dump_to_config-1"></a>
 
 <h3>dump_to_config/1</h3>
 
@@ -96,9 +155,13 @@ __Behaviours:__ [`gen_server`](gen_server.md).
 
 
 
-`enable_flow(Id) -> any()`
+<pre>enable_flow(Id::non_neg_integer()) -> ok | {error, term()}</pre>
+<br></br>
 
-<a name="get_flows-0"></a>
+
+
+
+Enable existing flow.<a name="get_flows-0"></a>
 
 <h3>get_flows/0</h3>
 
@@ -106,9 +169,13 @@ __Behaviours:__ [`gen_server`](gen_server.md).
 
 
 
-`get_flows() -> any()`
+<pre>get_flows() -> {ok, [#flow{}]} | {error, term()}</pre>
+<br></br>
 
-<a name="handle_call-3"></a>
+
+
+
+Return all flows.<a name="handle_call-3"></a>
 
 <h3>handle_call/3</h3>
 
@@ -166,9 +233,13 @@ __Behaviours:__ [`gen_server`](gen_server.md).
 
 
 
-`print_flows() -> any()`
+<pre>print_flows() -> ok</pre>
+<br></br>
 
-<a name="replase_flows-1"></a>
+
+
+
+Print all flows.<a name="replase_flows-1"></a>
 
 <h3>replase_flows/1</h3>
 
@@ -176,9 +247,13 @@ __Behaviours:__ [`gen_server`](gen_server.md).
 
 
 
-`replase_flows(Flows) -> any()`
+<pre>replase_flows(Flow::[#flow{}]) -> ok | {error, term()}</pre>
+<br></br>
 
-<a name="set_flow_filter-2"></a>
+
+
+
+Replase all flows on new.<a name="set_flow_filter-2"></a>
 
 <h3>set_flow_filter/2</h3>
 
@@ -186,9 +261,13 @@ __Behaviours:__ [`gen_server`](gen_server.md).
 
 
 
-`set_flow_filter(Id, Filter) -> any()`
+<pre>set_flow_filter(Id::non_neg_integer(), Filter::<a href="#type-filter">filter()</a>) -> ok | {error, term()}</pre>
+<br></br>
 
-<a name="set_flow_loggers-2"></a>
+
+
+
+Set new filter for existing flow.<a name="set_flow_loggers-2"></a>
 
 <h3>set_flow_loggers/2</h3>
 
@@ -196,9 +275,13 @@ __Behaviours:__ [`gen_server`](gen_server.md).
 
 
 
-`set_flow_loggers(Id, Loggers) -> any()`
+<pre>set_flow_loggers(Id::non_neg_integer(), Loggers::[atom()]) -> ok | {error, term()}</pre>
+<br></br>
 
-<a name="set_flow_priority-2"></a>
+
+
+
+Set new loggers for existing flow.<a name="set_flow_priority-2"></a>
 
 <h3>set_flow_priority/2</h3>
 
@@ -206,9 +289,13 @@ __Behaviours:__ [`gen_server`](gen_server.md).
 
 
 
-`set_flow_priority(Id, Priority) -> any()`
+<pre>set_flow_priority(Id::non_neg_integer(), Priority::<a href="#type-priority_pattern">priority_pattern()</a>) -> ok | {error, term()}</pre>
+<br></br>
 
-<a name="start_link-0"></a>
+
+
+
+Set new priority_pattern for existing flow.<a name="start_link-0"></a>
 
 <h3>start_link/0</h3>
 
