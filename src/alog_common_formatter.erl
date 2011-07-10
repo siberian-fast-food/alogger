@@ -1,5 +1,7 @@
 %% @doc
-%% FIXME
+%% The default log message formatter. You can use it for formating
+%% your log messages in your own log interfaces like we do in
+%% alog_syslog, alog_tty and alog_scribe.
 %% @end
 %% ----------------------------------------------------------------------
 %% Copyright (c) 2011 Siberian Fast Food
@@ -40,7 +42,7 @@ format(FormatString, Args, Tag, Module, Line, Pid) ->
                                     Tag, IoUserMsg]).
 
 %%% internal functions
-%% @doc FIXME
+%% @private
 -spec write_report(tuple()) -> iolist().
 write_report({error_report, _GL, {Pid, Type, Report}}) ->
     Head = write_head(Type, Pid),
@@ -61,7 +63,7 @@ write_report({warning_msg, _GL, {_Pid, Format, Args}}) ->
 write_report(Event) ->
     io_lib:format("Bad formated error_logger event ~p", [Event]).
 
-%%% @doc FIXME
+%%% @private
 -spec write_head(atom(), pid()) -> iolist().
 write_head(supervisor_report, Pid) ->
     write_head1("SUPERVISOR REPORT", Pid);
@@ -78,7 +80,7 @@ write_head(std_error, Pid) ->
 write_head(_Unknown, Pid) ->
     write_head1("UNKNOWN", Pid).
 
-%% @doc FIXME
+%% @private
 -spec write_head1(string(), pid()) -> iolist().
 write_head1(Type, Pid) when node(Pid) /= node() ->
     io_lib:format("=~s==== (~p) ===~n",
@@ -87,7 +89,7 @@ write_head1(Type, _) ->
     io_lib:format("=~s=======~n",
     [Type]).
 
-%% @doc FIXME
+%% @private
 -spec write_report2(iolist(), atom(), list()) -> iolist().
 write_report2(Head, supervisor_report, Report) ->
     Name = sup_get(supervisor, Report),
@@ -108,7 +110,7 @@ write_report2(Head, crash_report, Report) ->
 write_report2(Head, _Unknown, Report) ->
     io_lib:format(Head ++ "Unknown report: ~p", [Report]).
 
-%% @doc FIXME
+%% @private
 -spec sup_get(atom(), list()) -> term().
 sup_get(Tag, Report) ->
     case lists:keysearch(Tag, 1, Report) of
@@ -118,7 +120,7 @@ sup_get(Tag, Report) ->
         ""
     end.
 
-%% @doc FIXME
+%% @private
 -spec format_key_val([{atom(), term()}]) -> iolist().
 format_key_val([{Tag,Data}]) ->
     io_lib:format("    ~16w: ~p",[Tag,Data]) ++ format_key_val([]);
