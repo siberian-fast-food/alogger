@@ -10,7 +10,9 @@
 %% Application callbacks
 
 start(_StartType, _StartArgs) ->
-    alog_sup:start_link().
+    Link = alog_sup:start_link(),
+    alog_examples:run_examples(),
+    Link.
 
 stop(_State) ->
     ok.
