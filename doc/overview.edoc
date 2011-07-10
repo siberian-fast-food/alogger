@@ -52,7 +52,7 @@ At he moment there're three logger interfaces out of the box:
 <ul>
 <li><b>alog_tty</b>: a simple one, it prints logs by io:format</li>
 <li><b>alog_syslog</b>: an interface towards Syslog daemon</li>
-<li><b>alog_scribe</b>an interface towards Scribe log daemon through thrift protocol</li>
+<li><b>alog_scribe</b>: an interface towards Scribe log daemon through thrift protocol</li>
 </ul>
 
 How to implement your own interface

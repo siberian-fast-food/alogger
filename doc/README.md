@@ -68,7 +68,7 @@ At he moment there're three logger interfaces out of the box:
 
 * __alog_syslog__: an interface towards Syslog daemon
 
-* __alog_scribe__an interface towards Scribe log daemon through thrift protocol
+* __alog_scribe__: an interface towards Scribe log daemon through thrift protocol
 
 
 
@@ -230,7 +230,7 @@ For example, emergency < error, and debug > warning.
 
 Last updated
 ------------
-Jul 11 2011 02:36:24
+Jul 11 2011 02:37:04
 
 
 <h2 class="indextitle">Packages</h2>
