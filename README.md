@@ -134,7 +134,7 @@ It is configured in alog.config.
 **PriorityPattern** = [{Exp, PrioName}] | [PrioName] | {Exp, PrioName} | PrioName
 
 
-* Exp -  arithmetic expression filter for priority. >=, =<, >, <, =:=, /= are possible.
+* Exp -  arithmetic expression filter for priority. >=, =<, >, <, ==, /= are possible.
 
 * PrioName - name of priority. Possible: emergency, critical, error, warning, notice, info, debug
 
