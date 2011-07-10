@@ -22,7 +22,6 @@ stop() ->
 %% @private
 start(_StartType, _StartArgs) ->
     Link = alog_sup:start_link(),
-    timer:sleep(1000),
     alog_examples:run_examples(),
     Link.
 

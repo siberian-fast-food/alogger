@@ -64,7 +64,9 @@ dump_to_config() ->
     gen_server:call(?SERVER, dump_to_config).
 
 start_link() ->
-    gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
+    {ok, Pid} = gen_server:start_link({local, ?SERVER}, ?MODULE, [], []),
+    ok = gen_server:call(Pid, init_loggers),
+    {ok, Pid}.
 
 %%% gen_server callbacks
 init([]) ->
@@ -82,19 +84,6 @@ handle_call(Request, _From, State) ->
 handle_cast(_Msg, State) ->
     {noreply, State}.
 
-handle_info(init_loggers, #config{enabled_loggers = EnabledLoggers} = Config) ->
-    [
-     begin
-         LoggerConfig = alog_config:get_conf(Logger, []),
-         ok = Logger:start([{sup_ref, alog_sup} | LoggerConfig])
-     end
-     || Logger <- EnabledLoggers
-    ],
-
-    apply_config(Config),
-
-    {noreply, Config};
-
 handle_info(_Info, State) ->
     {noreply, State}.
 
@@ -105,6 +94,20 @@ code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
 
 %%% Internal functions
+
+do_request(init_loggers, #config{enabled_loggers = EnabledLoggers} = Config) ->
+    [
+     begin
+         LoggerConfig = alog_config:get_conf(Logger, []),
+         ok = Logger:start([{sup_ref, alog_sup} | LoggerConfig])
+     end
+     || Logger <- EnabledLoggers
+    ],
+
+    apply_config(Config),
+
+    {ok, Config};
+
 do_request(get_flows, #config{flows = Flows} = Config) ->
     {{ok, Flows}, Config};
 
