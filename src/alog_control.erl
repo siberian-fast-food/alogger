@@ -3,23 +3,31 @@
 -behaviour(gen_server).
 
 %% API
--export([start_link/0]).
--export([get_flows/0,
+-export([
+         start_link/0,
+         init_loggers/0
+        ]).
+
+-export([
+         get_flows/0,
          set_flow_priority/2,
          disable_flow/1,
          enable_flow/1,
          delete_flow/1,
          add_new_flow/3,
          update_flow/2,
-         dump_to_config/0]).
+         dump_to_config/0
+        ]).
 
 %% gen_server callbacks
--export([init/1,
+-export([
+         init/1,
          handle_call/3,
          handle_cast/2,
          handle_info/2,
          terminate/2,
-         code_change/3]).
+         code_change/3
+        ]).
 
 -define(SERVER, ?MODULE).
 
@@ -63,16 +71,15 @@ update_flow(Id, Flow) ->
 dump_to_config() ->
     gen_server:call(?SERVER, dump_to_config).
 
-start_link() ->
-    {ok, Pid} = gen_server:start_link({local, ?SERVER}, ?MODULE, [], []),
-    ok = gen_server:call(Pid, init_loggers),
-    {ok, Pid}.
+init_loggers() ->
+    gen_server:call(?SERVER, init_loggers).
 
+start_link() ->
+    gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
 %%% gen_server callbacks
 init([]) ->
     EnabledLoggers = alog_config:get_conf(enabled_loggers, []),
     FlowsConfig      = alog_config:get_conf(flows, []),
-    self() ! init_loggers,
     {ok, #config{enabled_loggers = EnabledLoggers,
                  flows = parse_flows_config(FlowsConfig)
                 }}.
