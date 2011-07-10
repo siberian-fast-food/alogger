@@ -22,9 +22,9 @@
 
 -include("alog.hrl").
 
--define(IDENT, "alogger").
--define(LOGOPT, [cons, perror, pid]).
--define(FACILITY, user).
+-define(DEF_IDENT, "alogger").
+-define(DEF_LOGOPT, [cons, perror, pid]).
+-define(DEF_FACILITY, user).
 
 %%%----------------------------------------------------------------------
 %%% @spec start(Opts::list()) -> ok
@@ -35,9 +35,12 @@
 %%%----------------------------------------------------------------------
 -spec start(list()) -> ok.
 
-start(_) ->
+start(Opts) ->
+    Ident = gen_alogger:get_opt(ident, Opts, ?DEF_IDENT),
+    Logopt = gen_alogger:get_opt(logopt, Opts, ?DEF_LOGOPT),
+    Facility = gen_alogger:get_opt(facility, Opts, ?DEF_FACILITY),
     syslog:start(),
-    syslog:open(?IDENT, ?LOGOPT, ?FACILITY),
+    syslog:open(Ident, Logopt, Facility),
     ok.
 
 %%%----------------------------------------------------------------------
