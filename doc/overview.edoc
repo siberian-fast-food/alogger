@@ -39,7 +39,6 @@ The Abstract Logger Interface (alogger) brings completely new opportunities of l
     <li>the possibility to change the logging priority by modules or by special tags</li>
     </ul>
   </li>
-  <li>Milk</li>
 </ul>
 
 So, basically, with alogger you'll be able to add any new logger to you project, you even won't have to recompile your code. You'll be able to control all your log flows 
