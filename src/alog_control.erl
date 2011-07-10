@@ -132,31 +132,40 @@ add_new_flow(Filter, Priority, Loggers) ->
 replase_flows(Flows) ->
     gen_server:call(?SERVER, {replase_flows, Flows}).
 
+%% @doc Update flows configuration in .config file
+-spec dump_to_config(string()) -> ok | {error, term()}.
 dump_to_config(File) ->
     gen_server:call(?SERVER, {dump_to_config, File}).
 
+%% @private
 init_loggers() ->
     gen_server:call(?SERVER, init_loggers).
 
+%% @private
 start_link() ->
     gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
 %%% gen_server callbacks
+%% @private
 init([]) ->
     EnabledLoggers = alog_config:get_conf(enabled_loggers, []),
     FlowsConfig    = alog_config:get_conf(flows, []),
     {ok, #config{enabled_loggers = EnabledLoggers,
                  flows = parse_flows_config(FlowsConfig)}}.
 
+%% @private
 handle_call(Request, _From, State) ->
     {Reply, NewState} = do_request(Request, State),
     {reply, Reply, NewState}.
 
+%% @private
 handle_cast(_Msg, State) ->
     {noreply, State}.
 
+%% @private
 handle_info(_Info, State) ->
     {noreply, State}.
 
+%% @private
 terminate(_Reason, #config{enabled_loggers = EnabledLoggers} = Config) ->
     apply_config(Config#config{flows = []}),
 
@@ -167,11 +176,12 @@ terminate(_Reason, #config{enabled_loggers = EnabledLoggers} = Config) ->
 
     ok.
 
+%% @private
 code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
 
 %%% Internal functions
-
+%% @private
 do_request(init_loggers, #config{enabled_loggers = EnabledLoggers} = Config) ->
     [begin
          LoggerConfig = alog_config:get_conf(Logger, []),
@@ -276,6 +286,7 @@ do_request({dump_to_config, File},#config{flows = Flows} = Config) ->
 
 do_request(_Req, State) -> {{error, badreq}, State}.
 
+%% @private
 modify_flow_if_exist(Id, Flows, ModFun, Config) ->
     case lists:keyfind(Id, #flow.id, Flows) of
         false ->
@@ -296,6 +307,7 @@ modify_flow_if_exist(Id, Flows, ModFun, Config) ->
             end
     end.
 
+%% @private
 new_config_if_successfully_applied(NewConfig, OldConfig) ->
     try apply_config(NewConfig) of
         ok    -> {ok, NewConfig};
@@ -305,9 +317,11 @@ new_config_if_successfully_applied(NewConfig, OldConfig) ->
             {{E, {W, erlang:get_stacktrace()}}, OldConfig}
     end.
 
+%% @private
 apply_config(#config{flows = Flows}) ->
     alog_parse_trans:load_config(configs_to_internal_form(Flows)).
 
+%% @private
 configs_to_internal_form(Flows) ->
     ToInternaFlow =
         fun(#flow{enabled = false}, Acc) -> Acc;
@@ -321,6 +335,7 @@ configs_to_internal_form(Flows) ->
         end,
     lists:foldl(ToInternaFlow, [], Flows).
 
+%% @private
 priority_pattern_to_internal(PriorityPattern) when is_list(PriorityPattern) ->
     [priority_pattern_to_internal(Pp) || Pp <- PriorityPattern];
 priority_pattern_to_internal({Exp, Priority}) ->
@@ -328,6 +343,7 @@ priority_pattern_to_internal({Exp, Priority}) ->
 priority_pattern_to_internal(Priority) ->
     priority_to_internal(Priority).
 
+%% @private
 priority_to_internal(emergency) -> ?emergency;
 priority_to_internal(alert)     -> ?alert;
 priority_to_internal(critical)  -> ?critical;
@@ -338,8 +354,7 @@ priority_to_internal(info)      -> ?info;
 priority_to_internal(debug)     -> ?debug;
 priority_to_internal(P) when is_integer(P) -> P.
 
-
-
+%% @private
 filter_to_internal({app, AppName}) ->
     Modules =
         case application:get_all_key(AppName) of
@@ -350,6 +365,7 @@ filter_to_internal({app, AppName}) ->
     {mod, Modules};
 filter_to_internal(Filter) -> Filter.
 
+%% @private
 parse_flows_config(FlowsConfig) ->
     ParseFun =
         fun({Filter, Priority, Loggers}, {CurId, Flows}) ->
@@ -362,6 +378,7 @@ parse_flows_config(FlowsConfig) ->
     {_Id, ParsedFlows} = lists:foldl(ParseFun, {1, []}, FlowsConfig),
     ParsedFlows.
 
+%% @private
 dump_to_config_low(File, Flow) ->
     case file:consult(File) of
 	{ok, Terms} ->
@@ -370,11 +387,13 @@ dump_to_config_low(File, Flow) ->
 	    Error
     end.
 
+%% @private
 update_terms(Terms, File, Flow) ->
     [[{alog, ListOfConf}]] = Terms,
     WriteToConf = [{alog, new_flow(ListOfConf, Flow)}], 
     write_to_config(WriteToConf, File).
 
+%% @private
 new_flow(ListOfConf, Flow) ->
     new_flow(ListOfConf, [], Flow).
 new_flow([{flows, _}|Other], Acc, Flow) ->
@@ -384,9 +403,11 @@ new_flow([N|Other],Acc, Flow) ->
 new_flow([], Acc, _Flow) ->
     lists:reverse(Acc).
 
+%% @private
 compose_new_flow(Flow) ->
     remove_id(Flow, []).
 
+%% @private
 remove_id([{flow,_, Filter, Exp, Loggers,_}|Other], Acc) ->
     remove_id(Other, [{Filter, Exp, Loggers}|Acc]);
 remove_id([N|Oth], Acc) ->
@@ -394,5 +415,6 @@ remove_id([N|Oth], Acc) ->
 remove_id([], Acc) ->
     lists:reverse(Acc).
 
+%% @private
 write_to_config(Terms, File) ->
     file:write_file(File,io_lib:fwrite("~p.\n",[Terms])).
