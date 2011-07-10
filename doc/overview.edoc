@@ -55,36 +55,6 @@ At he moment there're three logger interfaces out of the box:
 <li><b>alog_scribe</b>: an interface towards Scribe log daemon through thrift protocol</li>
 </ul>
 
-How to implement your own interface
------------------------------------
-To implement your own interface you should introduce a module which implements the gen_alogger behaviour. It's possible to configure your interface modules through priv/alog.config file. For each log interface module there's a configuration entry, for example:
-
-<pre>
-{alog_syslog, [{ident, "alogger"},
-               {logopt, [cons, perror, pid]},
-               {facility, user}]}
-</pre>
-
-Also, gen_logger behaviour provides two helper functions: get_opt/2 and get_opt/3, you can use it in your start/1 function to get neccessary configuration, for example:
-
-<pre>
-start(Opts) ->
-    Ident = gen_alogger:get_opt(ident, Opts, ?DEF_IDENT),
-    Logopt = gen_alogger:get_opt(logopt, Opts, ?DEF_LOGOPT),
-    Facility = gen_alogger:get_opt(facility, Opts, ?DEF_FACILITY),
-...
-</pre>
-
-How to run examples
--------------------
-We prepared some simple logging examples, so you could check how it works. You can run it by the following command from the Erlang shell:
-
-<pre>
-&gt; alog_examples:run_examples().
-</pre>
-
-NOTE: if you have enabled alog_scribe logger interface, you should have Scribe log daemon installed and configured (an configuration example you can find in the priv directory). For more information about Scribe installation procedure see Scribe documentation.
-
 How to use alogger and feel some magic
 --------------------------------------
 You can use alogger in different ways.
@@ -152,6 +122,36 @@ It is configured in alog.config.
 <ul>
 <li>Setting is for logger.</li>
 </ul>
+
+How to run examples
+-------------------
+We prepared some simple logging examples, so you could check how it works. You can run it by the following command from the Erlang shell:
+
+<pre>
+&gt; alog_examples:run_examples().
+</pre>
+
+NOTE: if you have enabled alog_scribe logger interface, you should have Scribe log daemon installed and configured (an configuration example you can find in the priv directory). For more information about Scribe installation procedure see Scribe documentation.
+
+How to implement your own interface
+-----------------------------------
+To implement your own interface you should introduce a module which implements the gen_alogger behaviour. It's possible to configure your interface modules through priv/alog.config file. For each log interface module there's a configuration entry, for example:
+
+<pre>
+{alog_syslog, [{ident, "alogger"},
+               {logopt, [cons, perror, pid]},
+               {facility, user}]}
+</pre>
+
+Also, gen_logger behaviour provides two helper functions: get_opt/2 and get_opt/3, you can use it in your start/1 function to get neccessary configuration, for example:
+
+<pre>
+start(Opts) ->
+    Ident = gen_alogger:get_opt(ident, Opts, ?DEF_IDENT),
+    Logopt = gen_alogger:get_opt(logopt, Opts, ?DEF_LOGOPT),
+    Facility = gen_alogger:get_opt(facility, Opts, ?DEF_FACILITY),
+...
+</pre>
 
 Log levels
 ----------
