@@ -63,7 +63,7 @@ __Behaviours:__ [`gen_server`](gen_server.md).
 
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#add_new_flow-3">add_new_flow/3</a></td><td>Add new flow.</td></tr><tr><td valign="top"><a href="#code_change-3">code_change/3</a></td><td></td></tr><tr><td valign="top"><a href="#delete_all_flows-0">delete_all_flows/0</a></td><td>Delete all flows.</td></tr><tr><td valign="top"><a href="#delete_flow-1">delete_flow/1</a></td><td>Delete existing flow.</td></tr><tr><td valign="top"><a href="#disable_flow-1">disable_flow/1</a></td><td>Temporary disable existing flow.</td></tr><tr><td valign="top"><a href="#dump_to_config-1">dump_to_config/1</a></td><td></td></tr><tr><td valign="top"><a href="#enable_flow-1">enable_flow/1</a></td><td>Enable existing flow.</td></tr><tr><td valign="top"><a href="#get_flows-0">get_flows/0</a></td><td>Return all flows.</td></tr><tr><td valign="top"><a href="#handle_call-3">handle_call/3</a></td><td></td></tr><tr><td valign="top"><a href="#handle_cast-2">handle_cast/2</a></td><td></td></tr><tr><td valign="top"><a href="#handle_info-2">handle_info/2</a></td><td></td></tr><tr><td valign="top"><a href="#init-1">init/1</a></td><td></td></tr><tr><td valign="top"><a href="#init_loggers-0">init_loggers/0</a></td><td></td></tr><tr><td valign="top"><a href="#print_flows-0">print_flows/0</a></td><td>Print all flows.</td></tr><tr><td valign="top"><a href="#replase_flows-1">replase_flows/1</a></td><td>Replase all flows on new.</td></tr><tr><td valign="top"><a href="#set_flow_filter-2">set_flow_filter/2</a></td><td>Set new filter for existing flow.</td></tr><tr><td valign="top"><a href="#set_flow_loggers-2">set_flow_loggers/2</a></td><td>Set new loggers for existing flow.</td></tr><tr><td valign="top"><a href="#set_flow_priority-2">set_flow_priority/2</a></td><td>Set new priority_pattern for existing flow.</td></tr><tr><td valign="top"><a href="#start_link-0">start_link/0</a></td><td></td></tr><tr><td valign="top"><a href="#terminate-2">terminate/2</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#add_new_flow-3">add_new_flow/3</a></td><td>Add new flow.</td></tr><tr><td valign="top"><a href="#delete_all_flows-0">delete_all_flows/0</a></td><td>Delete all flows.</td></tr><tr><td valign="top"><a href="#delete_flow-1">delete_flow/1</a></td><td>Delete existing flow.</td></tr><tr><td valign="top"><a href="#disable_flow-1">disable_flow/1</a></td><td>Temporary disable existing flow.</td></tr><tr><td valign="top"><a href="#dump_to_config-1">dump_to_config/1</a></td><td>Update flows configuration in .config file.</td></tr><tr><td valign="top"><a href="#enable_flow-1">enable_flow/1</a></td><td>Enable existing flow.</td></tr><tr><td valign="top"><a href="#get_flows-0">get_flows/0</a></td><td>Return all flows.</td></tr><tr><td valign="top"><a href="#print_flows-0">print_flows/0</a></td><td>Print all flows.</td></tr><tr><td valign="top"><a href="#replase_flows-1">replase_flows/1</a></td><td>Replase all flows on new.</td></tr><tr><td valign="top"><a href="#set_flow_filter-2">set_flow_filter/2</a></td><td>Set new filter for existing flow.</td></tr><tr><td valign="top"><a href="#set_flow_loggers-2">set_flow_loggers/2</a></td><td>Set new loggers for existing flow.</td></tr><tr><td valign="top"><a href="#set_flow_priority-2">set_flow_priority/2</a></td><td>Set new priority_pattern for existing flow.</td></tr></table>
 
 
 
@@ -85,17 +85,7 @@ __Behaviours:__ [`gen_server`](gen_server.md).
 
 
 
-Add new flow.<a name="code_change-3"></a>
-
-<h3>code_change/3</h3>
-
-
-
-
-
-`code_change(OldVsn, State, Extra) -> any()`
-
-<a name="delete_all_flows-0"></a>
+Add new flow.<a name="delete_all_flows-0"></a>
 
 <h3>delete_all_flows/0</h3>
 
@@ -145,9 +135,13 @@ Temporary disable existing flow.<a name="dump_to_config-1"></a>
 
 
 
-`dump_to_config(File) -> any()`
+<pre>dump_to_config(File::string()) -> ok | {error, term()}</pre>
+<br></br>
 
-<a name="enable_flow-1"></a>
+
+
+
+Update flows configuration in .config file<a name="enable_flow-1"></a>
 
 <h3>enable_flow/1</h3>
 
@@ -175,57 +169,7 @@ Enable existing flow.<a name="get_flows-0"></a>
 
 
 
-Return all flows.<a name="handle_call-3"></a>
-
-<h3>handle_call/3</h3>
-
-
-
-
-
-`handle_call(Request, From, State) -> any()`
-
-<a name="handle_cast-2"></a>
-
-<h3>handle_cast/2</h3>
-
-
-
-
-
-`handle_cast(Msg, State) -> any()`
-
-<a name="handle_info-2"></a>
-
-<h3>handle_info/2</h3>
-
-
-
-
-
-`handle_info(Info, State) -> any()`
-
-<a name="init-1"></a>
-
-<h3>init/1</h3>
-
-
-
-
-
-`init(X1) -> any()`
-
-<a name="init_loggers-0"></a>
-
-<h3>init_loggers/0</h3>
-
-
-
-
-
-`init_loggers() -> any()`
-
-<a name="print_flows-0"></a>
+Return all flows.<a name="print_flows-0"></a>
 
 <h3>print_flows/0</h3>
 
@@ -295,23 +239,4 @@ Set new loggers for existing flow.<a name="set_flow_priority-2"></a>
 
 
 
-Set new priority_pattern for existing flow.<a name="start_link-0"></a>
-
-<h3>start_link/0</h3>
-
-
-
-
-
-`start_link() -> any()`
-
-<a name="terminate-2"></a>
-
-<h3>terminate/2</h3>
-
-
-
-
-
-`terminate(Reason, Config) -> any()`
-
+Set new priority_pattern for existing flow.
