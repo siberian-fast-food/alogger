@@ -28,10 +28,11 @@
 
 -type priority() :: list() | tuple() | integer().
 
--record(flow, {id       :: non_neg_integer(),
-               filter   :: filter(),
-               priority :: priority(),
-               loggers  :: list(atom())}).
+-record(flow, {id              :: non_neg_integer(),
+               filter          :: filter(),
+               priority        :: priority(),
+               loggers  = []   :: list(atom()),
+               enabled  = true :: boolean}).
 
 -record(config, {flows           = [] :: list(#flow{}),
                  enabled_loggers = [] :: list(atom())}).
@@ -67,7 +68,10 @@ start_link() ->
 
 %%% gen_server callbacks
 init([]) ->
-    {ok, #config{}}.
+    EnabledLoggers = alog_config:get_conf(enabled_loggers, []),
+    Flows          = alog_config:get_conf(flows, []),
+    self() ! init_loggers,
+    {ok, #config{enabled_loggers = EnabledLoggers, flows = Flows}}.
 
 handle_call(Request, _From, State) ->
     {Reply, NewState} = do_request(Request, State),
@@ -75,6 +79,16 @@ handle_call(Request, _From, State) ->
 
 handle_cast(_Msg, State) ->
     {noreply, State}.
+
+handle_info(init_loggers, #config{enabled_loggers = EnabledLoggers} = Config) ->
+    [
+     begin
+         LoggerConfig = alog_config:get_conf(Logger, []),
+         ok = Logger:start([{sup_ref, alog_sup} | LoggerConfig])
+     end
+     || Logger <- EnabledLoggers
+    ],
+    {noreply, Config};
 
 handle_info(_Info, State) ->
     {noreply, State}.
@@ -99,3 +113,9 @@ do_request({add_new_flow, Filter, Priority, Loggers},
     {ok, Config#config{flows = NewFlows}};
 
 do_request(_Req, State) -> {{error, badreq}, State}.
+
+apply_config(#config{flows = Flows}) ->
+    EnabledFlows = lists:filter(fun(#flow{enabled = En}) -> En end, Flows),
+    alog_parse_trans:load_config(config_to_internal_form(EnabledFlows)).
+
+config_to_internal_form(Flows) -> Flows.
