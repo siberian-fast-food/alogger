@@ -6,6 +6,8 @@ Overview
 ========
 
 
+__Introduced in:__ Jul 10 2011
+
 __Authors:__ Alexander Dergachev ([`alexander.dergachev@gmail.com`](mailto:alexander.dergachev@gmail.com)), Artem Golovinsky ([`artemgolovinsky@gmail.com`](mailto:artemgolovinsky@gmail.com)), Igor Karymov ([`ingham.k@gmail.com`](mailto:ingham.k@gmail.com)), Dmitry Groshev ([`lambdadmitry@gmail.com`](mailto:lambdadmitry@gmail.com)).
 
 
@@ -17,7 +19,7 @@ This software is licensed under Erlang Public License [`http://www.erlang.org/EP
 
 Rationale
 ---------
-
+There are a lot of loggers in the wild
 
 Last updated: Jul 10 2011
 
