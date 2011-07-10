@@ -1,11 +1,5 @@
 %% @doc
-%% This module is a main alog module. It serves start/0 and
-%% stop/0 functions as a user API and implements appication behaviour.
-%% It also contains runtime logging API that mimics macroses defined in
-%% alog.hrl. There are 7 log levels (emergency, alert, critical, error,
-%% warning, notice, info and debug) and 3 functions for each log
-%% level - the one that accepts format string, arguments and list of tags,
-%% the one without tags and the one with string only.
+%% The log interface towards scribe log daemon through thrift protocol.
 %% @end
 %% ----------------------------------------------------------------------
 %% Copyright (c) 2011 Siberian Fast Food
@@ -57,7 +51,7 @@
 -define(DEF_FRAMED, true).
 
 %%% API
-%% @Starts logger
+%% @doc Starts logger
 -spec start_link(list()) -> pid().
 start_link(Opts) ->
     gen_server:start_link({local, ?MODULE}, ?MODULE, [Opts], []).

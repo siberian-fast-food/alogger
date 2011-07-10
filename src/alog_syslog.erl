@@ -1,5 +1,5 @@
 %% @doc
-%% FIXME
+%% The log interface towards system Syslog daemon.
 %% @end
 %% ----------------------------------------------------------------------
 %% Copyright (c) 2011 Siberian Fast Food

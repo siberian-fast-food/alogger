@@ -37,7 +37,9 @@ behaviour_info(callbacks) ->
 behaviour_info(_) ->
     undefined.
 
-%% @doc FIXME
+%% @doc returns the Opt-named option from the Opts proplist
+%%      or throws an exception in case of unsuccessful 
+%%      lookup
 get_opt(Opt, Opts) ->
     case lists:keysearch(Opt, 1, Opts) of
 	false ->
@@ -47,7 +49,8 @@ get_opt(Opt, Opts) ->
 	    Val
     end.
 
-%% @doc FIXME
+%% @doc returns the Opt-named option from the Opts proplist
+%%      or Default value in case of unsuccessful lookup
 get_opt(Opt, Opts, Default) ->
     case lists:keysearch(Opt, 1, Opts) of
 	false ->

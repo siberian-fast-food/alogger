@@ -1,5 +1,7 @@
 %% @doc
-%% FIXME
+%% The default log message formatter. You can use it for formating
+%% your log messages in your own log interfaces like we do in
+%% alog_syslog, alog_tty and alog_scribe.
 %% @end
 %% ----------------------------------------------------------------------
 %% Copyright (c) 2011 Siberian Fast Food
