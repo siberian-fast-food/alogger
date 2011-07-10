@@ -225,14 +225,10 @@ For example, emergency < error, and debug > warning.
 
 Last updated
 ------------
-Jul 11 2011 03:20:39
+Jul 11 2011 03:50:41
 
 
 <h2 class="indextitle">Packages</h2>
-
-
-
-<table width="100%" border="0" summary="list of packages"><tr><td><a href="https://github.com/spawnfest/alogger/blob/master/scribe/package-summary.md" class="package">scribe</a></td></tr></table>
 
 
 
