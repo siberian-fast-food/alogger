@@ -27,7 +27,6 @@
 %%% API
 %% @doc Starts alog application
 start() ->
-    ok = alog_error_logger_handler:install(),
     application:start(alog).
 
 %% @doc Stops alog application
