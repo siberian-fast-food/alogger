@@ -21,7 +21,7 @@
 
 behaviour_info(callbacks) ->
     [ {start, 1}
-    , {stop, 0}
+    , {stop, 1}
     , {log, 2}
     , {format, 6}];
 behaviour_info(_) ->
