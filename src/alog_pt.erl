@@ -50,11 +50,14 @@ build_format(Format) ->
     Vars = lists:reverse(VarsR),
 
     FStrT = erl_syntax:string(FStr),
-    VarsT = erl_syntax:list([erl_syntax:variable(X) || X <- Vars]),
-    FunT = erl_syntax:atom(format),
-    ModT = erl_syntax:atom(io_lib),
-    OperatorT = erl_syntax:module_qualifier(ModT, FunT),
-    erl_syntax:application(OperatorT, [FStrT, VarsT]).
+    VarsT = erl_syntax:list([case X of
+                                 X when is_atom(X) ->
+                                     erl_syntax:variable(X);
+                                 X when is_list(X) ->
+                                     erl_syntax:string(X)
+                             end || X <- Vars]),
+    IoFormatT = build_application(io_lib, format, [FStrT, VarsT]),
+    build_application(lists, flatten, [IoFormatT]).
 
 -spec (elems_folder(stxtree(), Acc) ->
               Acc when Acc :: {list(nonempty_string()), list(atom())}).
@@ -65,9 +68,17 @@ elems_folder(Elem, {FStrs, Vars}) ->
             Var = erl_syntax:variable_name(Elem),
             {[FStr|FStrs], [Var|Vars]};
         string ->
+            FStr = "~s",
             Str = erl_syntax:string_value(Elem),
-            {[Str|FStrs], Vars};
+            {[FStr|FStrs], [Str|Vars]};
         T ->
             parse_trans:error(badarg_in_tupleexpr,
                               ?LINE, [{type, T}])
     end.
+
+-spec build_application(atom(), atom(), [stxtree()]) -> stxtree().
+build_application(Mod, Fun, Args) ->
+    ModT = erl_syntax:atom(Mod),
+    FunT = erl_syntax:atom(Fun),
+    OperatorT = erl_syntax:module_qualifier(ModT, FunT),
+    erl_syntax:application(OperatorT, Args).

@@ -16,7 +16,7 @@ run_examples() ->
 
     TestVar = test_var_value,
     ?DBG({A, B}),
-    %?DBG({A, B, "testvar is ~p"}, [TestVar]),
+    ?DBG({A, B, "testvar is ~p"}, [TestVar]),
     ?DBG("test debug ~p", [TestVar]),
     ?INFO("test info ~p", [TestVar]),
     ?NOTICE("test notice ~p", [TestVar]),
