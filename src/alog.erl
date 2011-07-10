@@ -22,6 +22,7 @@ stop() ->
 %% @private
 start(_StartType, _StartArgs) ->
     Link = alog_sup:start_link(),
+    ok = alog_control:init_loggers(),
     alog_examples:run_examples(),
     Link.
 
