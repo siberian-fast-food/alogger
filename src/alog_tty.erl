@@ -39,7 +39,7 @@ stop() ->
 -spec log(integer(), string()) -> ok.
 
 log(_ALoggerPrio, Msg) ->
-    io:format(lists:flatten(Msg), []).
+    io:format("~s", [Msg]).
 
 %%%----------------------------------------------------------------------
 %%% @spec format(FormatString::string(), [term()], Tag::string(),

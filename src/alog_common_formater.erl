@@ -15,7 +15,7 @@
 -export([format/6]).
 
 %%% default log message format: module:line [pid]->[tag]: user message
--define(LOG_MSG_FORMAT, "~p:~p [~p]->[~p]: ~p").
+-define(LOG_MSG_FORMAT, "~p:~p [~p]->[~p]: ~s").
 
 %%%----------------------------------------------------------------------
 %%% @spec format(FormatString::string(), [term()], Tag::string(),
