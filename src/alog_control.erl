@@ -133,7 +133,8 @@ do_request({set_flow_priority, Id, Priority},
     ModFun = fun(Flow) ->
                      NewPriority =
                          case Priority of
-                             {_P, _Pr} -> Priority;
+                             {_P, _Pr}           -> Priority;
+                             Pr when is_list(Pr) -> Priority;
                              _Pr       ->
                                  {P, _OldP} = Flow#flow.priority,
                                  {P, Priority}
@@ -197,6 +198,14 @@ priority_to_internal(notice)->    5;
 priority_to_internal(info)->      6;
 priority_to_internal(debug)->     7.
 
+filter_to_internal({app, AppName}) ->
+    Modules =
+        case application:get_all_key(AppName) of
+            {ok, Params} ->
+                proplists:get_value(modules, Params, []);
+            _ -> []
+        end,
+    {mod, Modules};
 filter_to_internal(Filter) -> Filter.
 
 parse_flows_config(FlowsConfig) ->
