@@ -18,7 +18,7 @@ __Behaviours:__ [`gen_alogger`](gen_alogger.md).
 
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#format-6">format/6</a></td><td></td></tr><tr><td valign="top"><a href="#log-2">log/2</a></td><td></td></tr><tr><td valign="top"><a href="#start-1">start/1</a></td><td></td></tr><tr><td valign="top"><a href="#stop-0">stop/0</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#format-6">format/6</a></td><td></td></tr><tr><td valign="top"><a href="#log-2">log/2</a></td><td></td></tr><tr><td valign="top"><a href="#start-1">start/1</a></td><td></td></tr><tr><td valign="top"><a href="#stop-1">stop/1</a></td><td></td></tr></table>
 
 
 
@@ -56,13 +56,13 @@ __Behaviours:__ [`gen_alogger`](gen_alogger.md).
 
 `start(X1) -> any()`
 
-<a name="stop-0"></a>
+<a name="stop-1"></a>
 
-<h3>stop/0</h3>
-
-
+<h3>stop/1</h3>
 
 
 
-`stop() -> any()`
+
+
+`stop(X1) -> any()`
 

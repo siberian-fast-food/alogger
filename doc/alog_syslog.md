@@ -19,7 +19,7 @@ __Behaviours:__ [`gen_alogger`](gen_alogger.md).
 
 
 <table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#format-6">format/6</a></td><td>returns formated log message.</td></tr><tr><td valign="top"><a href="#log-2">log/2</a></td><td>logs message Msg with apropriate priority.</td></tr><tr><td valign="top"><a href="#start-1">start/1</a></td><td>starts syslog driver and opens log with predefined
-configuration.</td></tr><tr><td valign="top"><a href="#stop-0">stop/0</a></td><td></td></tr></table>
+configuration.</td></tr><tr><td valign="top"><a href="#stop-1">stop/1</a></td><td></td></tr></table>
 
 
 
@@ -63,22 +63,22 @@ logs message Msg with apropriate priority<a name="start-1"></a>
 
 
 
-<pre>start(SupRef::term()) -> ok</pre>
+<pre>start(Opts::list()) -> ok</pre>
 <br></br>
 
 
 
 
 starts syslog driver and opens log with predefined
-configuration<a name="stop-0"></a>
+configuration<a name="stop-1"></a>
 
-<h3>stop/0</h3>
-
-
+<h3>stop/1</h3>
 
 
 
-<pre>stop() -> ok</pre>
+
+
+<pre>stop(Opts::list()) -> ok</pre>
 <br></br>
 
 
