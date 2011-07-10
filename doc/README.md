@@ -119,7 +119,7 @@ You can use alogger in different ways.
 **Using macroses:**
 you can use only .hrl file like this
 <pre>-include_lib("alog.hrl")</pre>
-and you will get standart ?DBG/?INFO/?ERROR/... (you can find out more information in [`alog.hrl`](alog/hrl.md)). Or you can also engage our parse transformation:
+and you will get standart ?DBG/?INFO/?ERROR/... (you can find out more information in [`alog`](alog.md) module, which contains function that mimic macroses names and arguments). Or you can also engage our parse transformation:
 <pre>
 -include_lib("alog.hrl").
 -compile({parse_transform, alog_pt}).
@@ -229,7 +229,7 @@ For example, emergency < error, and debug > warning.
 
 Last updated
 ------------
-Jul 11 2011 02:46:00
+Jul 11 2011 02:46:54
 
 
 <h2 class="indextitle">Packages</h2>
