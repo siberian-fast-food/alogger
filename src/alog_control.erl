@@ -17,6 +17,7 @@
          disable_flow/1,
          enable_flow/1,
          delete_flow/1,
+         delete_all_flows/0,
          add_new_flow/3,
          dump_to_config/0
         ]).
@@ -75,6 +76,9 @@ enable_flow(Id) ->
 
 delete_flow(Id) ->
     gen_server:call(?SERVER, {delete_flow, Id}).
+
+delete_all_flows() ->
+    gen_server:call(?SERVER, delete_all_flows).
 
 add_new_flow(Filter, Priority, Loggers) ->
     gen_server:call(?SERVER, {add_new_flow, Filter, Priority, Loggers}).
@@ -219,6 +223,10 @@ do_request({delete_flow, Id},
                      {mod_flows, lists:keydelete(Id, #flow.id, Flows)}
              end,
     modify_flow_if_exist(Id, Flows, ModFun, Config);
+
+do_request(delete_all_flows, Config) ->
+    NewConfig = Config#config{flows = []},
+    new_config_if_successfully_applied(NewConfig, Config);
 
 do_request(_Req, State) -> {{error, badreq}, State}.
 
