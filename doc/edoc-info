@@ -2,5 +2,5 @@
 {packages,[scribe]}.
 {modules,[alog,alog_common_formatter,alog_config,alog_control,
           alog_error_logger_handler,alog_examples,alog_if_default,
-          alog_parse_trans,alog_pt,alog_scribe,alog_sup,alog_syslog,
+          alog_parse_trans,alog_pt,alog_scribe,alog_syslog,
           alog_test_logger_iface,alog_tests,alog_tty,gen_alogger]}.

@@ -4,11 +4,13 @@ Module alog_examples
 
 <h1>Module alog_examples</h1>
 
+* [Description](#description)
 * [Function Index](#index)
 * [Function Details](#functions)
 
 
 
+This module contains examples of alogger usage.
 
 
 
@@ -16,7 +18,7 @@ Module alog_examples
 
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#run_examples-0">run_examples/0</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#run_examples-0">run_examples/0</a></td><td>Shows some logger output.</td></tr></table>
 
 
 
@@ -32,5 +34,10 @@ Module alog_examples
 
 
 
-`run_examples() -> any()`
+<pre>run_examples() -> ok</pre>
+<br></br>
 
+
+
+
+Shows some logger output.

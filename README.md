@@ -31,7 +31,34 @@ under the License.
 
 Rationale
 ---------
-There are a lot of loggers in the wild
+There is a lot of loggers in the wild. You can consider to use one of them in your new project. After a while there a new cool logger appears, and you want it, so, you have to change lots of places in you code, and definitely you have to recompile the entire project. That sucks, doesn't it?
+
+
+
+The Abstract Logger Interface (alogger) brings completely new opportunities of logging. Here you go:
+
+
+  * the possibility to introduce any new logger to your project without a need to change the project code at all
+
+  * the interface will provide some neat features which are not exist in most of the existent loggers, like these:
+    
+    * the possibility to change the logging priority "on the fly" without any significant overhead
+
+    * the possibility to change the logging priority by modules or by special tags
+
+    
+ 
+
+
+
+
+
+So, basically, with alogger you'll be able to add any new logger to you project, you even won't have to recompile your code. You'll be able to control all your log flows 
+from the shell or through the config file.
+
+
+
+We don't invent a wheel, there's nothing like this around!
 
 Log levels
 ----------
@@ -57,7 +84,7 @@ For example, emergency < error, and debug > warning.
 
 Last updated
 ------------
-Jul 10 2011 23:27:31
+Jul 10 2011 22:22:31
 
 
 <h2 class="indextitle">Packages</h2>
@@ -83,7 +110,6 @@ Jul 10 2011 23:27:31
 <tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_parse_trans.md" class="module">alog_parse_trans</a></td></tr>
 <tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_pt.md" class="module">alog_pt</a></td></tr>
 <tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_scribe.md" class="module">alog_scribe</a></td></tr>
-<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_sup.md" class="module">alog_sup</a></td></tr>
 <tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_syslog.md" class="module">alog_syslog</a></td></tr>
 <tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_test_logger_iface.md" class="module">alog_test_logger_iface</a></td></tr>
 <tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_tests.md" class="module">alog_tests</a></td></tr>

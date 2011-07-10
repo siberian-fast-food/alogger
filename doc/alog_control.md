@@ -4,11 +4,13 @@ Module alog_control
 
 <h1>Module alog_control</h1>
 
+* [Description](#description)
 * [Function Index](#index)
 * [Function Details](#functions)
 
 
 
+FIXME.
 
 
 
