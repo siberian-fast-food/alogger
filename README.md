@@ -95,8 +95,7 @@ this API consists of pure function calls. Functions are defined in [`alog`](http
 
 Configuration
 -------------
-alogger can be configured to write different flows (or streams of log messages) to different loggers. It can be done in config or in runtime with [`alog_control`](https://github.com/spawnfest/alogger/blob/master/doc/alog_control.md) module.
-It is configured in alog.config.
+alogger can be configured to write different flows (or streams of log messages) to different loggers. It can be done in config (alog.config) or in runtime with [`alog_control`](https://github.com/spawnfest/alogger/blob/master/doc/alog_control.md) module.
 <pre>
         [{alog, [
                   {enabled_loggers, Loggers},
@@ -226,7 +225,7 @@ For example, emergency < error, and debug > warning.
 
 Last updated
 ------------
-Jul 11 2011 03:14:51
+Jul 11 2011 03:20:39
 
 
 <h2 class="indextitle">Packages</h2>
