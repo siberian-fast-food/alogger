@@ -24,24 +24,44 @@
 
 -module(alog_common_formatter).
 
--export([format/6]).
+-export([format/7]).
+
+-include("alog.hrl").
 
 %% default log message format: module:line [pid]->[tag]: user message
--define(LOG_MSG_FORMAT, "~p:~p [~p]->[~p]: ~s~n").
+-define(LOG_MSG_FORMAT, "~p:~p:~s [~p]->[~p]: ~s~n").
+-define(LOG_MSG_FORMAT_EMPTY_TAG, "~p:~p:~s [~p]->[]: ~s~n").
 
 %% @doc returns formated log message
--spec format(string(), [term()], string(),
+-spec format(string(), [term()], integer(), list(),
              atom(), integer(), pid()) -> iolist().
 %% this is a special case for error_logger messages
-format(Msg, _, '$error_logger', _, _, _) ->
+format(Msg, _, _, '$error_logger', _, _, _) ->
     write_report(Msg);
 %% and this is for anything else
-format(FormatString, Args, Tag, Module, Line, Pid) ->
+format(FormatString, Args, Level, [], Module, Line, Pid) ->
+    LevelStr = map_prio(Level),
     IoUserMsg = io_lib:format(FormatString, Args),
-    io_lib:format(?LOG_MSG_FORMAT, [Module, Line, Pid,
-                                    Tag, IoUserMsg]).
+    io_lib:format(?LOG_MSG_FORMAT_EMPTY_TAG, [Module, Line, LevelStr,
+					      Pid, IoUserMsg]);
+format(FormatString, Args, Level, Tag, Module, Line, Pid) ->
+    LevelStr = map_prio(Level),
+    IoUserMsg = io_lib:format(FormatString, Args),
+    io_lib:format(?LOG_MSG_FORMAT, [Module, Line, LevelStr,
+				    Pid, Tag, IoUserMsg]).
 
 %%% internal functions
+%% @private
+-spec map_prio(integer()) -> string().
+map_prio(?emergency) -> "emergency";
+map_prio(?alert)     -> "alert";
+map_prio(?critical)  -> "critical";
+map_prio(?error)     -> "error";
+map_prio(?warning)   -> "warning";
+map_prio(?notice)    -> "notice";
+map_prio(?info)      -> "info";
+map_prio(?debug)     -> "debug".
+
 %% @private
 -spec write_report(tuple()) -> iolist().
 write_report({error_report, _GL, {Pid, Type, Report}}) ->
