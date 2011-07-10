@@ -112,22 +112,18 @@ NOTE: if you have enabled alog_scribe logger interface, you should have Scribe l
 Configuration
 -------------
 
-
-
 alogger may be configured to write different flows to different loggers.
 It is configured in alog.config.
-
-        
-
-[{alog, [                  
-{enabled_loggers, Loggers},                  
-{flows, [                          
-{Filter,PriorityPattern, Loggers},                  
-]},  		
-{LoggerName,ListOfSettings}                
-]}         
-].
-
+<pre>
+        [{alog, [
+                  {enabled_loggers, Loggers},
+                  {flows, [
+                          {Filter,PriorityPattern, Loggers},
+                  ]},
+		  {LoggerName,ListOfSettings}
+                ]}
+         ].
+</pre>
 
 
 
@@ -137,49 +133,40 @@ It is configured in alog.config.
 
 **flows** - every flow is represented as tuple of setting.
 
-
-
-
-'{Filter, PriorityPattern, Loggers}'
+<pre>{Filter, PriorityPattern, Loggers}</pre>
 
 
 
 **Filter** = {tag, TagList} | {mod, ModList}
 
 
-
 * TagList is list of tags, Every tag is atom. If you set tag as filter, printouts with pointed tags is sent to loggers. Name of modules are  no matter in this case.
 
-
-
 * ModList is list of modules which should be logged to loggers. Tags are no matter.
+
+
 
 
 
 **PriorityPattern** = [{Exp, PrioName}] | [PrioName] | {Exp, PrioName} | PrioName
 
 
-
 * Exp -  arithmetic expression filter for priority. >=, =<, >, <, =:=, /= are possible.
 
-
-
 * PrioName - name of priority. Possible: emergency, critical, error, warning, notice, info, debug
+
+
 
 
 
 **Loggers** = [Logger]
 
 
-
 * Logger is atom. Name of logger.
 
 
 
-
-
-'{LoggerName, ListOfSettings}'
-
+<pre>{LoggerName, ListOfSettings}</pre>
 
 
 
@@ -190,8 +177,9 @@ It is configured in alog.config.
 **ListOfSettings** = [Setting]
 
 
-
 * Setting is for logger.
+
+
 
 Log levels
 ----------
@@ -217,7 +205,7 @@ For example, emergency < error, and debug > warning.
 
 Last updated
 ------------
-Jul 11 2011 02:05:41
+Jul 11 2011 02:16:25
 
 
 <h2 class="indextitle">Packages</h2>
