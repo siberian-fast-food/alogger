@@ -44,7 +44,6 @@ load_config(Config) ->
 % -------------------------------
 load_config2(NewAst) -> 	
     _Source = erl_prettypr:format(erl_syntax:form_list(NewAst)),
-    io:format("SOURSE = ~p ~n",[_Source]),
     {ok, ModuleName, Bin} = compile:forms(NewAst),
     code:load_binary(ModuleName, ?IFACE_SOURCE, Bin).
 	
