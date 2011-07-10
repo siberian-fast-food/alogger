@@ -60,14 +60,17 @@ from the shell or through the config file.
 
 We don't invent a wheel, there's nothing like this around!
 
-
-
 Implemented logger interfaces
 -----------------------------
 At he moment there're three logger interfaces out of the box:
-- __alog_tty__: a simple one, it prints logs by io:format
-- __alog_syslog__: an interface towards Syslog daemon
-- __alog_scribe__an interface towards Scribe log daemon through thrift protocol
+
+* __alog_tty__: a simple one, it prints logs by io:format
+
+* __alog_syslog__: an interface towards Syslog daemon
+
+* __alog_scribe__an interface towards Scribe log daemon through thrift protocol
+
+
 
 
 
@@ -227,7 +230,7 @@ For example, emergency < error, and debug > warning.
 
 Last updated
 ------------
-Jul 11 2011 02:33:41
+Jul 11 2011 02:36:24
 
 
 <h2 class="indextitle">Packages</h2>
