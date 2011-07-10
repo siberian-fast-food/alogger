@@ -94,7 +94,7 @@ It is configured in alog.config.
 **flows** - every flow is represented as tuple of setting.
 
 
-`{Filter, PriorityPattern, Loggers}`
+'{Filter, PriorityPattern, Loggers}'
 
 **Filter** = {tag, TagList} | {mod, ModList}
 
@@ -114,7 +114,7 @@ It is configured in alog.config.
 
 
 
-`{LoggerName, ListOfSettings}`
+'{LoggerName, ListOfSettings}'
 
 
 **LoggerName** - name of logger module.
