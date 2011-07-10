@@ -10,9 +10,15 @@ Module alog_common_formatter
 
 
 
-FIXME.
+The default log message formatter.
 
 
+
+<h2><a name="description">Description</a></h2>
+
+You can use it for formating
+your log messages in your own log interfaces like we do in
+alog_syslog, alog_tty and alog_scribe.
 
 <h2><a name="index">Function Index</a></h2>
 
