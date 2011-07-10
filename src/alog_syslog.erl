@@ -15,7 +15,7 @@
 
 -behaviour(gen_alogger).
 
--export([ start/0
+-export([ start/1
         , stop/0
         , log/2
         , format/6]).
