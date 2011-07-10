@@ -57,7 +57,7 @@ start_link() ->
 -spec start(list()) -> ok.
 
 start(Opts) ->
-    SupRef = gen_alogger:get_opts(sup_ref, Opts, ?DEF_SUP_REF),
+    SupRef = gen_alogger:get_opt(sup_ref, Opts, ?DEF_SUP_REF),
     attach_to_supervisor(SupRef),
     ok.
 
