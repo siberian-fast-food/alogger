@@ -32,7 +32,7 @@
                filter          :: filter(),
                priority        :: priority(),
                loggers  = []   :: list(atom()),
-               enabled  = true :: boolean}).
+               enabled  = true :: boolean()}).
 
 -record(config, {flows           = [] :: list(#flow{}),
                  enabled_loggers = [] :: list(atom())}).
