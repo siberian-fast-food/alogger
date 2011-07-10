@@ -18,4 +18,6 @@ format(_FormatString, [RequestRef], Tag, Module, Line, Pid) ->
 
 log(Level, {RequestRef, Tag, Module, Line, Pid}) ->
     Pid ! {log, Level, RequestRef, Tag, Module, Line, Pid}.
+
+	
     
