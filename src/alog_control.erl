@@ -69,9 +69,11 @@ start_link() ->
 %%% gen_server callbacks
 init([]) ->
     EnabledLoggers = alog_config:get_conf(enabled_loggers, []),
-    Flows          = alog_config:get_conf(flows, []),
+    FlowsConfig      = alog_config:get_conf(flows, []),
     self() ! init_loggers,
-    {ok, #config{enabled_loggers = EnabledLoggers, flows = Flows}}.
+    {ok, #config{enabled_loggers = EnabledLoggers,
+                 flows = parse_flows_config(FlowsConfig)
+                }}.
 
 handle_call(Request, _From, State) ->
     {Reply, NewState} = do_request(Request, State),
@@ -88,6 +90,9 @@ handle_info(init_loggers, #config{enabled_loggers = EnabledLoggers} = Config) ->
      end
      || Logger <- EnabledLoggers
     ],
+
+    apply_config(Config),
+
     {noreply, Config};
 
 handle_info(_Info, State) ->
@@ -115,7 +120,41 @@ do_request({add_new_flow, Filter, Priority, Loggers},
 do_request(_Req, State) -> {{error, badreq}, State}.
 
 apply_config(#config{flows = Flows}) ->
-    EnabledFlows = lists:filter(fun(#flow{enabled = En}) -> En end, Flows),
-    alog_parse_trans:load_config(config_to_internal_form(EnabledFlows)).
+    alog_parse_trans:load_config(configs_to_internal_form(Flows)).
 
-config_to_internal_form(Flows) -> Flows.
+configs_to_internal_form(Flows) ->
+    ToInternaFlow = 
+        fun(#flow{enabled = false}, Acc) -> Acc;
+           (#flow{filter = Filter, loggers = Loggers,
+                  priority = {P, Priority}}, Acc) ->
+                NewFlow =
+                    {filter_to_internal(Filter),
+                     {P, priority_to_internal(Priority)},
+                     Loggers},
+                [NewFlow | Acc]
+        end,
+    lists:foldl(ToInternaFlow, [], Flows).
+
+priority_to_internal(emergency)-> 0;
+priority_to_internal(alert)->     1;
+priority_to_internal(critical)->  2;
+priority_to_internal(error)->     3;
+priority_to_internal(warning)->   4;
+priority_to_internal(notice)->    5;
+priority_to_internal(info)->      6;
+priority_to_internal(debug)->     7.
+
+filter_to_internal(Filter) -> Filter.
+
+parse_flows_config(FlowsConfig) ->
+    ParseFun =
+        fun({Filter, Priority, Loggers}, {CurId, Flows}) ->
+                Flow = #flow{id       = CurId,
+                             filter   = Filter,
+                             priority = Priority,
+                             loggers  = Loggers
+                            },
+                {CurId + 1, [Flow | Flows]}
+        end,
+    {_Id, ParsedFlows} = lists:foldl(ParseFun, {1, []}, FlowsConfig),
+    ParsedFlows.

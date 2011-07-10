@@ -12,7 +12,6 @@ run_examples() ->
     B = bar,
 
     io:format("*** all priorities~n", []),
-    alog_parse_trans:load_config([{{mod,[?MODULE]}, {'=<', ?debug},[alog_tty]}]),
 
     TestVar = test_var_value,
     ?DBG({A, B}),
@@ -27,8 +26,8 @@ run_examples() ->
 
     io:format("*** =< errors~n", []),
 
-    alog_parse_trans:load_config(
-      [{{mod,[?MODULE]}, {'=<', ?error},[alog_tty]}]),
+    %% alog_parse_trans:load_config(
+    %%   [{{mod,[?MODULE]}, {'=<', ?error},[alog_tty]}]),
 
     ?DBG("test debug ~p", [TestVar]),
     ?INFO("test info ~p", [TestVar]),
