@@ -16,7 +16,7 @@
 -behaviour(gen_alogger).
 
 -export([ start/1
-        , stop/0
+        , stop/1
         , log/2
         , format/6]).
 
@@ -27,13 +27,13 @@
 -define(FACILITY, user).
 
 %%%----------------------------------------------------------------------
-%%% @spec start(SupRef::term()) -> ok
+%%% @spec start(Opts::list()) -> ok
 %%%
 %%% @doc starts syslog driver and opens log with predefined
 %%%      configuration
 %%% @end
 %%%----------------------------------------------------------------------
--spec start(term()) -> ok.
+-spec start(list()) -> ok.
 
 start(_) ->
     syslog:start(),
@@ -41,14 +41,14 @@ start(_) ->
     ok.
 
 %%%----------------------------------------------------------------------
-%%% @spec stop() -> ok
+%%% @spec stop(Opts::list()) -> ok
 %%%
 %%% @doc
 %%% @end
 %%%----------------------------------------------------------------------
--spec stop() -> ok.
+-spec stop(list()) -> ok.
 
-stop() ->
+stop(_) ->
     ok.
 
 %%%----------------------------------------------------------------------
