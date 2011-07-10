@@ -4,12 +4,16 @@ Module alog_pt
 
 <h1>Module alog_pt</h1>
 
+* [Description](#description)
 * [Data Types](#types)
 * [Function Index](#index)
 * [Function Details](#functions)
 
 
 
+This module contains parse_transform to give user an ability to use
+"tuple expressions": ?DBG({A, "string",  B}) will log string
+"A: [A value] string B: [B value]".
 
 
 

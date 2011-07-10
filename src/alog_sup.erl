@@ -1,5 +1,27 @@
--module(alog_sup).
+%% @private
+%% @doc
+%% Main alogger supervisor.
+%% @end
+%% ----------------------------------------------------------------------
+%% Copyright (c) 2011 Siberian Fast Food
+%% Authors: Alexander Dergachev <alexander.dergachev@gmail.com>
+%%          Artem Golovinsky    <artemgolovinsky@gmail.com>
+%%          Igor Karymov        <ingham.k@gmail.com>
+%%          Dmitry Groshev      <lambdadmitry@gmail.com>
+%
+%% The contents of this file are subject to the Erlang Public License,
+%% Version 1.1, (the "License"); you may not use this file except in
+%% compliance with the License. You should have received a copy of the
+%% Erlang Public License along with this software. If not, it can be
+%% retrieved online at http://www.erlang.org/.
+%%
+%% Software distributed under the License is distributed on an "AS IS"
+%% basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+%% the License for the specific language governing rights and limitations
+%% under the License.
+%% ----------------------------------------------------------------------
 
+-module(alog_sup).
 -behaviour(supervisor).
 
 %% API
@@ -10,37 +32,18 @@
 
 -define(SERVER, ?MODULE).
 
-%%%===================================================================
 %%% API functions
-%%%===================================================================
-
-%%--------------------------------------------------------------------
-%% @doc
-%% Starts the supervisor
-%%
-%% @spec start_link() -> {ok, Pid} | ignore | {error, Error}
-%% @end
-%%--------------------------------------------------------------------
+%% @doc Starts the supervisor
 start_link() ->
     supervisor:start_link({local, ?SERVER}, ?MODULE, []).
 
-%%%===================================================================
 %%% Supervisor callbacks
-%%%===================================================================
-
-%%--------------------------------------------------------------------
 %% @private
 %% @doc
 %% Whenever a supervisor is started using supervisor:start_link/[2,3],
 %% this function is called by the new process to find out about
 %% restart strategy, maximum restart frequency and child
 %% specifications.
-%%
-%% @spec init(Args) -> {ok, {SupFlags, [ChildSpec]}} |
-%%                     ignore |
-%%                     {error, Reason}
-%% @end
-%%--------------------------------------------------------------------
 init([]) ->
     RestartStrategy = one_for_one,
     MaxRestarts = 100,
@@ -56,11 +59,5 @@ init([]) ->
          Restart, Shutdown, worker, [alog_control]},
 
     {ok,
-     {SupFlags, [
-                 Control
-                ]
+     {SupFlags, [Control]
      }}.
-
-%%%===================================================================
-%%% Internal functions
-%%%===================================================================

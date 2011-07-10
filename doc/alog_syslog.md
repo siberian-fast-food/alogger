@@ -4,11 +4,13 @@ Module alog_syslog
 
 <h1>Module alog_syslog</h1>
 
+* [Description](#description)
 * [Function Index](#index)
 * [Function Details](#functions)
 
 
 
+FIXME.
 
 
 
@@ -35,7 +37,7 @@ configuration.</td></tr><tr><td valign="top"><a href="#stop-1">stop/1</a></td><t
 
 
 
-<pre>format(FormatString::string(), Args::[term()], Tag::string(), Module::atom(), Line::integer(), Pid::pid()) -> <a href="#type-io_list">io_list()</a></pre>
+<pre>format(FormatString::string(), Args::[term()], Tag::string(), Module::atom(), Line::integer(), Pid::pid()) -> iolist()</pre>
 <br></br>
 
 
@@ -78,7 +80,7 @@ configuration<a name="stop-1"></a>
 
 
 
-<pre>stop(Opts::list()) -> ok</pre>
+<pre>stop(X1::list()) -> ok</pre>
 <br></br>
 
 
