@@ -38,16 +38,20 @@ There is a lot of loggers in the wild. You can consider to use one of them in yo
 The Abstract Logger Interface (alogger) brings completely new opportunities of logging. Here you go:
 
 
-  * the possibility to introduce any new logger to your project without a need to change the project code at all
+  
+<li>the possibility to introduce any new logger to your project without a need to change the project code at all</li>
 
-  * the interface will provide some neat features which are not exist in most of the existent loggers, like these:
+  
+<li>the interface will provide some neat features which are not exist in most of the existent loggers, like these:
     
-    * the possibility to change the logging priority "on the fly" without any significant overhead thanks to some parse_transform and hot code reloading magic
-
-    * the possibility to change the logging priority by modules or by special tags
+    
+<li>the possibility to change the logging priority "on the fly" without any significant overhead thanks to some parse_transform and hot code reloading magic</li>
 
     
- 
+<li>the possibility to change the logging priority by modules or by special tags</li>
+
+    
+  </li>
 
 
 
@@ -64,11 +68,14 @@ Implemented logger interfaces
 -----------------------------
 At he moment there're three logger interfaces out of the box:
 
-* __alog_tty__: a simple one, it prints logs by io:format
 
-* __alog_syslog__: an interface towards Syslog daemon
+<li>__alog_tty__: a simple one, it prints logs by io:format</li>
 
-* __alog_scribe__: an interface towards Scribe log daemon through thrift protocol
+
+<li>__alog_syslog__: an interface towards Syslog daemon</li>
+
+
+<li>__alog_scribe__: an interface towards Scribe log daemon through thrift protocol</li>
 
 
 
@@ -81,7 +88,7 @@ You can use alogger in different ways.
 **Using macroses:**
 you can use only .hrl file like this
 <pre>-include_lib("alog.hrl")</pre>
-and you will get standart ?DBG/?INFO/?ERROR/... (you can find out more information in [`alog`](https://github.com/spawnfest/alogger/blob/master/doc/alog.md) module, which contains function that mimic macroses names and arguments). Or you can also engage our parse transformation:
+and you will get standart ?DBG/?INFO/?ERROR/... (you can find out more information in [`alog`](https://github.com/siberian-fast-food/alogger/blob/master/doc/alog.md) module, which contains function that mimic macroses names and arguments). Or you can also engage our parse transformation:
 <pre>
 -include_lib("alog.hrl").
 -compile({parse_transform, alog_pt}).
@@ -91,11 +98,11 @@ This way you can use _tuple expression_ (like ?DBG({A, B})) which are translated
 
 
 **Using runtime API:**
-this API consists of pure function calls. Functions are defined in [`alog`](https://github.com/spawnfest/alogger/blob/master/doc/alog.md) module.
+this API consists of pure function calls. Functions are defined in [`alog`](https://github.com/siberian-fast-food/alogger/blob/master/doc/alog.md) module.
 
 Configuration
 -------------
-alogger can be configured to write different flows (or streams of log messages) to different loggers. It can be done in config (alog.config) or in runtime with [`alog_control`](https://github.com/spawnfest/alogger/blob/master/doc/alog_control.md) module.
+alogger can be configured to write different flows (or streams of log messages) to different loggers. It can be done in config (alog.config) or in runtime with [`alog_control`](https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_control.md) module.
 <pre>
         [{alog, [
                   {enabled_loggers, Loggers},
@@ -122,9 +129,11 @@ alogger can be configured to write different flows (or streams of log messages) 
 **Filter** = {tag, TagList} | {mod, ModList}
 
 
-* TagList is list of tags, Every tag is atom. If you set tag as filter, printouts with pointed tags is sent to loggers. Name of modules are  no matter in this case.
 
-* ModList is list of modules which should be logged to loggers. Tags are no matter.
+<li>TagList is list of tags, Every tag is atom. If you set tag as filter, printouts with pointed tags is sent to loggers. Name of modules are  no matter in this case.</li>
+
+
+<li>ModList is list of modules which should be logged to loggers. Tags are no matter.</li>
 
 
 
@@ -133,9 +142,11 @@ alogger can be configured to write different flows (or streams of log messages) 
 **PriorityPattern** = [{Exp, PrioName}] | [PrioName] | {Exp, PrioName} | PrioName
 
 
-* Exp -  arithmetic expression filter for priority. >=, =<, >, <, =:=, /= are possible.
 
-* PrioName - name of priority. Possible: emergency, critical, error, warning, notice, info, debug
+<li>Exp -  arithmetic expression filter for priority. >=, =<, >, <, =:=, /= are possible.</li>
+
+
+<li>PrioName - name of priority. Possible: emergency, critical, error, warning, notice, info, debug</li>
 
 
 
@@ -144,7 +155,8 @@ alogger can be configured to write different flows (or streams of log messages) 
 **Loggers** = [Logger]
 
 
-* Logger is atom. Name of logger.
+
+<li>Logger is atom. Name of logger.</li>
 
 
 
@@ -159,7 +171,8 @@ alogger can be configured to write different flows (or streams of log messages) 
 **ListOfSettings** = [Setting]
 
 
-* Setting is for logger.
+
+<li>Setting is for logger.</li>
 
 
 
@@ -207,15 +220,69 @@ Log levels are arranged in the following order.
 
 
 <table>
-<tr><th>Level</th><th>Description</th></tr>
-<tr><td>0. emergency</td><td>system is unusable</td></tr>
-<tr><td>1. alert</td><td>action must be taken immediately</td></tr>
-<tr><td>2. critical</td><td>critical conditions</td></tr>
-<tr><td>3. error</td><td>error conditions</td></tr>
-<tr><td>4. warning</td><td>warning conditions</td></tr>
-<tr><td>5. notice</td><td>normal but significant condition</td></tr>
-<tr><td>6. info</td><td>informational</td></tr>
-<tr><td>7. debug</td><td>debug-level messages</td></tr>
+
+<tr>
+<th>Level</th>
+
+<th>Description</th>
+</tr>
+
+
+<tr>
+<td>0. emergency</td>
+
+<td>system is unusable</td>
+</tr>
+
+
+<tr>
+<td>1. alert</td>
+
+<td>action must be taken immediately</td>
+</tr>
+
+
+<tr>
+<td>2. critical</td>
+
+<td>critical conditions</td>
+</tr>
+
+
+<tr>
+<td>3. error</td>
+
+<td>error conditions</td>
+</tr>
+
+
+<tr>
+<td>4. warning</td>
+
+<td>warning conditions</td>
+</tr>
+
+
+<tr>
+<td>5. notice</td>
+
+<td>normal but significant condition</td>
+</tr>
+
+
+<tr>
+<td>6. info</td>
+
+<td>informational</td>
+</tr>
+
+
+<tr>
+<td>7. debug</td>
+
+<td>debug-level messages</td>
+</tr>
+
 </table>
 
 
@@ -225,7 +292,19 @@ For example, emergency < error, and debug > warning.
 
 Last updated
 ------------
-Jul 11 2011 03:50:41
+Jul 11 2011 16:13:26
+
+
+<h2 class="indextitle">Packages</h2>
+
+
+
+<table width="100%" border="0" summary="list of packages">
+<tr>
+<td>[scribe](https://github.com/siberian-fast-food/alogger/blob/master/scribe/package-summary.md)</td>
+</tr>
+</table>
+
 
 
 <h2 class="indextitle">Modules</h2>
@@ -233,17 +312,69 @@ Jul 11 2011 03:50:41
 
 
 <table width="100%" border="0" summary="list of modules">
-<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog.md" class="module">alog</a></td></tr>
-<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_common_formatter.md" class="module">alog_common_formatter</a></td></tr>
-<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_config.md" class="module">alog_config</a></td></tr>
-<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_control.md" class="module">alog_control</a></td></tr>
-<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_error_logger_handler.md" class="module">alog_error_logger_handler</a></td></tr>
-<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_examples.md" class="module">alog_examples</a></td></tr>
-<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_if_default.md" class="module">alog_if_default</a></td></tr>
-<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_parse_trans.md" class="module">alog_parse_trans</a></td></tr>
-<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_pt.md" class="module">alog_pt</a></td></tr>
-<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_scribe.md" class="module">alog_scribe</a></td></tr>
-<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_syslog.md" class="module">alog_syslog</a></td></tr>
-<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_tty.md" class="module">alog_tty</a></td></tr>
-<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/gen_alogger.md" class="module">gen_alogger</a></td></tr></table>
+
+<tr>
+<td>[alog](https://github.com/siberian-fast-food/alogger/blob/master/doc/alog.md)</td>
+</tr>
+
+
+<tr>
+<td>[alog_common_formatter](https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_common_formatter.md)</td>
+</tr>
+
+
+<tr>
+<td>[alog_config](https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_config.md)</td>
+</tr>
+
+
+<tr>
+<td>[alog_control](https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_control.md)</td>
+</tr>
+
+
+<tr>
+<td>[alog_error_logger_handler](https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_error_logger_handler.md)</td>
+</tr>
+
+
+<tr>
+<td>[alog_examples](https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_examples.md)</td>
+</tr>
+
+
+<tr>
+<td>[alog_if_default](https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_if_default.md)</td>
+</tr>
+
+
+<tr>
+<td>[alog_parse_trans](https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_parse_trans.md)</td>
+</tr>
+
+
+<tr>
+<td>[alog_pt](https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_pt.md)</td>
+</tr>
+
+
+<tr>
+<td>[alog_scribe](https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_scribe.md)</td>
+</tr>
+
+
+<tr>
+<td>[alog_syslog](https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_syslog.md)</td>
+</tr>
+
+
+<tr>
+<td>[alog_tty](https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_tty.md)</td>
+</tr>
+
+
+<tr>
+<td>[gen_alogger](https://github.com/siberian-fast-food/alogger/blob/master/doc/gen_alogger.md)</td>
+</tr>
+</table>
 

@@ -37,9 +37,7 @@ or Default value in case of unsuccessful lookup.</td></tr></table>
 
 
 
-<pre>behaviour_info(X1::atom()) -> [{atom(), integer()}, ...] | undefined</pre>
-<br></br>
-
+`behaviour_info(X1) -> any()`
 
 <a name="get_opt-2"></a>
 

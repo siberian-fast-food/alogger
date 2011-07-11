@@ -35,9 +35,7 @@ to log them too.
 
 
 
-<pre>install() -> ok</pre>
-<br></br>
-
+`install() -> any()`
 
 
 

@@ -37,9 +37,7 @@ configuration.</td></tr><tr><td valign="top"><a href="#stop-1">stop/1</a></td><t
 
 
 
-<pre>format(FormatString::string(), Args::[term()], Level::integer(), Tag::list(), Module::atom(), Line::integer(), Pid::pid()) -> iolist()</pre>
-<br></br>
-
+`format(FormatString, Args, Level, Tag, Module, Line, Pid) -> any()`
 
 
 
@@ -51,9 +49,7 @@ returns formated log message<a name="log-2"></a>
 
 
 
-<pre>log(ALoggerPrio::integer(), Msg::string()) -> ok</pre>
-<br></br>
-
+`log(ALoggerPrio, Msg) -> any()`
 
 
 
@@ -65,9 +61,7 @@ logs message Msg with apropriate priority<a name="start-1"></a>
 
 
 
-<pre>start(Opts::list()) -> ok</pre>
-<br></br>
-
+`start(Opts) -> any()`
 
 
 
@@ -80,7 +74,5 @@ configuration<a name="stop-1"></a>
 
 
 
-<pre>stop(X1::list()) -> ok</pre>
-<br></br>
-
+`stop(X1) -> any()`
 

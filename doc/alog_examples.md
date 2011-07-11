@@ -34,9 +34,7 @@ This module contains examples of alogger usage.
 
 
 
-<pre>run_examples() -> ok</pre>
-<br></br>
-
+`run_examples() -> any()`
 
 
 

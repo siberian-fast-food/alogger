@@ -222,7 +222,7 @@ find_gml([{function,Line,get_mod_logs,Arity,Clause}|_]) ->
 find_gml([_|Fs]) ->
     find_gml(Fs);
 find_gml([]) ->
-    error("default interface is damaged").
+    erlang:error("default interface is damaged").
 
 %% @private
 mdma_transform([F|Fs], Ast, Glm) ->
