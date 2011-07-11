@@ -219,7 +219,11 @@ do_request(print_flows, #config{flows = Flows} = Config) ->
 do_request({add_new_flow, Filter, Priority, Loggers},
            #config{flows = Flows} = Config) ->
 
-    Id = length(Flows) + 1,
+    Id =
+        lists:foldl(fun(#flow{id = CurId}, MaxId) when CurId > MaxId -> CurId;
+                       (_Flow, MaxId) -> MaxId
+                    end, 0, Flows) + 1,
+
     NewFlows = [#flow{id = Id, filter = Filter, priority = Priority,
                       loggers = Loggers} | Flows],
     NewConfig = Config#config{flows = NewFlows},
