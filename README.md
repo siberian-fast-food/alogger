@@ -81,7 +81,7 @@ You can use alogger in different ways.
 **Using macroses:**
 you can use only .hrl file like this
 <pre>-include_lib("alog.hrl")</pre>
-and you will get standart ?DBG/?INFO/?ERROR/... (you can find out more information in [`alog`](https://github.com/spawnfest/alogger/blob/master/doc/alog.md) module, which contains function that mimic macroses names and arguments). Or you can also engage our parse transformation:
+and you will get standart ?DBG/?INFO/?ERROR/... (you can find out more information in [`alog`](https://github.com/siberian-fast-food/alogger/blob/master/doc/alog.md) module, which contains function that mimic macroses names and arguments). Or you can also engage our parse transformation:
 <pre>
 -include_lib("alog.hrl").
 -compile({parse_transform, alog_pt}).
@@ -91,11 +91,11 @@ This way you can use _tuple expression_ (like ?DBG({A, B})) which are translated
 
 
 **Using runtime API:**
-this API consists of pure function calls. Functions are defined in [`alog`](https://github.com/spawnfest/alogger/blob/master/doc/alog.md) module.
+this API consists of pure function calls. Functions are defined in [`alog`](https://github.com/siberian-fast-food/alogger/blob/master/doc/alog.md) module.
 
 Configuration
 -------------
-alogger can be configured to write different flows (or streams of log messages) to different loggers. It can be done in config (alog.config) or in runtime with [`alog_control`](https://github.com/spawnfest/alogger/blob/master/doc/alog_control.md) module.
+alogger can be configured to write different flows (or streams of log messages) to different loggers. It can be done in config (alog.config) or in runtime with [`alog_control`](https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_control.md) module.
 <pre>
         [{alog, [
                   {enabled_loggers, Loggers},
@@ -225,7 +225,15 @@ For example, emergency < error, and debug > warning.
 
 Last updated
 ------------
-Jul 11 2011 03:50:41
+Jul 11 2011 19:09:45
+
+
+<h2 class="indextitle">Packages</h2>
+
+
+
+<table width="100%" border="0" summary="list of packages"><tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/scribe/package-summary.md" class="package">scribe</a></td></tr></table>
+
 
 
 <h2 class="indextitle">Modules</h2>
@@ -233,17 +241,17 @@ Jul 11 2011 03:50:41
 
 
 <table width="100%" border="0" summary="list of modules">
-<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog.md" class="module">alog</a></td></tr>
-<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_common_formatter.md" class="module">alog_common_formatter</a></td></tr>
-<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_config.md" class="module">alog_config</a></td></tr>
-<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_control.md" class="module">alog_control</a></td></tr>
-<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_error_logger_handler.md" class="module">alog_error_logger_handler</a></td></tr>
-<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_examples.md" class="module">alog_examples</a></td></tr>
-<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_if_default.md" class="module">alog_if_default</a></td></tr>
-<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_parse_trans.md" class="module">alog_parse_trans</a></td></tr>
-<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_pt.md" class="module">alog_pt</a></td></tr>
-<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_scribe.md" class="module">alog_scribe</a></td></tr>
-<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_syslog.md" class="module">alog_syslog</a></td></tr>
-<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/alog_tty.md" class="module">alog_tty</a></td></tr>
-<tr><td><a href="https://github.com/spawnfest/alogger/blob/master/doc/gen_alogger.md" class="module">gen_alogger</a></td></tr></table>
+<tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/doc/alog.md" class="module">alog</a></td></tr>
+<tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_common_formatter.md" class="module">alog_common_formatter</a></td></tr>
+<tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_config.md" class="module">alog_config</a></td></tr>
+<tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_control.md" class="module">alog_control</a></td></tr>
+<tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_error_logger_handler.md" class="module">alog_error_logger_handler</a></td></tr>
+<tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_examples.md" class="module">alog_examples</a></td></tr>
+<tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_if_default.md" class="module">alog_if_default</a></td></tr>
+<tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_parse_trans.md" class="module">alog_parse_trans</a></td></tr>
+<tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_pt.md" class="module">alog_pt</a></td></tr>
+<tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_scribe.md" class="module">alog_scribe</a></td></tr>
+<tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_syslog.md" class="module">alog_syslog</a></td></tr>
+<tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_tty.md" class="module">alog_tty</a></td></tr>
+<tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/doc/gen_alogger.md" class="module">gen_alogger</a></td></tr></table>
 

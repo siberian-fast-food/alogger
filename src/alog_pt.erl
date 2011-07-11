@@ -93,8 +93,8 @@ build_format(Format) ->
 %% @private
 %% This functions is used in fold in build_format. It accumulates variables
 %% and strings that are used in tuple expression
--spec (elems_folder(stxtree(), Acc) ->
-              Acc when Acc :: {list(nonempty_string()), list(atom())}).
+-type elems_folder_acc() :: {list(nonempty_string()), list(atom())}.
+-spec elems_folder(stxtree(), elems_folder_acc()) -> elems_folder_acc().
 elems_folder(Elem, {FStrs, Vars}) ->
     case erl_syntax:type(Elem) of
         variable ->

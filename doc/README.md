@@ -225,7 +225,15 @@ For example, emergency < error, and debug > warning.
 
 Last updated
 ------------
-Jul 11 2011 03:50:41
+Jul 11 2011 19:09:45
+
+
+<h2 class="indextitle">Packages</h2>
+
+
+
+<table width="100%" border="0" summary="list of packages"><tr><td><a href="scribe/package-summary.md" class="package">scribe</a></td></tr></table>
+
 
 
 <h2 class="indextitle">Modules</h2>

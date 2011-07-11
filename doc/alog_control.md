@@ -47,7 +47,7 @@ __Behaviours:__ [`gen_server`](gen_server.md).
 
 
 
-<pre>priority_expr() = '&lt;' | '&gt;' | '=&lt;' | '&gt;=' | '==' | '/='</pre>
+<pre>priority_expr() = '<' | '>' | '=<' | '>=' | '==' | '/='</pre>
 
 
 
