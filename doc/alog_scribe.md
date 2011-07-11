@@ -36,7 +36,9 @@ __Behaviours:__ [`gen_alogger`](gen_alogger.md), [`gen_server`](gen_server.md).
 
 
 
-`start_link(Opts) -> any()`
+<pre>start_link(Opts::list()) -> pid()</pre>
+<br></br>
+
 
 
 

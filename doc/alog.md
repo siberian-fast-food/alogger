@@ -46,7 +46,9 @@ the one without tags and the one with string only.
 
 
 
-`alert(Format) -> any()`
+<pre>alert(Format::nonempty_string()) -> ok</pre>
+<br></br>
+
 
 <a name="alert-2"></a>
 
@@ -56,7 +58,9 @@ the one without tags and the one with string only.
 
 
 
-`alert(Format, Args) -> any()`
+<pre>alert(Format::nonempty_string(), Args::list()) -> ok</pre>
+<br></br>
+
 
 <a name="alert-3"></a>
 
@@ -66,7 +70,9 @@ the one without tags and the one with string only.
 
 
 
-`alert(Format, Args, Tag) -> any()`
+<pre>alert(Format::nonempty_string(), Args::list(), Tag::[atom()]) -> ok</pre>
+<br></br>
+
 
 <a name="critical-1"></a>
 
@@ -76,7 +82,9 @@ the one without tags and the one with string only.
 
 
 
-`critical(Format) -> any()`
+<pre>critical(Format::nonempty_string()) -> ok</pre>
+<br></br>
+
 
 <a name="critical-2"></a>
 
@@ -86,7 +94,9 @@ the one without tags and the one with string only.
 
 
 
-`critical(Format, Args) -> any()`
+<pre>critical(Format::nonempty_string(), Args::list()) -> ok</pre>
+<br></br>
+
 
 <a name="critical-3"></a>
 
@@ -96,7 +106,9 @@ the one without tags and the one with string only.
 
 
 
-`critical(Format, Args, Tag) -> any()`
+<pre>critical(Format::nonempty_string(), Args::list(), Tag::[atom()]) -> ok</pre>
+<br></br>
+
 
 <a name="dbg-1"></a>
 
@@ -106,7 +118,9 @@ the one without tags and the one with string only.
 
 
 
-`dbg(Format) -> any()`
+<pre>dbg(Format::nonempty_string()) -> ok</pre>
+<br></br>
+
 
 <a name="dbg-2"></a>
 
@@ -116,7 +130,9 @@ the one without tags and the one with string only.
 
 
 
-`dbg(Format, Args) -> any()`
+<pre>dbg(Format::nonempty_string(), Args::list()) -> ok</pre>
+<br></br>
+
 
 <a name="dbg-3"></a>
 
@@ -126,7 +142,9 @@ the one without tags and the one with string only.
 
 
 
-`dbg(Format, Args, Tag) -> any()`
+<pre>dbg(Format::nonempty_string(), Args::list(), Tag::[atom()]) -> ok</pre>
+<br></br>
+
 
 <a name="emergency-1"></a>
 
@@ -136,7 +154,9 @@ the one without tags and the one with string only.
 
 
 
-`emergency(Format) -> any()`
+<pre>emergency(Format::nonempty_string()) -> ok</pre>
+<br></br>
+
 
 <a name="emergency-2"></a>
 
@@ -146,7 +166,9 @@ the one without tags and the one with string only.
 
 
 
-`emergency(Format, Args) -> any()`
+<pre>emergency(Format::nonempty_string(), Args::list()) -> ok</pre>
+<br></br>
+
 
 <a name="emergency-3"></a>
 
@@ -156,7 +178,9 @@ the one without tags and the one with string only.
 
 
 
-`emergency(Format, Args, Tag) -> any()`
+<pre>emergency(Format::nonempty_string(), Args::list(), Tag::[atom()]) -> ok</pre>
+<br></br>
+
 
 <a name="error-1"></a>
 
@@ -166,7 +190,9 @@ the one without tags and the one with string only.
 
 
 
-`error(Format) -> any()`
+<pre>error(Format::nonempty_string()) -> ok</pre>
+<br></br>
+
 
 <a name="error-2"></a>
 
@@ -176,7 +202,9 @@ the one without tags and the one with string only.
 
 
 
-`error(Format, Args) -> any()`
+<pre>error(Format::nonempty_string(), Args::list()) -> ok</pre>
+<br></br>
+
 
 <a name="error-3"></a>
 
@@ -186,7 +214,9 @@ the one without tags and the one with string only.
 
 
 
-`error(Format, Args, Tag) -> any()`
+<pre>error(Format::nonempty_string(), Args::list(), Tag::[atom()]) -> ok</pre>
+<br></br>
+
 
 <a name="info-1"></a>
 
@@ -196,7 +226,9 @@ the one without tags and the one with string only.
 
 
 
-`info(Format) -> any()`
+<pre>info(Format::nonempty_string()) -> ok</pre>
+<br></br>
+
 
 <a name="info-2"></a>
 
@@ -206,7 +238,9 @@ the one without tags and the one with string only.
 
 
 
-`info(Format, Args) -> any()`
+<pre>info(Format::nonempty_string(), Args::list()) -> ok</pre>
+<br></br>
+
 
 <a name="info-3"></a>
 
@@ -216,7 +250,9 @@ the one without tags and the one with string only.
 
 
 
-`info(Format, Args, Tag) -> any()`
+<pre>info(Format::nonempty_string(), Args::list(), Tag::[atom()]) -> ok</pre>
+<br></br>
+
 
 <a name="log-4"></a>
 
@@ -226,7 +262,9 @@ the one without tags and the one with string only.
 
 
 
-`log(Format, Args, Level, Tags) -> any()`
+<pre>log(Format::nonempty_string(), Args::list(), Level::integer(), Tags::[atom()]) -> ok</pre>
+<br></br>
+
 
 <a name="notice-1"></a>
 
@@ -236,7 +274,9 @@ the one without tags and the one with string only.
 
 
 
-`notice(Format) -> any()`
+<pre>notice(Format::nonempty_string()) -> ok</pre>
+<br></br>
+
 
 <a name="notice-2"></a>
 
@@ -246,7 +286,9 @@ the one without tags and the one with string only.
 
 
 
-`notice(Format, Args) -> any()`
+<pre>notice(Format::nonempty_string(), Args::list()) -> ok</pre>
+<br></br>
+
 
 <a name="notice-3"></a>
 
@@ -256,7 +298,9 @@ the one without tags and the one with string only.
 
 
 
-`notice(Format, Args, Tag) -> any()`
+<pre>notice(Format::nonempty_string(), Args::list(), Tag::[atom()]) -> ok</pre>
+<br></br>
+
 
 <a name="start-0"></a>
 
@@ -290,7 +334,9 @@ Stops alog application<a name="warning-1"></a>
 
 
 
-`warning(Format) -> any()`
+<pre>warning(Format::nonempty_string()) -> ok</pre>
+<br></br>
+
 
 <a name="warning-2"></a>
 
@@ -300,7 +346,9 @@ Stops alog application<a name="warning-1"></a>
 
 
 
-`warning(Format, Args) -> any()`
+<pre>warning(Format::nonempty_string(), Args::list()) -> ok</pre>
+<br></br>
+
 
 <a name="warning-3"></a>
 
@@ -310,5 +358,7 @@ Stops alog application<a name="warning-1"></a>
 
 
 
-`warning(Format, Args, Tag) -> any()`
+<pre>warning(Format::nonempty_string(), Args::list(), Tag::[atom()]) -> ok</pre>
+<br></br>
+
 

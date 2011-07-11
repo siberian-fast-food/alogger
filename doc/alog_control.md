@@ -5,6 +5,7 @@ Module alog_control
 <h1>Module alog_control</h1>
 
 * [Description](#description)
+* [Data Types](#types)
 * [Function Index](#index)
 * [Function Details](#functions)
 
@@ -15,6 +16,48 @@ Main interface for work with log flows.
 
 
 __Behaviours:__ [`gen_server`](gen_server.md).
+
+
+<h2><a name="types">Data Types</a></h2>
+
+
+
+
+
+<h3 class="typedecl"><a name="type-filter">filter()</a></h3>
+
+
+
+
+<pre>filter() = {mod, atom()} | {mod, [atom()]} | {tag, atom()} | {tag, [atom()]} | {app, atom()}</pre>
+
+
+
+<h3 class="typedecl"><a name="type-priority">priority()</a></h3>
+
+
+
+
+<pre>priority() = debug | info | notice | warning | error | critical | alert | emergency | integer()</pre>
+
+
+
+<h3 class="typedecl"><a name="type-priority_expr">priority_expr()</a></h3>
+
+
+
+
+<pre>priority_expr() = '<' | '>' | '=<' | '>=' | '==' | '/='</pre>
+
+
+
+<h3 class="typedecl"><a name="type-priority_pattern">priority_pattern()</a></h3>
+
+
+
+
+<pre>priority_pattern() = [{<a href="#type-priority_expr">priority_expr()</a>, <a href="#type-priority">priority()</a>}] | {<a href="#type-priority_expr">priority_expr()</a>, <a href="#type-priority">priority()</a>} | <a href="#type-priority">priority()</a></pre>
+
 
 <h2><a name="index">Function Index</a></h2>
 
@@ -36,7 +79,9 @@ __Behaviours:__ [`gen_server`](gen_server.md).
 
 
 
-`add_new_flow(Filter, Priority, Loggers) -> any()`
+<pre>add_new_flow(Filter::<a href="#type-filter">filter()</a>, Priority::<a href="#type-priority_pattern">priority_pattern()</a>, Loggers::[atom()]) -> ok | {error, term()}</pre>
+<br></br>
+
 
 
 
@@ -48,7 +93,9 @@ Add new flow.<a name="delete_all_flows-0"></a>
 
 
 
-`delete_all_flows() -> any()`
+<pre>delete_all_flows() -> ok | {error, term()}</pre>
+<br></br>
+
 
 
 
@@ -60,7 +107,9 @@ Delete all flows.<a name="delete_flow-1"></a>
 
 
 
-`delete_flow(Id) -> any()`
+<pre>delete_flow(Id::non_neg_integer()) -> ok | {error, term()}</pre>
+<br></br>
+
 
 
 
@@ -72,7 +121,9 @@ Delete existing flow.<a name="disable_flow-1"></a>
 
 
 
-`disable_flow(Id) -> any()`
+<pre>disable_flow(Id::non_neg_integer()) -> ok | {error, term()}</pre>
+<br></br>
+
 
 
 
@@ -84,7 +135,9 @@ Temporary disable existing flow.<a name="dump_to_config-1"></a>
 
 
 
-`dump_to_config(File) -> any()`
+<pre>dump_to_config(File::string()) -> ok | {error, term()}</pre>
+<br></br>
+
 
 
 
@@ -96,7 +149,9 @@ Update flows configuration in .config file<a name="enable_flow-1"></a>
 
 
 
-`enable_flow(Id) -> any()`
+<pre>enable_flow(Id::non_neg_integer()) -> ok | {error, term()}</pre>
+<br></br>
+
 
 
 
@@ -108,7 +163,9 @@ Enable existing flow.<a name="get_flows-0"></a>
 
 
 
-`get_flows() -> any()`
+<pre>get_flows() -> {ok, [#flow{}]} | {error, term()}</pre>
+<br></br>
+
 
 
 
@@ -120,7 +177,9 @@ Return all flows.<a name="print_flows-0"></a>
 
 
 
-`print_flows() -> any()`
+<pre>print_flows() -> ok</pre>
+<br></br>
+
 
 
 
@@ -132,7 +191,9 @@ Print all flows.<a name="replase_flows-1"></a>
 
 
 
-`replase_flows(Flows) -> any()`
+<pre>replase_flows(Flow::[#flow{}]) -> ok | {error, term()}</pre>
+<br></br>
+
 
 
 
@@ -144,7 +205,9 @@ Replase all flows on new.<a name="set_flow_filter-2"></a>
 
 
 
-`set_flow_filter(Id, Filter) -> any()`
+<pre>set_flow_filter(Id::non_neg_integer(), Filter::<a href="#type-filter">filter()</a>) -> ok | {error, term()}</pre>
+<br></br>
+
 
 
 
@@ -156,7 +219,9 @@ Set new filter for existing flow.<a name="set_flow_loggers-2"></a>
 
 
 
-`set_flow_loggers(Id, Loggers) -> any()`
+<pre>set_flow_loggers(Id::non_neg_integer(), Loggers::[atom()]) -> ok | {error, term()}</pre>
+<br></br>
+
 
 
 
@@ -168,7 +233,9 @@ Set new loggers for existing flow.<a name="set_flow_priority-2"></a>
 
 
 
-`set_flow_priority(Id, Priority) -> any()`
+<pre>set_flow_priority(Id::non_neg_integer(), Priority::<a href="#type-priority_pattern">priority_pattern()</a>) -> ok | {error, term()}</pre>
+<br></br>
+
 
 
 

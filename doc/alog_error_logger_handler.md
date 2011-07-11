@@ -35,7 +35,9 @@ to log them too.
 
 
 
-`install() -> any()`
+<pre>install() -> ok</pre>
+<br></br>
+
 
 
 

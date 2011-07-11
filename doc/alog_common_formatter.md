@@ -40,7 +40,9 @@ alog_syslog, alog_tty and alog_scribe.
 
 
 
-`format(Msg, Args, Level, Tag, Module, Line, Pid) -> any()`
+<pre>format(Msg::string(), Args::[term()], Level::integer(), Tag::list(), Module::atom(), Line::integer(), Pid::pid()) -> iolist()</pre>
+<br></br>
+
 
 
 
