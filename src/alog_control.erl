@@ -202,18 +202,9 @@ do_request(get_flows, #config{flows = Flows} = Config) ->
     {{ok, Flows}, Config};
 
 do_request(print_flows, #config{flows = Flows} = Config) ->
-    FormatFun = fun(#flow{id = Id, filter = Filter,
-                          loggers = Loggers, enabled = Enabled
-                         }, {FormatString, Vars}) ->
-                        F = "id = ~w filter = ~w loggers = ~w enabled = ~w~n",
-                        {FormatString ++ F,
-                         Vars ++ [Id, Filter, Loggers, Enabled]}
-                end,
-
-    {Format, Args} = lists:foldl(FormatFun, {"",[]}, Flows),
-
-    io:format(Format, Args),
-
+    Table = {table, {flows, list_to_tuple([flow | record_info(fields, flow)]),
+                     Flows }},
+    format_lib_supp:print_info(group_leader(), [Table]),
     {ok, Config};
 
 do_request({add_new_flow, Filter, Priority, Loggers},
