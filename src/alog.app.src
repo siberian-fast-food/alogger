@@ -23,7 +23,8 @@
   {vsn, "1"},
   {registered, []},
   {applications, [kernel,
-                  stdlib]},
+                  stdlib,
+                  sasl]},
   {mod, { alog, []}},
   {env, []}
  ]}.

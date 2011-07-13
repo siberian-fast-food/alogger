@@ -38,8 +38,12 @@
          delete_flow/1,
          delete_all_flows/0,
          add_new_flow/3,
-         replase_flows/1,
-         dump_to_config/1]).
+         replace_flows/1,
+         dump_to_config/1,
+         add_logger/1,
+         delete_logger/1,
+         replace_loggers/1,
+         get_loggers/0]).
 
 %% gen_server callbacks
 -export([init/1,
@@ -55,6 +59,8 @@
                   {tag, atom()} | {tag, [atom()]} |
                   {app, atom()}.
 
+-type logger() :: atom().
+
 -type priority() :: debug | info | notice | warning | error 
                     | critical | alert | emergency | integer().
 
@@ -66,11 +72,11 @@
 -record(flow, {id              :: non_neg_integer(),
                filter          :: filter(),
                priority        :: priority_pattern(),
-               loggers  = []   :: list(atom()),
-               enabled  = true :: boolean()}).
+               loggers  = []   :: list(logger()),
+               enabled  = true :: true | {false, user} | {false, loggersOff}}).
 
 -record(config, {flows           = [] :: list(#flow{}),
-                 enabled_loggers = [] :: list(atom())}).
+                 enabled_loggers = [] :: list(logger())}).
 
 
 %% @doc Return all flows.
@@ -96,8 +102,8 @@ set_flow_filter(Id, Filter) ->
     gen_server:call(?SERVER, {set_flow_filter, Id, Filter}).
 
 %% @doc Set new loggers for existing flow.
--spec  set_flow_loggers(non_neg_integer(), list(atom())) ->
-                                ok | {error, term()}.
+-spec  set_flow_loggers(non_neg_integer(), list(logger())) ->
+                               ok | {error, term()}.
 set_flow_loggers(Id, Loggers) ->
     gen_server:call(?SERVER, {set_flow_loggers, Id, Loggers}).
 
@@ -122,20 +128,39 @@ delete_all_flows() ->
     gen_server:call(?SERVER, delete_all_flows).
 
 %% @doc Add new flow.
--spec  add_new_flow(filter(), priority_pattern(), [atom()])
+-spec  add_new_flow(filter(), priority_pattern(), [logger()])
                    -> ok | {error, term()}.
 add_new_flow(Filter, Priority, Loggers) ->
     gen_server:call(?SERVER, {add_new_flow, Filter, Priority, Loggers}).
 
-%% @doc Replase all flows on new.
--spec  replase_flows([#flow{}]) -> ok | {error, term()}.
-replase_flows(Flows) ->
-    gen_server:call(?SERVER, {replase_flows, Flows}).
+%% @doc Replace all flows on new.
+-spec  replace_flows([#flow{}]) -> ok | {error, term()}.
+replace_flows(Flows) ->
+    gen_server:call(?SERVER, {replace_flows, Flows}).
 
 %% @doc Update flows configuration in .config file
 -spec dump_to_config(string()) -> ok | {error, term()}.
 dump_to_config(File) ->
     gen_server:call(?SERVER, {dump_to_config, File}).
+
+%% @doc Add and start new logger.
+-spec add_logger(logger()) -> ok | {error, term()}.                       
+add_logger(Logger) ->
+    gen_server:call(?SERVER, {add_logger, Logger}).
+
+%% @doc Delete exist logger. All flows use this logger
+%% became disabled.
+-spec delete_logger(logger()) -> ok | {error, term()}.                       
+delete_logger(Logger) ->
+    gen_server:call(?SERVER, {delete_logger, Logger}).
+
+-spec replace_loggers([logger()]) -> ok |  {error, term()}.
+replace_loggers(Loggers) ->
+    gen_server:call(?SERVER, {replace_loggers, Loggers}).
+
+-spec get_loggers() -> {ok, [logger()]}.
+get_loggers() ->
+    gen_server:call(?SERVER, get_loggers).
 
 %% @private
 init_loggers() ->
@@ -168,12 +193,7 @@ handle_info(_Info, State) ->
 %% @private
 terminate(_Reason, #config{enabled_loggers = EnabledLoggers} = Config) ->
     apply_config(Config#config{flows = []}),
-
-    [begin
-         LoggerConfig = alog_config:get_conf(Logger, []),
-         ok = Logger:stop([{sup_ref, alog_sup} | LoggerConfig])
-     end  || Logger <- EnabledLoggers],
-
+    ok = stop_loggers(EnabledLoggers),
     ok.
 
 %% @private
@@ -183,11 +203,7 @@ code_change(_OldVsn, State, _Extra) ->
 %%% Internal functions
 %% @private
 do_request(init_loggers, #config{enabled_loggers = EnabledLoggers} = Config) ->
-    [begin
-         LoggerConfig = alog_config:get_conf(Logger, []),
-         ok = Logger:start([{sup_ref, alog_sup} | LoggerConfig])
-     end || Logger <- EnabledLoggers],
-
+    ok = start_loggers(EnabledLoggers),
     apply_config(Config),
 
     case alog_config:get_conf(install_error_logger_handler, true) of
@@ -245,18 +261,23 @@ do_request({set_flow_loggers, Id, Loggers},
     modify_flow_if_exist(Id, Flows, ModFun, Config);
 
 do_request({enable_flow, Id},
-           #config{flows = Flows} = Config) ->
+           #config{flows = Flows, enabled_loggers = EnabledLoggers}
+           = Config) ->
 
-    ModFun = fun(Flow) ->
-                     {mod_flow, Flow#flow{enabled = true}}
-             end,
+    ModFun =
+        fun(#flow{loggers = Loggers} = Flow) ->
+                case ordsets:is_subset(Loggers, EnabledLoggers) of
+                    true  -> {mod_flow, Flow#flow{enabled = true}};
+                    false -> {mod_flow, Flow#flow{enabled = {false, loggersOff}}}
+                end
+           end,
     modify_flow_if_exist(Id, Flows, ModFun, Config);
 
 do_request({disable_flow, Id},
            #config{flows = Flows} = Config) ->
 
     ModFun = fun(Flow) ->
-                     {mod_flow, Flow#flow{enabled = false}}
+                     {mod_flow, Flow#flow{enabled = {false, user}}}
              end,
     modify_flow_if_exist(Id, Flows, ModFun, Config);
 
@@ -272,14 +293,82 @@ do_request(delete_all_flows, Config) ->
     NewConfig = Config#config{flows = []},
     new_config_if_successfully_applied(NewConfig, Config);
 
-do_request({replase_flows, NewFlows}, Config) ->
+do_request({replace_flows, NewFlows}, Config) ->
     NewConfig = Config#config{flows = NewFlows},
     new_config_if_successfully_applied(NewConfig, Config);
 
 do_request({dump_to_config, File},#config{flows = Flows} = Config) ->
     {dump_to_config_low(File, Flows), Config};
 
+do_request(get_loggers, #config{enabled_loggers = Loggers} = Config) ->
+    {{ok, Loggers}, Config};
+
+do_request({delete_logger, Logger}, #config{enabled_loggers = Loggers}
+           = Config) ->
+    replace_loggers(ordsets:del_element(Logger, Loggers), Loggers, Config);
+
+do_request({add_logger, Logger}, #config{enabled_loggers = Loggers}
+           = Config) ->
+    replace_loggers(ordsets:add_element(Logger, Loggers), Loggers, Config);
+
+do_request({replace_loggers, Loggers}, #config{enabled_loggers = Loggers}
+           = Config) ->
+    replace_loggers(ordsets:from_list(Loggers), Loggers, Config);
+
 do_request(_Req, State) -> {{error, badreq}, State}.
+
+
+%% @private
+replace_loggers(OldLoggers, OldLoggers, Config) ->
+    {ok, Config};
+replace_loggers(NewLoggers, OldLoggers, #config{flows = Flows} = Config) ->
+    DeletedLoggers = ordsets:subtract(OldLoggers, NewLoggers),
+    AddedLoggers   = ordsets:subtract(NewLoggers, OldLoggers),
+
+    FlowSwitcher =
+        fun(#flow{loggers = Loggers, enabled = true} = Flow) ->
+                case ordsets:is_disjoint(Loggers, DeletedLoggers) of
+                    true  -> Flow;
+                    false -> Flow#flow{enabled = {false, loggersOff}}
+                end;
+           (#flow{enabled = {false, loggersOff},
+                  loggers = Loggers} = Flow) ->
+                case ordsets:is_subset(Loggers, NewLoggers) of
+                    true  -> Flow#flow{enabled = true};
+                    false -> Flow
+                end;
+           (UserDisabledFlow) -> UserDisabledFlow
+        end,
+
+    NewFlows  = lists:map(FlowSwitcher, Flows),
+    NewConfig = Config#config{enabled_loggers = NewLoggers,
+                              flows           = NewFlows},
+
+    ok = start_loggers(AddedLoggers),
+
+    case new_config_if_successfully_applied(NewConfig, Config) of
+        {ok, _} ->
+            ok = stop_loggers(DeletedLoggers),
+            {ok, NewConfig};
+        ErrorAndOldConfig ->
+            ok = stop_loggers(AddedLoggers),
+            ErrorAndOldConfig
+    end.
+
+start_loggers(Loggers) ->
+    [begin
+         LoggerConfig = alog_config:get_conf(Logger, []),
+         ok = Logger:start([{sup_ref, alog_sup} | LoggerConfig])
+     end || Logger <- Loggers],
+    ok.
+
+stop_loggers(Loggers) ->
+    [begin
+         LoggerConfig = alog_config:get_conf(Logger, []),
+         ok = Logger:stop([{sup_ref, alog_sup} | LoggerConfig])
+     end  || Logger <- Loggers],
+    ok.
+
 
 %% @private
 modify_flow_if_exist(Id, Flows, ModFun, Config) ->
