@@ -55,7 +55,7 @@ base_test_() ->
                end || CP <- ?all_priorities])}]}.
 
 install_test_logger_iface() ->
-    alog:start(),
+    ok = alog:start(),
     {ok, BackupFlows} = alog_control:get_flows(),
     ok = alog_control:delete_all_flows(),
     MaxPr = get_max_priotity(),

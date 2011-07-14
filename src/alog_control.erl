@@ -173,9 +173,10 @@ start_link() ->
 %% @private
 init([]) ->
     EnabledLoggers = alog_config:get_conf(enabled_loggers, []),
+    OrdLoggers     = ordsets:from_list(EnabledLoggers),
     FlowsConfig    = alog_config:get_conf(flows, []),
-    {ok, #config{enabled_loggers = EnabledLoggers,
-                 flows = parse_flows_config(FlowsConfig)}}.
+    Flows          = add_flow(parse_flows_config(FlowsConfig), [], OrdLoggers),
+    {ok, #config{enabled_loggers = OrdLoggers, flows = Flows}}.
 
 %% @private
 handle_call(Request, _From, State) ->
@@ -204,7 +205,7 @@ code_change(_OldVsn, State, _Extra) ->
 %% @private
 do_request(init_loggers, #config{enabled_loggers = EnabledLoggers} = Config) ->
     ok = start_loggers(EnabledLoggers),
-    apply_config(Config),
+    ok = apply_config(Config),
 
     case alog_config:get_conf(install_error_logger_handler, true) of
         true ->
@@ -218,21 +219,22 @@ do_request(get_flows, #config{flows = Flows} = Config) ->
     {{ok, Flows}, Config};
 
 do_request(print_flows, #config{flows = Flows} = Config) ->
-    Table = {table, {flows, list_to_tuple([flow | record_info(fields, flow)]),
-                     Flows }},
+    Table = {table, {flows, list_to_tuple(record_info(fields, flow)),
+                     [begin
+                          [_ | NF] = tuple_to_list(F),
+                          list_to_tuple(NF)
+                      end || F <- Flows]}},
     format_lib_supp:print_info(group_leader(), [Table]),
     {ok, Config};
 
 do_request({add_new_flow, Filter, Priority, Loggers},
-           #config{flows = Flows} = Config) ->
+           #config{flows = Flows, enabled_loggers = EnabledLoggers} = Config) ->
+    
+    NewFlow = #flow{filter = Filter, priority = Priority,
+                    loggers = Loggers},
 
-    Id =
-        lists:foldl(fun(#flow{id = CurId}, MaxId) when CurId > MaxId -> CurId;
-                       (_Flow, MaxId) -> MaxId
-                    end, 0, Flows) + 1,
+    NewFlows = add_flow(NewFlow, Flows, EnabledLoggers),
 
-    NewFlows = [#flow{id = Id, filter = Filter, priority = Priority,
-                      loggers = Loggers} | Flows],
     NewConfig = Config#config{flows = NewFlows},
     new_config_if_successfully_applied(NewConfig, Config);
 
@@ -254,10 +256,12 @@ do_request({set_flow_filter, Id, Filter},
 
 do_request({set_flow_loggers, Id, Loggers},
            #config{flows = Flows} = Config) ->
-
-    ModFun = fun(Flow) ->
-                     {mod_flow, Flow#flow{loggers = Loggers}}
-             end,
+    
+    %%TODO check flow loggers
+    ModFun =
+        fun(Flow) ->
+                {mod_flow, Flow#flow{loggers = ordsets:from_list(Loggers)}}
+        end,
     modify_flow_if_exist(Id, Flows, ModFun, Config);
 
 do_request({enable_flow, Id},
@@ -293,8 +297,10 @@ do_request(delete_all_flows, Config) ->
     NewConfig = Config#config{flows = []},
     new_config_if_successfully_applied(NewConfig, Config);
 
-do_request({replace_flows, NewFlows}, Config) ->
-    NewConfig = Config#config{flows = NewFlows},
+do_request({replace_flows, NewFlows},
+           #config{enabled_loggers = EnabledLoggers} =Config) ->
+    CheckedFlows = add_flow(NewFlows, [], EnabledLoggers),
+    NewConfig = Config#config{flows = CheckedFlows},
     new_config_if_successfully_applied(NewConfig, Config);
 
 do_request({dump_to_config, File},#config{flows = Flows} = Config) ->
@@ -317,6 +323,31 @@ do_request({replace_loggers, Loggers}, #config{enabled_loggers = Loggers}
 
 do_request(_Req, State) -> {{error, badreq}, State}.
 
+add_flow(NewFlows, Flows, EnabledLoggers) when is_list(NewFlows)->
+    MaxId =
+        lists:foldl(fun(#flow{id = CurId}, MaxId) when CurId > MaxId -> CurId;
+                       (_Flow, MaxId) -> MaxId
+                    end, 0, Flows) + 1,
+
+    CheckAndAddFlow =
+        fun(#flow{loggers = Loggers, enabled = Enabled} = Flow,
+            {CurId, FlowsAcc}) ->
+                OrdLoggers = ordsets:from_list(Loggers),
+                NewEnabled =
+                    case ordsets:is_subset(OrdLoggers, EnabledLoggers) of
+                        _ when Enabled =/= true -> {false, user};
+                        true  -> true;
+                        false -> {false, loggersOff}
+                    end,
+                {CurId +1, [Flow#flow{id = CurId,
+                                      enabled = NewEnabled,
+                                      loggers = OrdLoggers} | FlowsAcc]}
+        end,
+    {_NewMaxId, CheckedFlows} =
+        lists:foldl(CheckAndAddFlow, {MaxId, Flows}, NewFlows),
+    CheckedFlows;
+add_flow(Flow, Flows, EnabledLoggers) ->
+    add_flow([Flow], Flows, EnabledLoggers).
 
 %% @private
 replace_loggers(OldLoggers, OldLoggers, Config) ->
@@ -369,7 +400,6 @@ stop_loggers(Loggers) ->
      end  || Logger <- Loggers],
     ok.
 
-
 %% @private
 modify_flow_if_exist(Id, Flows, ModFun, Config) ->
     case lists:keyfind(Id, #flow.id, Flows) of
@@ -408,14 +438,14 @@ apply_config(#config{flows = Flows}) ->
 %% @private
 configs_to_internal_form(Flows) ->
     ToInternaFlow =
-        fun(#flow{enabled = false}, Acc) -> Acc;
-           (#flow{filter = Filter, loggers = Loggers,
+        fun(#flow{enabled = true, filter = Filter, loggers = Loggers,
                   priority = PriorityPattern}, Acc) ->
                 NewFlow =
                     {filter_to_internal(Filter),
                      priority_pattern_to_internal(PriorityPattern),
                      Loggers},
-                [NewFlow | Acc]
+                [NewFlow | Acc];
+           (_DisabledFlow, Acc) -> Acc
         end,
     lists:foldl(ToInternaFlow, [], Flows).
 
