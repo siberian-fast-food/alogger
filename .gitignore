@@ -3,3 +3,4 @@
 *.beam
 ebin/
 deps/
+.eunit/*
