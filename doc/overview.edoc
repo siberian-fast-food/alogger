@@ -64,8 +64,7 @@ you can use only .hrl file like this
 <pre>-include_lib("alog.hrl")</pre>
 and you will get standart ?DBG/?INFO/?ERROR/... (you can find out more information in {@link alog} module, which contains function that mimic macroses names and arguments). Or you can also engage our parse transformation:
 <pre>
--include_lib("alog.hrl").
--compile({parse_transform, alog_pt}).
+-include_lib("alog_pt.hrl").
 </pre>
 This way you can use <em>tuple expression</em> (like ?DBG({A, B})) which are translated to debug message with both names and values of A and B. Tuple expression can contain strings (like ?DBG({A, "string", B})); a log message will contain something like <pre>alog_examples:42:debug [&lt; 0.52.0 &gt;]->[]: A: "foo" B: bar</pre>
 
