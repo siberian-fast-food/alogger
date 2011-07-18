@@ -21,8 +21,8 @@
 %% ----------------------------------------------------------------------
 
 -module(alog_examples).
--include_lib("alog.hrl").
--compile({parse_transform, alog_pt}).
+-include_lib("alog_pt.hrl").
+%-compile({parse_transform, alog_pt}).
 
 -export([run_examples/0]).
 
@@ -33,7 +33,7 @@ run_examples() ->
     {ok, BackupFlows} = alog_control:get_flows(),
     ok = alog_control:delete_all_flows(),
     ok = alog_control:add_new_flow({mod,[?MODULE]}, {'=<', debug}, [alog_tty]),
-    
+
     A = "foo",
     B = bar,
 
@@ -50,7 +50,7 @@ run_examples() ->
     ?EMERGENCY("test emergency ~p", [TestVar]),
 
     io:format("*** =< errors~n", []),
-  
+
     ok = alog_control:set_flow_priority(1, {'=<', error}),
 
     ?DBG("test debug ~p", [TestVar]),
