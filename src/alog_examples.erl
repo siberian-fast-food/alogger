@@ -61,5 +61,5 @@ run_examples() ->
     ?CRITICAL("test critical ~p", [TestVar]),
     ?EMERGENCY("test emergency ~p", [TestVar]),
 
-    ok = alog_control:replase_flows(BackupFlows),
+    ok = alog_control:replace_flows(BackupFlows),
     ok.

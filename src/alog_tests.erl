@@ -36,6 +36,10 @@
                          ?info,
                          ?debug]).
 
+-record(setup_state, {
+          backup_flows
+         }).
+
 base_test_() ->
     {setup,
      fun install_test_logger_iface/0,
@@ -55,17 +59,22 @@ base_test_() ->
                end || CP <- ?all_priorities])}]}.
 
 install_test_logger_iface() ->
+    ok = application:start(sasl),
     ok = alog:start(),
     {ok, BackupFlows} = alog_control:get_flows(),
     ok = alog_control:delete_all_flows(),
     MaxPr = get_max_priotity(),
+    ok = alog_control:add_logger(alog_test_logger_iface),
     ok = alog_control:add_new_flow({mod,[?MODULE]}, {'=<', MaxPr},
                                    [alog_test_logger_iface]),
-    BackupFlows.
 
-remove_test_logger_iface(BackupFlows) ->
-    ok = alog_control:replase_flows(BackupFlows),
+    #setup_state{backup_flows = BackupFlows}.
+
+remove_test_logger_iface(#setup_state{backup_flows = BackupFlows}) ->
+    ok = alog_control:replace_flows(BackupFlows),
+    ok = alog_control:delete_logger(alog_test_logger_iface),
     alog:stop(),
+    application:stop(sasl),
     ok.
 
 get_great_priorities(P) -> [Rp || Rp <- ?all_priorities, Rp > P].
