@@ -70,6 +70,8 @@ At he moment there're three logger interfaces out of the box:
 
 * __alog_scribe__: an interface towards Scribe log daemon through thrift protocol
 
+* __alog_disk_log__: an interface towards disk_log logging facility
+
 
 
 
@@ -224,7 +226,7 @@ For example, emergency < error, and debug > warning.
 
 Last updated
 ------------
-Aug 7 2011 23:16:49
+Aug 7 2011 23:54:43
 
 
 <h2 class="indextitle">Packages</h2>
