@@ -158,18 +158,6 @@ code_change(_OldVsn, State, _Extra) ->
 
 %%% Internal functions
 %% @private
-%% @doc Maps alogger priorities to scribe priorities
-%% -spec map_prio(integer()) -> string().
-%% map_prio(?emergency) -> "emergency";
-%% map_prio(?alert)     -> "alert";
-%% map_prio(?critical)  -> "critical";
-%% map_prio(?error)     -> "error";
-%% map_prio(?warning)   -> "warning";
-%% map_prio(?notice)    -> "notice";
-%% map_prio(?info)      -> "info";
-%% map_prio(?debug)     -> "debug".
-
-%% @private
 attach_to_supervisor(SupRef, Opts) ->
   Restart = permanent,
   Shutdown = 2000,
