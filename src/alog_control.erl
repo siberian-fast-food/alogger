@@ -55,6 +55,13 @@
 
 -define(SERVER, ?MODULE).
 
+%% Default enabled loggers
+%% will be used in case if alog.config doesn't exist
+-define(DEF_LOGGERS_ENABLED, [alog_tty]).
+%% Default enabled flows
+%% will be used in case if alog.config doesn't exist
+-define(DEF_FLOWS_ENABLED, [{{mod, ['_']}, {'=<', debug}, [alog_tty]}]).
+
 -type filter() :: {mod, atom()} | {mod, [atom()]} |
                   {tag, atom()} | {tag, [atom()]} |
                   {app, atom()}.
@@ -172,9 +179,11 @@ start_link() ->
 %%% gen_server callbacks
 %% @private
 init([]) ->
-    EnabledLoggers = alog_config:get_conf(enabled_loggers, []),
+    EnabledLoggers = alog_config:get_conf(enabled_loggers,
+                                          ?DEF_LOGGERS_ENABLED),
     OrdLoggers     = ordsets:from_list(EnabledLoggers),
-    FlowsConfig    = alog_config:get_conf(flows, []),
+    FlowsConfig    = alog_config:get_conf(flows,
+                                          ?DEF_FLOWS_ENABLED),
     Flows          = add_flow(parse_flows_config(FlowsConfig), [], OrdLoggers),
     {ok, #config{enabled_loggers = OrdLoggers, flows = Flows}}.
 
