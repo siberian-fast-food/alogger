@@ -224,7 +224,7 @@ For example, emergency < error, and debug > warning.
 
 Last updated
 ------------
-Jul 18 2011 15:10:01
+Aug 7 2011 23:16:49
 
 
 <h2 class="indextitle">Packages</h2>
@@ -244,6 +244,7 @@ Jul 18 2011 15:10:01
 <tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_common_formatter.md" class="module">alog_common_formatter</a></td></tr>
 <tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_config.md" class="module">alog_config</a></td></tr>
 <tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_control.md" class="module">alog_control</a></td></tr>
+<tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_disk_log.md" class="module">alog_disk_log</a></td></tr>
 <tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_error_logger_handler.md" class="module">alog_error_logger_handler</a></td></tr>
 <tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_examples.md" class="module">alog_examples</a></td></tr>
 <tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_if_default.md" class="module">alog_if_default</a></td></tr>

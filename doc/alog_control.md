@@ -33,6 +33,15 @@ __Behaviours:__ [`gen_server`](gen_server.md).
 
 
 
+<h3 class="typedecl"><a name="type-logger">logger()</a></h3>
+
+
+
+
+<pre>logger() = atom()</pre>
+
+
+
 <h3 class="typedecl"><a name="type-priority">priority()</a></h3>
 
 
@@ -63,7 +72,7 @@ __Behaviours:__ [`gen_server`](gen_server.md).
 
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#add_new_flow-3">add_new_flow/3</a></td><td>Add new flow.</td></tr><tr><td valign="top"><a href="#delete_all_flows-0">delete_all_flows/0</a></td><td>Delete all flows.</td></tr><tr><td valign="top"><a href="#delete_flow-1">delete_flow/1</a></td><td>Delete existing flow.</td></tr><tr><td valign="top"><a href="#disable_flow-1">disable_flow/1</a></td><td>Temporary disable existing flow.</td></tr><tr><td valign="top"><a href="#dump_to_config-1">dump_to_config/1</a></td><td>Update flows configuration in .config file.</td></tr><tr><td valign="top"><a href="#enable_flow-1">enable_flow/1</a></td><td>Enable existing flow.</td></tr><tr><td valign="top"><a href="#get_flows-0">get_flows/0</a></td><td>Return all flows.</td></tr><tr><td valign="top"><a href="#print_flows-0">print_flows/0</a></td><td>Print all flows.</td></tr><tr><td valign="top"><a href="#replase_flows-1">replase_flows/1</a></td><td>Replase all flows on new.</td></tr><tr><td valign="top"><a href="#set_flow_filter-2">set_flow_filter/2</a></td><td>Set new filter for existing flow.</td></tr><tr><td valign="top"><a href="#set_flow_loggers-2">set_flow_loggers/2</a></td><td>Set new loggers for existing flow.</td></tr><tr><td valign="top"><a href="#set_flow_priority-2">set_flow_priority/2</a></td><td>Set new priority_pattern for existing flow.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#add_logger-1">add_logger/1</a></td><td>Add and start new logger.</td></tr><tr><td valign="top"><a href="#add_new_flow-3">add_new_flow/3</a></td><td>Add new flow.</td></tr><tr><td valign="top"><a href="#delete_all_flows-0">delete_all_flows/0</a></td><td>Delete all flows.</td></tr><tr><td valign="top"><a href="#delete_flow-1">delete_flow/1</a></td><td>Delete existing flow.</td></tr><tr><td valign="top"><a href="#delete_logger-1">delete_logger/1</a></td><td>Delete exist logger.</td></tr><tr><td valign="top"><a href="#disable_flow-1">disable_flow/1</a></td><td>Temporary disable existing flow.</td></tr><tr><td valign="top"><a href="#dump_to_config-1">dump_to_config/1</a></td><td>Update flows configuration in .config file.</td></tr><tr><td valign="top"><a href="#enable_flow-1">enable_flow/1</a></td><td>Enable existing flow.</td></tr><tr><td valign="top"><a href="#get_flows-0">get_flows/0</a></td><td>Return all flows.</td></tr><tr><td valign="top"><a href="#get_loggers-0">get_loggers/0</a></td><td></td></tr><tr><td valign="top"><a href="#print_flows-0">print_flows/0</a></td><td>Print all flows.</td></tr><tr><td valign="top"><a href="#replace_flows-1">replace_flows/1</a></td><td>Replace all flows on new.</td></tr><tr><td valign="top"><a href="#replace_loggers-1">replace_loggers/1</a></td><td></td></tr><tr><td valign="top"><a href="#set_flow_filter-2">set_flow_filter/2</a></td><td>Set new filter for existing flow.</td></tr><tr><td valign="top"><a href="#set_flow_loggers-2">set_flow_loggers/2</a></td><td>Set new loggers for existing flow.</td></tr><tr><td valign="top"><a href="#set_flow_priority-2">set_flow_priority/2</a></td><td>Set new priority_pattern for existing flow.</td></tr></table>
 
 
 
@@ -71,7 +80,21 @@ __Behaviours:__ [`gen_server`](gen_server.md).
 <h2><a name="functions">Function Details</a></h2>
 
 
-<a name="add_new_flow-3"></a>
+<a name="add_logger-1"></a>
+
+<h3>add_logger/1</h3>
+
+
+
+
+
+<pre>add_logger(Logger::<a href="#type-logger">logger()</a>) -> ok | {error, term()}</pre>
+<br></br>
+
+
+
+
+Add and start new logger.<a name="add_new_flow-3"></a>
 
 <h3>add_new_flow/3</h3>
 
@@ -79,7 +102,7 @@ __Behaviours:__ [`gen_server`](gen_server.md).
 
 
 
-<pre>add_new_flow(Filter::<a href="#type-filter">filter()</a>, Priority::<a href="#type-priority_pattern">priority_pattern()</a>, Loggers::[atom()]) -> ok | {error, term()}</pre>
+<pre>add_new_flow(Filter::<a href="#type-filter">filter()</a>, Priority::<a href="#type-priority_pattern">priority_pattern()</a>, Loggers::[<a href="#type-logger">logger()</a>]) -> ok | {error, term()}</pre>
 <br></br>
 
 
@@ -113,7 +136,22 @@ Delete all flows.<a name="delete_flow-1"></a>
 
 
 
-Delete existing flow.<a name="disable_flow-1"></a>
+Delete existing flow.<a name="delete_logger-1"></a>
+
+<h3>delete_logger/1</h3>
+
+
+
+
+
+<pre>delete_logger(Logger::<a href="#type-logger">logger()</a>) -> ok | {error, term()}</pre>
+<br></br>
+
+
+
+
+Delete exist logger. All flows use this logger
+became disabled.<a name="disable_flow-1"></a>
 
 <h3>disable_flow/1</h3>
 
@@ -169,7 +207,19 @@ Enable existing flow.<a name="get_flows-0"></a>
 
 
 
-Return all flows.<a name="print_flows-0"></a>
+Return all flows.<a name="get_loggers-0"></a>
+
+<h3>get_loggers/0</h3>
+
+
+
+
+
+<pre>get_loggers() -> {ok, [<a href="#type-logger">logger()</a>]}</pre>
+<br></br>
+
+
+<a name="print_flows-0"></a>
 
 <h3>print_flows/0</h3>
 
@@ -183,21 +233,33 @@ Return all flows.<a name="print_flows-0"></a>
 
 
 
-Print all flows.<a name="replase_flows-1"></a>
+Print all flows.<a name="replace_flows-1"></a>
 
-<h3>replase_flows/1</h3>
-
-
+<h3>replace_flows/1</h3>
 
 
 
-<pre>replase_flows(Flow::[#flow{}]) -> ok | {error, term()}</pre>
+
+
+<pre>replace_flows(Flow::[#flow{}]) -> ok | {error, term()}</pre>
 <br></br>
 
 
 
 
-Replase all flows on new.<a name="set_flow_filter-2"></a>
+Replace all flows on new.<a name="replace_loggers-1"></a>
+
+<h3>replace_loggers/1</h3>
+
+
+
+
+
+<pre>replace_loggers(Loggers::[<a href="#type-logger">logger()</a>]) -> ok | {error, term()}</pre>
+<br></br>
+
+
+<a name="set_flow_filter-2"></a>
 
 <h3>set_flow_filter/2</h3>
 
@@ -219,7 +281,7 @@ Set new filter for existing flow.<a name="set_flow_loggers-2"></a>
 
 
 
-<pre>set_flow_loggers(Id::non_neg_integer(), Loggers::[atom()]) -> ok | {error, term()}</pre>
+<pre>set_flow_loggers(Id::non_neg_integer(), Loggers::[<a href="#type-logger">logger()</a>]) -> ok | {error, term()}</pre>
 <br></br>
 
 

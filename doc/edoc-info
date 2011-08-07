@@ -1,6 +1,6 @@
 {application,alog}.
 {packages,[scribe]}.
-{modules,[alog,alog_common_formatter,alog_config,alog_control,
+{modules,[alog,alog_common_formatter,alog_config,alog_control,alog_disk_log,
           alog_error_logger_handler,alog_examples,alog_if_default,
           alog_parse_trans,alog_pt,alog_scribe,alog_syslog,alog_tty,
           gen_alogger]}.
