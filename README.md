@@ -62,7 +62,7 @@ We don't invent a wheel, there's nothing like this around!
 
 Implemented logger interfaces
 -----------------------------
-At he moment there're three logger interfaces out of the box:
+A the moment there're four logger interfaces out of the box:
 
 * __alog_tty__: a simple one, it prints logs by io:format
 
@@ -226,7 +226,7 @@ For example, emergency < error, and debug > warning.
 
 Last updated
 ------------
-Aug 7 2011 23:54:43
+Aug 7 2011 23:56:44
 
 
 <h2 class="indextitle">Packages</h2>

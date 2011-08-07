@@ -48,7 +48,7 @@ We don't invent a wheel, there's nothing like this around!
 
 Implemented logger interfaces
 -----------------------------
-At he moment there're three logger interfaces out of the box:
+A the moment there're four logger interfaces out of the box:
 <ul>
 <li><b>alog_tty</b>: a simple one, it prints logs by io:format</li>
 <li><b>alog_syslog</b>: an interface towards Syslog daemon</li>
