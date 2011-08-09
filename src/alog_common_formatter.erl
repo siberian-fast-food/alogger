@@ -31,8 +31,8 @@
 -include("alog.hrl").
 
 %% default log message format: module:line [pid]->[tag]: user message
--define(LOG_MSG_FORMAT, "~s ~p:~p:~s [~p]->[~p]: ~s~n").
--define(LOG_MSG_FORMAT_EMPTY_TAG, "~s ~p:~p:~s [~p]->[]: ~s~n").
+-define(LOG_MSG_FORMAT, "~s~p:~p:~s [~p]->[~p]: ~s~n").
+-define(LOG_MSG_FORMAT_EMPTY_TAG, "~s~p:~p:~s [~p]->[]: ~s~n").
 
 %% @doc returns formated log message
 -spec format(string(), [term()], integer(), list(),
@@ -57,7 +57,7 @@ format(FormatString, Args, Level, Tag, Module, Line, Pid, TimeStamp) ->
 -spec format_timestamp({non_neg_integer(), non_neg_integer(), non_neg_integer()}) -> iolist().
 format_timestamp({_MegaSecs, _Secs, MicroSec} = NowTime) ->
     {{Y, M, D}, {H, Mi, S}} = calendar:now_to_local_time(NowTime),
-    io_lib:format("~4.10.0B-~2.10.0B-~2.10.0B ~2.10.0B:~2.10.0B:~2.10.0B:~6.10.0B",
+    io_lib:format("~4.10.0B-~2.10.0B-~2.10.0B ~2.10.0B:~2.10.0B:~2.10.0B:~6.10.0B ",
                   [Y, M, D, H, Mi, S, MicroSec]).
     
 
