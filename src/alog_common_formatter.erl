@@ -153,8 +153,6 @@ sup_get(Tag, Report) ->
 
 %% @private
 -spec format_key_val([{atom(), term()}]) -> iolist().
-format_key_val([{Tag,Data}]) ->
-    io_lib:format("    ~16w: ~p",[Tag,Data]) ++ format_key_val([]);
 format_key_val([{Tag,Data}|Rep]) ->
     io_lib:format("    ~16w: ~p~n",[Tag,Data]) ++ format_key_val(Rep);
 format_key_val(_) ->
