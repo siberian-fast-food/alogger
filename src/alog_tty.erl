@@ -29,7 +29,7 @@
 -export([start/1,
          stop/1,
          log/2,
-         format/7]).
+         format/8]).
 
 %% @private
 -spec start(list()) -> ok.
@@ -48,7 +48,9 @@ log(_ALoggerPrio, Msg) ->
 
 %% @private
 -spec format(string(), [term()], integer(), list(),
-             atom(), integer(), pid()) -> iolist().
-format(FormatString, Args, Level, Tag, Module, Line, Pid) ->
+             atom(), integer(), pid(),
+             {non_neg_integer(), non_neg_integer(), non_neg_integer()})
+            -> iolist().
+format(FormatString, Args, Level, Tag, Module, Line, Pid, TimeStamp) ->
     alog_common_formatter:format(FormatString, Args, Level,
-                                Tag, Module, Line, Pid).
+                                Tag, Module, Line, Pid, TimeStamp).

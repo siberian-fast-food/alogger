@@ -24,31 +24,42 @@
 
 -module(alog_common_formatter).
 
--export([format/7]).
+-export([format/8]).
+
+-compile(export_all).
 
 -include("alog.hrl").
 
 %% default log message format: module:line [pid]->[tag]: user message
--define(LOG_MSG_FORMAT, "~p:~p:~s [~p]->[~p]: ~s~n").
--define(LOG_MSG_FORMAT_EMPTY_TAG, "~p:~p:~s [~p]->[]: ~s~n").
+-define(LOG_MSG_FORMAT, "~s ~p:~p:~s [~p]->[~p]: ~s~n").
+-define(LOG_MSG_FORMAT_EMPTY_TAG, "~s ~p:~p:~s [~p]->[]: ~s~n").
 
 %% @doc returns formated log message
 -spec format(string(), [term()], integer(), list(),
-             atom(), integer(), pid()) -> iolist().
+             atom(), integer(), pid(),
+             {non_neg_integer(), non_neg_integer(), non_neg_integer()}) -> iolist().
 %% this is a special case for error_logger messages
-format(Msg, _, _, '$error_logger', _, _, _) ->
-    write_report(Msg);
+format(Msg, _, _, '$error_logger', _, _, _, TimeStamp) ->
+    format_timestamp(TimeStamp) ++ write_report(Msg);
 %% and this is for anything else
-format(FormatString, Args, Level, [], Module, Line, Pid) ->
+format(FormatString, Args, Level, [], Module, Line, Pid, TimeStamp) ->
     LevelStr = map_prio(Level),
     IoUserMsg = io_lib:format(FormatString, Args),
-    io_lib:format(?LOG_MSG_FORMAT_EMPTY_TAG, [Module, Line, LevelStr,
-					      Pid, IoUserMsg]);
-format(FormatString, Args, Level, Tag, Module, Line, Pid) ->
+    io_lib:format(?LOG_MSG_FORMAT_EMPTY_TAG,
+                  [format_timestamp(TimeStamp), Module, Line, LevelStr, Pid, IoUserMsg]);
+format(FormatString, Args, Level, Tag, Module, Line, Pid, TimeStamp) ->
     LevelStr = map_prio(Level),
     IoUserMsg = io_lib:format(FormatString, Args),
-    io_lib:format(?LOG_MSG_FORMAT, [Module, Line, LevelStr,
-				    Pid, Tag, IoUserMsg]).
+    io_lib:format(?LOG_MSG_FORMAT,
+                  [format_timestamp(TimeStamp), Module, Line, LevelStr, Pid, Tag, IoUserMsg]).
+
+%% @private
+-spec format_timestamp({non_neg_integer(), non_neg_integer(), non_neg_integer()}) -> iolist().
+format_timestamp({_MegaSecs, _Secs, MicroSec} = NowTime) ->
+    {{Y, M, D}, {H, Mi, S}} = calendar:now_to_local_time(NowTime),
+    io_lib:format("~4.10.0B-~2.10.0B-~2.10.0B ~2.10.0B:~2.10.0B:~2.10.0B:~6.10.0B",
+                  [Y, M, D, H, Mi, S, MicroSec]).
+    
 
 %%% internal functions
 %% @private
