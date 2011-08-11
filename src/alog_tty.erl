@@ -44,7 +44,12 @@ stop(_) ->
 %% @private
 -spec log(integer(), string()) -> ok.
 log(_ALoggerPrio, Msg) ->
-    io:format("~s", [Msg]).
+    case node(group_leader()) =:= node() of
+        true ->
+            io:format("~s", [Msg]);
+        _ ->
+            ok
+    end.
 
 %% @private
 -spec format(string(), [term()], integer(), list(),
