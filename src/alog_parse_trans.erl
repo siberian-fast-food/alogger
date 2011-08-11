@@ -28,6 +28,7 @@
 -include("alog.hrl").
 -define(IFACE_MODE, alog_if).
 -define(IFACE_SOURCE, "alog_if.erl").
+-define(FILTER_BOOLEAN, ['>','<','=<','>=','==','/=']).
 
 %%% API
 %% @doc Makes alog_if_default parse transform
@@ -43,17 +44,16 @@ load_config(Config) ->
                     ok
             catch
                 Class:Exp ->
-                    {error, Class, Exp}
+                    {error,{Class, Exp}}
             end;
         Other ->
             Other
     end.
 
-
 %%% Internal functions
 %% @private
 load_config2(NewAst) ->
-    _Source = erl_prettypr:format(erl_syntax:form_list(NewAst)),
+%    _Source = erl_prettypr:format(erl_syntax:form_list(NewAst)),
     {ok, ModuleName, Bin} = compile:forms(NewAst),
     code:load_binary(ModuleName, ?IFACE_SOURCE, Bin).
 
@@ -68,29 +68,32 @@ make_ast(Config) ->
 
 %% @private
 make_proceed_ast(Config) ->
-    Clauses = multiply_clauses(Config),
-    DefAst = alog_if_default:default_mod_ast(),
-    NewAst = insert_clauses(DefAst, Clauses),
-    {ok, NewAst}.
+    FlowSeq     = lists:seq(1, length(Config)),
+    FlowsConfig = lists:zip(FlowSeq, Config),
+    Clauses     = multiply_clauses(FlowsConfig),
+    DefAst      = alog_if_default:default_mod_ast(),
+    NewAst      = insert_clauses(DefAst, Clauses),
+    FlowNewAst  = insert_flowlist(NewAst, [abstract(FlowSeq)]), 
+    {ok, FlowNewAst}.
 
 %% @private
 %% @doc makes many many clauses
 multiply_clauses(Config) ->
     multiply_clauses(Config, def_clause()).
-multiply_clauses([{{What,Mods},Prio, Loggers}|Configs], Acc) ->
-    NewAcc = make_clause(What,Mods, Prio, Loggers, Acc),
+multiply_clauses([{Flow,{{What,ModTags},Prio, Loggers}}|Configs], Acc) ->
+    NewAcc = make_clause(Flow, What,ModTags, Prio, Loggers, Acc),
     multiply_clauses(Configs, NewAcc);
 multiply_clauses([], Acc) ->
     Acc.
 
 %% @private
-make_clause(What, [Mod|Mods], Prio, Loggers, Acc)  ->
+make_clause(Flow, What, [ModTag|ModTags], Prio, Loggers, Acc)  ->
     AbsLogs = [abstract(Loggers)],
-    NewClause = {clause, 0, get_arity(What,Mod),
+    NewClause = {clause, 0, get_arity(Flow,What,ModTag),
                  get_guard(Prio), AbsLogs},
-    make_clause(What, Mods, Prio, Loggers,
+    make_clause(Flow, What, ModTags, Prio, Loggers,
                 [NewClause | Acc]);
-make_clause(_,[], _, _, Acc) ->
+make_clause(_,_,[], _, _, Acc) ->
     Acc.
 
 %% @private
@@ -99,6 +102,7 @@ insert_clauses([F|Fs], Clauses) ->
     F1 = insert_clauses_every(F, Clauses),
     Fs1 = insert_clauses(Fs, Clauses),
     [F1|Fs1];
+
 insert_clauses([], _Ast) ->
     [].
 
@@ -107,6 +111,23 @@ insert_clauses_every({function, Line, get_mod_logs,
                        Arity, _Clause}, Clauses) ->
     {function,Line,get_mod_logs,Arity,Clauses};
 insert_clauses_every(Any, _Clauses) ->
+    Any.
+
+%% @private
+insert_flowlist([F|Fs], FlowList) ->
+    F1 = insert_flowlist_every(F, FlowList),
+    Fs1 = insert_flowlist(Fs, FlowList), 
+    [F1|Fs1];
+
+insert_flowlist([], _FlowList) ->
+    [].
+
+%% @private
+insert_flowlist_every({function, Line, flows, 
+		       Arity, _Clause}, FlowList) ->
+    NewClause = [{clause,0,[],[],FlowList}],
+    {function, Line, flows, Arity, NewClause};
+insert_flowlist_every(Any, _FlowList) ->
     Any.
 
 
@@ -144,7 +165,7 @@ is_loaded(Prio, AllMods) ->
         [] ->
             check_prio(Prio) ;
         Other ->
-            {error,modules_not_loaded, Other}
+            {error,{modules_not_loaded, Other}}
     end.
 
 %% @private
@@ -161,31 +182,27 @@ check_prio([]) ->
 check_prio(Level) when is_integer(Level),
                        Level >= ?emergency, Level =< ?debug ->
     ok;
-check_prio({'>', Level}) when Level >= ?emergency, Level =< ?debug ->
-    ok;
-check_prio({'<', Level}) when Level >= ?emergency, Level =< ?debug ->
-    ok;
-check_prio({'=<', Level}) when Level >= ?emergency, Level =< ?debug ->
-    ok;
-check_prio({'>=', Level}) when Level >= ?emergency, Level =< ?debug ->
-    ok;
-check_prio({'==', Level}) when Level >= ?emergency, Level =< ?debug ->
-    ok;
-check_prio({'/=', Level}) when Level >= ?emergency, Level =< ?debug ->
-    ok;
+check_prio({Filter, Level}) when Level >= ?emergency, 
+				 Level =< ?debug ->
+    case lists:member(Filter,?FILTER_BOOLEAN) of
+	true ->
+	    ok;
+	false ->
+	    {error, {wrong_filter, Filter}}
+    end;
 check_prio(Other) ->
-    {error, wrong_level, Other}.
+    {error, {wrong_level, Other}}.
 
 %% @private
 %% @doc Composes new AST for get_mod_logs/3
-get_arity(mod, '_') ->
-    [{var,0,'Level'},{var,0,'_'},{var,0,'Tag'}];
-get_arity(mod,Mod) ->
-    [{var,0,'Level'},{atom,0,Mod},{var,0,'Tag'}];
-get_arity(tag,'_') ->
-    [{var,0,'Level'},{var,0,'Module'},{var,0,'_'}];
-get_arity(tag,Tag) ->
-    [{var,0,'Level'},{var,0,'Module'},{atom,0,Tag}].
+get_arity(Flow,mod, '_') ->
+    [{integer, 0, Flow},{var,0,'Level'},{var,0,'_'},{var,0,'_'}];
+get_arity(Flow,mod,Mod) ->
+    [{integer, 0, Flow},{var,0,'Level'},{atom,0,Mod},{var,0,'_'}];
+get_arity(Flow,tag,'_') ->
+    [{integer, 0, Flow},{var,0,'Level'},{var,0,'_'},{var,0,'_'}];
+get_arity(Flow,tag,Tag) ->
+    [{integer, 0, Flow},{var,0,'Level'},{var,0,'_'},{atom,0,Tag}].
 
 %% @private
 get_guard(Prio) when is_list(Prio) ->

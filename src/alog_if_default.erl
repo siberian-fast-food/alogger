@@ -30,19 +30,35 @@
          default_modlogs_ast/0]).
 
 %% @doc Will return list of loggers for module/tag
-get_mod_logs(_, _, _) ->
+get_mod_logs(_, _, _, _) -> 
     [].
 
 %% @doc Main logging function
-log(Format, Args, Level, Tags, Module, Line, Pid) when is_list(Tags), Tags /= [] ->
-    [log(Format, Args, Level, Tag, Module, Line, Pid) || Tag <- Tags],
+log(Format, Args, Level, Tags, Module, Line, Pid)
+    when is_list(Tags), Tags /= [] ->
+    [log(Format, Args, Level, Tag, Module, Line, Pid)
+     || Tag <- Tags],
     ok;
 log(Format, Args, Level, Tag, Module, Line, Pid) ->
-    lists:foreach(fun(Mod) ->
-			  Formatted = Mod:format(Format, Args, Level, Tag, Module, Line, Pid, now()),
-			  Mod:log(Level, Formatted)
-		  end, get_mod_logs(Level, Module, Tag)),
+    to_log(Format, Args, Level, Tag,  Module, Line, Pid, now(), get_loggers(Level, Module, Tag)).    
+
+%% @doc Get all loggers as list of lists 
+get_loggers(Level, Module, Tag) ->
+    [get_mod_logs(Flow, Level, Module, Tag) || Flow <- flows()].
+
+%% @doc Helpful log function
+to_log(Format, Args, Level, Tag,  Module, Line, Pid, Time, [Mods|TailMods]) ->
+    [begin
+	 Formatted = Mod:format(Format, Args, Level, Tag, Module, Line, Pid, Time),
+	 Mod:log(Level, Formatted)
+     end || Mod <- Mods],
+    to_log(Format, Args, Level, Tag,  Module, Line, Pid, Time, TailMods);    
+to_log(_, _, _, _, _, _, _, _, []) ->
     ok.
+
+%% @doc Return list of flows, which should be logged
+flows() ->
+    [].
 
 %% @doc Will return default AST of this module after parse_transform
 default_mod_ast() ->

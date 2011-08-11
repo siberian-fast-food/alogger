@@ -434,7 +434,7 @@ modify_flow_if_exist(Id, Flows, ModFun, Config) ->
 new_config_if_successfully_applied(NewConfig, OldConfig) ->
     try apply_config(NewConfig) of
         ok    -> {ok, NewConfig};
-        Error -> {{error, Error}, OldConfig}
+        {error,Error} -> {{error, Error}, OldConfig}
     catch
         E:W ->
             {{E, {W, erlang:get_stacktrace()}}, OldConfig}
