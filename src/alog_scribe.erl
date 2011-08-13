@@ -21,14 +21,14 @@
 %% ----------------------------------------------------------------------
 
 -module(alog_scribe).
--behaviour(gen_alogger).
+-behaviour(gen_alog).
 -behaviour(gen_server).
 -include_lib("alog.hrl").
 -include_lib("scribe_types.hrl").
 
 %% API
 -export([start_link/1]).
-%% gen_alogger callbacks
+%% gen_alog callbacks
 -export([start/1,
          stop/1,
          log/2,
@@ -56,11 +56,11 @@
 start_link(Opts) ->
     gen_server:start_link({local, ?MODULE}, ?MODULE, [Opts], []).
 
-%%% gen_alogger callbacks
+%%% gen_alog callbacks
 %% @private
 -spec start(list()) -> ok.
 start(Opts) ->
-    SupRef = gen_alogger:get_opt(sup_ref, Opts, ?DEF_SUP_REF),
+    SupRef = gen_alog:get_opt(sup_ref, Opts, ?DEF_SUP_REF),
     attach_to_supervisor(SupRef, Opts),
     ok.
 
@@ -90,11 +90,11 @@ format(FormatString, Args, Level, Tag, Module, Line, Pid, TimeStamp) ->
 %%% gen_server callbacks
 %% @private
 init([Opts]) ->
-    Addr = gen_alogger:get_opt(addr, Opts, ?DEF_ADDR),
-    Port = gen_alogger:get_opt(port, Opts, ?DEF_PORT),
-    StrictRead = gen_alogger:get_opt(strict_read, Opts, ?DEF_STRICT_READ),
-    StrictWrite = gen_alogger:get_opt(strict_write, Opts, ?DEF_STRICT_WRITE),
-    Framed = gen_alogger:get_opt(framed, Opts, ?DEF_FRAMED),
+    Addr = gen_alog:get_opt(addr, Opts, ?DEF_ADDR),
+    Port = gen_alog:get_opt(port, Opts, ?DEF_PORT),
+    StrictRead = gen_alog:get_opt(strict_read, Opts, ?DEF_STRICT_READ),
+    StrictWrite = gen_alog:get_opt(strict_write, Opts, ?DEF_STRICT_WRITE),
+    Framed = gen_alog:get_opt(framed, Opts, ?DEF_FRAMED),
     {ok, C} = thrift_client_util:new(Addr, Port, scribe_thrift,
                                      [{strict_read, StrictRead},
                                       {strict_write, StrictWrite},
@@ -146,10 +146,10 @@ attach_to_supervisor(SupRef, Opts) ->
     Restart = permanent,
     Shutdown = 2000,
     ChildSpec = {?MODULE,
-		 {?MODULE, start_link, [Opts]},
-		 Restart,
-		 Shutdown,
-		 worker,
-		 [?MODULE]},
+                 {?MODULE, start_link, [Opts]},
+                 Restart,
+                 Shutdown,
+                 worker,
+                 [?MODULE]},
     supervisor:start_child(SupRef, ChildSpec),
     ok.

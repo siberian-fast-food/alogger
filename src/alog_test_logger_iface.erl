@@ -22,7 +22,7 @@
 %% ----------------------------------------------------------------------
 
 -module(alog_test_logger_iface).
--behaviour(gen_alogger).
+-behaviour(gen_alog).
 
 -export([start/1,
          stop/1,
@@ -43,6 +43,3 @@ format(_FormatString, [RequestRef], Level, Tag, Module, Line, Pid, _Timestamp) -
 %% @private
 log(Level, {RequestRef, Level, Tag, Module, Line, Pid}) ->
     Pid ! {log, Level, RequestRef, Tag, Module, Line, Pid}.
-
-
-

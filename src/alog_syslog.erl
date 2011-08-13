@@ -21,7 +21,7 @@
 %% ----------------------------------------------------------------------
 
 -module(alog_syslog).
--behaviour(gen_alogger).
+-behaviour(gen_alog).
 -include_lib("alog.hrl").
 
 -export([start/1,
@@ -37,9 +37,9 @@
 %%      configuration
 -spec start(list()) -> ok.
 start(Opts) ->
-    Ident = gen_alogger:get_opt(ident, Opts, ?DEF_IDENT),
-    Logopt = gen_alogger:get_opt(logopt, Opts, ?DEF_LOGOPT),
-    Facility = gen_alogger:get_opt(facility, Opts, ?DEF_FACILITY),
+    Ident = gen_alog:get_opt(ident, Opts, ?DEF_IDENT),
+    Logopt = gen_alog:get_opt(logopt, Opts, ?DEF_LOGOPT),
+    Facility = gen_alog:get_opt(facility, Opts, ?DEF_FACILITY),
     syslog:start(),
     syslog:open(Ident, Logopt, Facility),
     ok.

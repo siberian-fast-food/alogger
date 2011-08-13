@@ -23,7 +23,7 @@
 %% ----------------------------------------------------------------------
 
 -module(alog_tty).
--behaviour(gen_alogger).
+-behaviour(gen_alog).
 
 %% gen_alogger callbacks
 -export([start/1,

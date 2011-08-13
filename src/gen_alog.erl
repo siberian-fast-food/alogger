@@ -20,7 +20,7 @@
 %% under the License.
 %% ----------------------------------------------------------------------
 
--module(gen_alogger).
+-module(gen_alog).
 -author('alexander.dergachev@gmail.com').
 
 -export([behaviour_info/1,
@@ -38,23 +38,23 @@ behaviour_info(_) ->
     undefined.
 
 %% @doc returns the Opt-named option from the Opts proplist
-%%      or throws an exception in case of unsuccessful 
+%%      or throws an exception in case of unsuccessful
 %%      lookup
 get_opt(Opt, Opts) ->
     case lists:keysearch(Opt, 1, Opts) of
-	false ->
-	    % TODO: replace with more appropriate function
-	    throw({undefined_option, Opt});
-	{value, {_, Val}} ->
-	    Val
+      false ->
+            % TODO: replace with more appropriate function
+            throw({undefined_option, Opt});
+      {value, {_, Val}} ->
+        Val
     end.
 
 %% @doc returns the Opt-named option from the Opts proplist
 %%      or Default value in case of unsuccessful lookup
 get_opt(Opt, Opts, Default) ->
     case lists:keysearch(Opt, 1, Opts) of
-	false ->
-	    Default;
-	{value, {_, Val}} ->
-	    Val
+        false ->
+            Default;
+        {value, {_, Val}} ->
+            Val
     end.

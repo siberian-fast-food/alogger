@@ -21,13 +21,13 @@
 %% ----------------------------------------------------------------------
 
 -module(alog_disk_log).
--behaviour(gen_alogger).
+-behaviour(gen_alog).
 -behaviour(gen_server).
 -include_lib("alog.hrl").
 
 %% API
 -export([start_link/1]).
-%% gen_alogger callbacks
+%% gen_alog callbacks
 -export([start/1,
          stop/1,
          log/2,
@@ -93,11 +93,11 @@
 start_link(Opts) ->
   gen_server:start_link({local, ?MODULE}, ?MODULE, [Opts], []).
 
-%%% gen_alogger callbacks
+%%% gen_alog callbacks
 %% @private
 -spec start(list()) -> ok.
 start(Opts) ->
-  SupRef = gen_alogger:get_opt(sup_ref, Opts, ?DEF_SUP_REF),
+  SupRef = gen_alog:get_opt(sup_ref, Opts, ?DEF_SUP_REF),
   attach_to_supervisor(SupRef, Opts),
   ok.
 
@@ -173,16 +173,16 @@ attach_to_supervisor(SupRef, Opts) ->
 
 %% @private
 get_args(Opts) ->
-  DLArgs  = [{DiskLogArg , gen_alogger:get_opt(ConfArg, Opts, DefVal)} ||
+  DLArgs  = [{DiskLogArg , gen_alog:get_opt(ConfArg, Opts, DefVal)} ||
               {ConfArg, DiskLogArg , DefVal} <- ?DEF_ARGS],
-  ADLArgs = [{ADiskLogArg, gen_alogger:get_opt(ConfArg, Opts, DefVal)} ||
+  ADLArgs = [{ADiskLogArg, gen_alog:get_opt(ConfArg, Opts, DefVal)} ||
               {ConfArg, ADiskLogArg, DefVal} <- ?DEF_SPEC_ARGS],
   {DLArgs, ADLArgs}.
 
 %% @private
 open_logs({DLArgs, ADLArgs}) ->
-  Format = gen_alogger:get_opt(?FORMAT_ARG, DLArgs , ?FORMAT_DEF),
-  Sync   = gen_alogger:get_opt(?SYNC_ARG  , ADLArgs, ?SYNC_DEF),
+  Format = gen_alog:get_opt(?FORMAT_ARG, DLArgs , ?FORMAT_DEF),
+  Sync   = gen_alog:get_opt(?SYNC_ARG  , ADLArgs, ?SYNC_DEF),
   LogFun = get_log_fun(Format, Sync, ?LOG_FUNS),
   case disk_log:open(DLArgs) of
     {ok, LogRef} ->
