@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+
+  <title>siberian-fast-food/alogger @ GitHub</title>
+
+  <style type="text/css">
+    body {
+      margin-top: 1.0em;
+      background-color: #c0a140;
+      font-family: Helvetica, Arial, FreeSans, san-serif;
+      color: #000000;
+    }
+    #container {
+      margin: 0 auto;
+      width: 700px;
+    }
+    h1 { font-size: 3.8em; color: #3f5ebf; margin-bottom: 3px; }
+    h1 .small { font-size: 0.4em; }
+    h1 a { text-decoration: none }
+    h2 { font-size: 1.5em; color: #3f5ebf; }
+    h3 { text-align: center; color: #3f5ebf; }
+    a { color: #3f5ebf; }
+    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
+    .download { float: right; }
+    pre { background: #000; color: #fff; padding: 15px;}
+    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
+    .footer { text-align:center; padding-top:30px; font-style: italic; }
+  </style>
+</head>
+
+<body>
+  <a href="http://github.com/siberian-fast-food/alogger"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+
+  <div id="container">
+
+    <div class="download">
+      <a href="http://github.com/siberian-fast-food/alogger/zipball/master">
+        <img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a>
+      <a href="http://github.com/siberian-fast-food/alogger/tarball/master">
+        <img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
+    </div>
+
+    <h1><a href="http://github.com/siberian-fast-food/alogger">alogger</a>
+      <span class="small">by <a href="http://github.com/siberian-fast-food">siberian-fast-food</a></span></h1>
+
+    <div class="description">
+      Simply the best logging framework for Erlang
+    </div>
+
+    <p>There is a lot of loggers in the wild. You can consider to use one of them in your new project. After a while a new cool logger appears, and you want it, so, you have to change lots of places in you code, and definitely you have to recompile the entire project. That sucks, doesn't it?
+
+The Abstract Logger Interface (alogger) brings completely new opportunities of logging. Here you go:
+
+the possibility to introduce any new logger to your project without a need to change the project code at all
+
+the interface will provide some neat features which are not exist in most of the existent loggers, like these:
+
+the possibility to change the logging priority "on the fly" without any significant overhead thanks to some parse_transform and hot code reloading magic
+the possibility to change the logging priority by modules or by special tags
+So, basically, with alogger you'll be able to add any new logger to you project, you even won't have to recompile your code. You'll be able to control all your log flows from the shell or through the config file.
+
+We don't invent a wheel, there's nothing like this around!</p><h2>Dependencies</h2>
+<p>edown (git://github.com/si14/edown.git)
+parse_trans (git://github.com/esl/parse_trans.git)
+syslog (git://github.com/Vagabond/erlang-syslog.git)
+</p>
+<h2>License</h2>
+<p>Copyright (c) 2011 Siberian Fast Food
+
+The contents of this file are subject to the Erlang Public License,
+Version 1.1, (the "License"); you may not use this file except in
+compliance with the License. You should have received a copy of the
+Erlang Public License along with this software. If not, it can be
+retrieved online at http://www.erlang.org/.
+
+Software distributed under the License is distributed on an "AS IS"
+basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+the License for the specific language governing rights and limitations
+under the License.</p>
+<h2>Authors</h2>
+<p>Alexander Dergachev (alexander.dergachev@gmail.com)<br/>Artem Golovinsky (artemgolovinsky@gmail.com)<br/>Groshev Dmitry (a2alt@ya.ru)<br/>Igor Karymov (ingham.k@gmail.com)<br/><br/>      </p>
+<h2>Contact</h2>
+<p>Siberian Fast Food (lambdadmitry@google.com)<br/>      </p>
+
+
+    <h2>Download</h2>
+    <p>
+      You can download this project in either
+      <a href="http://github.com/siberian-fast-food/alogger/zipball/master">zip</a> or
+      <a href="http://github.com/siberian-fast-food/alogger/tarball/master">tar</a> formats.
+    </p>
+    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
+      by running:
+      <pre>$ git clone git://github.com/siberian-fast-food/alogger</pre>
+    </p>
+
+    <div class="footer">
+      get the source code on GitHub : <a href="http://github.com/siberian-fast-food/alogger">siberian-fast-food/alogger</a>
+    </div>
+
+  </div>
+
+  
+</body>
+</html>
