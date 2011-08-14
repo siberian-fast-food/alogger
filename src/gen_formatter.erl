@@ -23,7 +23,7 @@
 -module(gen_formatter).
 -author('alexander.dergachev@gmail.com').
 
--export([behaviour_info/1).
+-export([behaviour_info/1]).
 
 -spec behaviour_info(atom()) -> [{atom(), integer()}, ...] |
                                 undefined.
