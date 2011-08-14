@@ -54,8 +54,8 @@ load_config(Config) ->
 %%% Internal functions
 %% @private
 load_config2(NewAst) ->
-%   Source = erl_prettypr:format(erl_syntax:form_list(NewAst)),
-%   io:format("~s~n",[Source]),
+%    Source = erl_prettypr:format(erl_syntax:form_list(NewAst)),
+%    io:format("~s~n",[Source]),
     {ok, ModuleName, Bin} = compile:forms(NewAst),
     code:load_binary(ModuleName, ?IFACE_SOURCE, Bin).
 
@@ -82,10 +82,8 @@ make_proceed_ast(Config) ->
 multiply_clauses(Config) ->
     multiply_clauses(Config, def_clause()).
 multiply_clauses([FlowRec|Configs], Acc) ->
-    {What, ModTags} = FlowRec#flow.filter,
     NewAcc = make_clause(FlowRec#flow.id,
-			 What,
-			 ModTags,
+			 FlowRec#flow.filter,
 			 FlowRec#flow.priority,
 			 FlowRec#flow.loggers,
 			 FlowRec#flow.formatter,
@@ -95,13 +93,22 @@ multiply_clauses([], Acc) ->
     Acc.
 
 %% @private
-make_clause(Flow, What, [ModTag|ModTags], Prio, Loggers, Formatter, Acc)  ->
+make_clause(Flow, Filter, Prio, Loggers, Formatter, Acc) when is_tuple(Filter) ->
+    make_clause(Flow, [Filter], Prio, Loggers, Formatter, Acc);    
+make_clause(Flow, [F|Filters], Prio, Loggers, Formatter, Acc) ->
+    Acc1 = make_clause_low(Flow, F, Prio, Loggers, Formatter, Acc),
+    make_clause(Flow, Filters, Prio, Loggers, Formatter, Acc1);
+make_clause(_,[], _, _,_, Acc) ->
+    Acc.
+
+%% @private
+make_clause_low(Flow, {What, [ModTag|ModTags]}, Prio, Loggers, Formatter, Acc)  ->
     AbsLogs = [abstract({Formatter,Loggers})],
     NewClause = {clause, 0, get_arity(Flow,What,ModTag),
                  get_guard(Prio), AbsLogs},
-    make_clause(Flow, What, ModTags, Prio, Loggers, Formatter,
-                [NewClause | Acc]);
-make_clause(_,_,[], _, _,_, Acc) ->
+    make_clause_low(Flow, {What, ModTags}, Prio, Loggers, Formatter,
+		    [NewClause | Acc]);
+make_clause_low(_,{_,[]}, _, _,_, Acc) ->
     Acc.
 
 %% @private
