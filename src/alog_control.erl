@@ -22,7 +22,6 @@
 
 -module(alog_control).
 -behaviour(gen_server).
--include_lib("alog.hrl").
 
 %% API
 -export([start_link/0,
@@ -53,6 +52,9 @@
          terminate/2,
          code_change/3]).
 
+-include("alog.hrl").
+-include("alog_flow.hrl").
+
 -define(SERVER, ?MODULE).
 
 %% Default enabled loggers
@@ -61,26 +63,6 @@
 %% Default enabled flows
 %% will be used in case if alog.config doesn't exist
 -define(DEF_FLOWS_ENABLED, [{{mod, ['_']}, {'=<', debug}, [alog_tty]}]).
-
--type filter() :: {mod, atom()} | {mod, [atom()]} |
-                  {tag, atom()} | {tag, [atom()]} |
-                  {app, atom()}.
-
--type logger() :: atom().
-
--type priority() :: debug | info | notice | warning | error 
-                    | critical | alert | emergency | integer().
-
--type priority_expr() :: '<' | '>' | '=<' | '>=' | '==' | '/='.
-
--type priority_pattern() :: list({priority_expr(), priority()}) |
-                            {priority_expr(), priority()} | priority().
-
--record(flow, {id              :: non_neg_integer(),
-               filter          :: filter(),
-               priority        :: priority_pattern(),
-               loggers  = []   :: list(logger()),
-               enabled  = true :: true | {false, user} | {false, loggersOff}}).
 
 -record(config, {flows           = [] :: list(#flow{}),
                  enabled_loggers = [] :: list(logger())}).
@@ -448,11 +430,11 @@ apply_config(#config{flows = Flows}) ->
 configs_to_internal_form(Flows) ->
     ToInternaFlow =
         fun(#flow{enabled = true, filter = Filter, loggers = Loggers,
-                  priority = PriorityPattern}, Acc) ->
+                  priority = PriorityPattern} = Flow, Acc) ->
                 NewFlow =
-                    {filter_to_internal(Filter),
-                     priority_pattern_to_internal(PriorityPattern),
-                     Loggers},
+                    Flow#flow{
+                      filter   = filter_to_internal(Filter),
+                      priority = priority_pattern_to_internal(PriorityPattern)},
                 [NewFlow | Acc];
            (_DisabledFlow, Acc) -> Acc
         end,
