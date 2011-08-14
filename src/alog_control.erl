@@ -37,6 +37,7 @@
          delete_flow/1,
          delete_all_flows/0,
          add_new_flow/3,
+         add_new_flow/1,
          replace_flows/1,
          dump_to_config/1,
          add_logger/1,
@@ -120,7 +121,14 @@ delete_all_flows() ->
 -spec  add_new_flow(filter(), priority_pattern(), [logger()])
                    -> ok | {error, term()}.
 add_new_flow(Filter, Priority, Loggers) ->
-    gen_server:call(?SERVER, {add_new_flow, Filter, Priority, Loggers}).
+    ProplistConfig =
+        [{filter, Filter}, {priority, Priority}, {loggers, Loggers}],
+    add_new_flow(ProplistConfig).
+
+%% @doc Create new flow from proplist params
+-spec  add_new_flow(list()) -> ok | {error, term()}.
+add_new_flow(ProplistConfig) ->
+    gen_server:call(?SERVER, {add_new_flow, ProplistConfig}).
 
 %% @doc Replace all flows on new.
 -spec  replace_flows([#flow{}]) -> ok | {error, term()}.
@@ -218,14 +226,10 @@ do_request(print_flows, #config{flows = Flows} = Config) ->
     format_lib_supp:print_info(group_leader(), [Table]),
     {ok, Config};
 
-do_request({add_new_flow, Filter, Priority, Loggers},
+do_request({add_new_flow, ProplistConfig},
            #config{flows = Flows, enabled_loggers = EnabledLoggers} = Config) ->
-    
-    NewFlow = #flow{filter = Filter, priority = Priority,
-                    loggers = Loggers},
-
-    NewFlows = add_flow(NewFlow, Flows, EnabledLoggers),
-
+    NewFlow   = proplist_config_to_flow(ProplistConfig, #flow{}),
+    NewFlows  = add_flow(NewFlow, Flows, EnabledLoggers),
     NewConfig = Config#config{flows = NewFlows},
     new_config_if_successfully_applied(NewConfig, Config);
 
@@ -478,10 +482,32 @@ parse_flows_config(FlowsConfig) ->
                              filter   = Filter,
                              priority = Priority,
                              loggers  = Loggers},
-                {CurId + 1, [Flow | Flows]}
+                {CurId + 1, [Flow | Flows]};
+           ({Filter, Priority, Formatter, Loggers}, {CurId, Flows}) ->
+                Flow = #flow{id        = CurId,
+                             filter    = Filter,
+                             priority  = Priority,
+                             formatter = Formatter,
+                             loggers   = Loggers},
+                {CurId + 1, [Flow | Flows]};
+           (ProplistConfig, {CurId, Flows}) when is_list(ProplistConfig) ->
+                   Flow =
+                    proplist_config_to_flow(ProplistConfig, #flow{id = CurId}),
+                   {CurId + 1, [Flow | Flows]}
         end,
     {_Id, ParsedFlows} = lists:foldl(ParseFun, {1, []}, FlowsConfig),
     ParsedFlows.
+
+%% @private
+proplist_config_to_flow(ProplistConfig, OldFlow) ->
+    ParseFun =
+        fun({filter, Val},    Flow) -> Flow#flow{filter = Val};
+           ({priority, Val},  Flow) -> Flow#flow{priority = Val};
+           ({formatter, Val}, Flow) -> Flow#flow{formatter = Val};
+           ({loggers, Val},   Flow) -> Flow#flow{loggers = Val};
+           ({enabled, Val},   Flow) -> Flow#flow{enabled = Val}
+        end,
+    lists:foldl(ParseFun, OldFlow, ProplistConfig).
 
 %% @private
 dump_to_config_low(File, Flow) ->
