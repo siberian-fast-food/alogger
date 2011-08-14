@@ -44,6 +44,8 @@
 -export([critical/3, critical/2, critical/1]).
 -export([alert/3, alert/2, alert/1]).
 -export([emergency/3, emergency/2, emergency/1]).
+%% Short control api aliases
+-export([on/0, off/0, inv/0]).
 
 %%% API
 %% @doc Starts alog application
@@ -69,6 +71,13 @@ stop(_State) ->
 -spec log(nonempty_string(), list(), integer(), list(atom())) -> ok.
 log(Format, Args, Level, Tags) ->
     ?LOGMOD:?LOGFUN(Format, Args, Level, Tags, runtime, 0, self()).
+
+%% @doc stop logging on all flows, without any change flows values.
+off() -> alog_control:power_off().
+%% @doc inverse operation to off.
+on()  -> alog_control:power_on().
+%% @doc inverse current state from on to off and vice versa.
+inv() -> alog_control:power_invers().
 
 %%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

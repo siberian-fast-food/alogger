@@ -28,6 +28,8 @@
 -export([start_link/0,
          init_loggers/0]).
 
+-export([power_on/0, power_off/0, power_inverse/0]).
+
 -export([print_flows/0,
          get_flows/0,
          set_flow_priority/2,
@@ -83,8 +85,17 @@
                enabled  = true :: true | {false, user} | {false, loggersOff}}).
 
 -record(config, {flows           = [] :: list(#flow{}),
-                 enabled_loggers = [] :: list(logger())}).
+                 enabled_loggers = [] :: list(logger()),
+                 power           = on :: on | off}).
 
+power_on() ->
+    gen_server:call(?SERVER, {set_power, on}).
+
+power_off() ->
+    gen_server:call(?SERVER, {set_power, off}).
+
+power_inverse() ->
+    gen_server:call(?SERVER, power_inverse).
 
 %% @doc Return all flows.
 -spec get_flows() -> {ok, [#flow{}]} | {error, term()}.
@@ -224,16 +235,32 @@ do_request(init_loggers, #config{enabled_loggers = EnabledLoggers} = Config) ->
 
     {ok, Config};
 
+do_request(power_inverse, #config{power = Power} = Config) ->
+    NewPower = case Power of
+                   on  -> off;
+                   off -> on
+               end,
+    NewConfig = Config#config{power = NewPower},
+    new_config_if_successfully_applied(NewConfig, Config);
+    
+do_request({set_power, Val}, #config{} = Config) ->
+    NewConfig = Config#config{power = Val},
+    new_config_if_successfully_applied(NewConfig, Config);
+
 do_request(get_flows, #config{flows = Flows} = Config) ->
     {{ok, Flows}, Config};
 
-do_request(print_flows, #config{flows = Flows} = Config) ->
-    Table = {table, {flows, list_to_tuple(record_info(fields, flow)),
-                     [begin
-                          [_ | NF] = tuple_to_list(F),
-                          list_to_tuple(NF)
-                      end || F <- Flows]}},
-    format_lib_supp:print_info(group_leader(), [Table]),
+do_request(print_flows, #config{flows = Flows, power = Power} = Config) ->
+    Header = case Power of
+                 off -> {header, "ATTENTION: POWER OFF"};
+                 on  -> {header, "POWER ON"}
+             end,
+    Table  = {table, {flows, list_to_tuple(record_info(fields, flow)),
+                      [begin
+                           [_ | NF] = tuple_to_list(F),
+                           list_to_tuple(NF)
+                       end || F <- Flows]}},
+    format_lib_supp:print_info(group_leader(), [Header, Table]),
     {ok, Config};
 
 do_request({add_new_flow, Filter, Priority, Loggers},
@@ -441,6 +468,8 @@ new_config_if_successfully_applied(NewConfig, OldConfig) ->
     end.
 
 %% @private
+apply_config(#config{power = off}) ->
+    alog_parse_trans:load_config([]);
 apply_config(#config{flows = Flows}) ->
     alog_parse_trans:load_config(configs_to_internal_form(Flows)).
 
