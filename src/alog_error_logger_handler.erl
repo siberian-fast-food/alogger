@@ -73,12 +73,12 @@ terminate(_Args, _State) ->
 process_event(Event = {ReportType, _, _}) ->
     ALoggerPrio = map_prio(ReportType),
     alog_if:log(Event,             %% this is a special case of
-		[],                %% call alog_if:log.
-		ALoggerPrio,       %% As FormatString we pass
-		?ERROR_LOGGER_TAG, %% the error_logger event.
-		"",                %% As Tag we pass a special
-		"",                %% tag '$error_logger' which
-		""),               %% will be understood by the
+                [],                %% call alog_if:log.
+                ALoggerPrio,       %% As FormatString we pass
+                ?ERROR_LOGGER_TAG, %% the error_logger event.
+                "",                %% As Tag we pass a special
+                "",                %% tag '$error_logger' which
+                ""),               %% will be understood by the
     ok.                            %% default formatter. The
                                    %% priority is mapped to the
                                    %% appropriate values. All

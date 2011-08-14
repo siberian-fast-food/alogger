@@ -24,10 +24,10 @@
 -behaviour(gen_alog).
 -include_lib("alog.hrl").
 
+%% gen_alog callbacks
 -export([start/1,
          stop/1,
-         log/2,
-         format/8]).
+         log/2]).
 
 -define(DEF_IDENT, "alogger").
 -define(DEF_LOGOPT, [cons, perror, pid]).
@@ -55,14 +55,6 @@ log(ALoggerPrio, Msg) ->
     SyslogPrio = map_prio(ALoggerPrio),
     syslog:log(SyslogPrio, Msg),
     ok.
-
-%% @doc returns formated log message
--spec format(string(), [term()], integer(), list(),
-             atom(), integer(), pid(),
-             {non_neg_integer(), non_neg_integer(), non_neg_integer()}) -> iolist().
-format(FormatString, Args, Level, Tag, Module, Line, Pid, TimeStamp) ->
-    alog_common_formatter:format(FormatString, Args, Level,
-                                Tag, Module, Line, Pid, TimeStamp).
 
 %%% internal functions
 %% @doc maps alogger priorities to syslog priorities

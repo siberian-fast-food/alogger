@@ -1,6 +1,6 @@
 %% @doc
 %% Easy logger that logs messages to console (maiking io:format).
-%% All functions in this logger are just gen_alogger callbacks, so they
+%% All functions in this logger are just gen_alog callbacks, so they
 %% are private.
 %% @end
 %% ----------------------------------------------------------------------
@@ -25,11 +25,10 @@
 -module(alog_tty).
 -behaviour(gen_alog).
 
-%% gen_alogger callbacks
+%% gen_alog callbacks
 -export([start/1,
          stop/1,
-         log/2,
-         format/8]).
+         log/2]).
 
 %% @private
 -spec start(list()) -> ok.
@@ -50,12 +49,3 @@ log(_ALoggerPrio, Msg) ->
         _ ->
             ok
     end.
-
-%% @private
--spec format(string(), [term()], integer(), list(),
-             atom(), integer(), pid(),
-             {non_neg_integer(), non_neg_integer(), non_neg_integer()})
-            -> iolist().
-format(FormatString, Args, Level, Tag, Module, Line, Pid, TimeStamp) ->
-    alog_common_formatter:format(FormatString, Args, Level,
-                                Tag, Module, Line, Pid, TimeStamp).

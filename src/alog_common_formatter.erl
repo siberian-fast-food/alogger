@@ -23,12 +23,11 @@
 %% ----------------------------------------------------------------------
 
 -module(alog_common_formatter).
+-behaviour(gen_formatter).
+-include_lib("alog.hrl").
 
+%% gen_formatter callbacks
 -export([format/8]).
-
--compile(export_all).
-
--include("alog.hrl").
 
 %% default log message format: module:line [pid]->[tag]: user message
 -define(LOG_MSG_FORMAT, "~s~p:~p:~s [~p]->[~p]: ~s~n").

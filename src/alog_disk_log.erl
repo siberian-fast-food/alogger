@@ -30,8 +30,7 @@
 %% gen_alog callbacks
 -export([start/1,
          stop/1,
-         log/2,
-         format/8]).
+         log/2]).
 %% gen_server callbacks
 -export([init/1,
          handle_call/3,
@@ -111,15 +110,6 @@ stop(_) ->
 log(_ALoggerPrio, Msg) ->
   gen_server:cast(?MODULE, {log, "", Msg}),
   ok.
-
-%% @private
-%% @doc returns formated log message
--spec format(string(), [term()], integer(), list(),
-             atom(), integer(), pid(),
-             {non_neg_integer(), non_neg_integer(), non_neg_integer()}) -> iolist().
-format(FormatString, Args, Level, Tag, Module, Line, Pid, TimeStamp) ->
-  alog_common_formatter:format(FormatString, Args, Level,
-                               Tag, Module, Line, Pid, TimeStamp).
 
 %%% gen_server callbacks
 %% @private
