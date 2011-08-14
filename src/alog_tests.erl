@@ -65,9 +65,14 @@ install_test_logger_iface() ->
     ok = alog_control:delete_all_flows(),
     MaxPr = get_max_priotity(),
     ok = alog_control:add_logger(alog_test_logger_iface),
-    ok = alog_control:add_new_flow({mod,[?MODULE]}, {'=<', MaxPr},
-                                   [alog_test_logger_iface]),
-
+    ok = alog_control:add_new_flow(
+           [
+            {filter,    {mod, [?MODULE]}},
+            {priority,  {'=<', MaxPr}},
+            {loggers,   [alog_test_logger_iface]},
+            {formatter, alog_test_formatter},
+            {enabled,   true}
+           ]),
     #setup_state{backup_flows = BackupFlows}.
 
 remove_test_logger_iface(#setup_state{backup_flows = BackupFlows}) ->
