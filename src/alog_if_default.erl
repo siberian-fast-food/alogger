@@ -26,12 +26,13 @@
 -compile([{parse_transform, alog_parse_trans}, nowarn_unused_vars]).
 -include("alog.hrl").
 -export([log/7,
+	 log_lazy/7,
          default_mod_ast/0,
          default_modlogs_ast/0]).
 
-%% @doc Will return list of loggers for module/tag
+%% @doc Will return list of {Formatter,loggers} for module/tag
 get_mod_logs(_, _, _, _) -> 
-    [].
+    {ok,[]}.
 
 %% @doc Main logging function
 log(Format, Args, Level, Tags, Module, Line, Pid)
@@ -42,19 +43,43 @@ log(Format, Args, Level, Tags, Module, Line, Pid)
 log(Format, Args, Level, Tag, Module, Line, Pid) ->
     to_log(Format, Args, Level, Tag,  Module, Line, Pid, now(), get_loggers(Level, Module, Tag)).    
 
+%% @doc Helpful log function
+to_log(Format, Args, Level, Tag,  Module, Line, Pid, Time, [{_, []}|TailLoggers]) ->
+    to_log(Format, Args, Level, Tag,  Module, Line, Pid, Time, TailLoggers);
+
+to_log(Format, Args, Level, Tag,  Module, Line, Pid, Time, [{Formatter, Loggers}|TailLoggers]) ->
+    Formatted = Formatter:format(Format, Args, Level, Tag, Module, Line, Pid, Time),
+    [Logger:log(Level, Formatted)  || Logger <- Loggers],
+    to_log(Format, Args, Level, Tag,  Module, Line, Pid, Time, TailLoggers);    
+
+to_log(_, _, _, _, _, _, _, _, []) ->
+    ok.
+
+%% @doc Helpful "lazy" log function. Fun from args will be executed.
+%%      expensive operation 
+log_lazy(Format, Args, Level, Tag, Module, Line, Pid) ->
+    to_log_lazy(Format, Args, Level, Tag,  Module, Line, Pid, now(), get_loggers(Level, Module, Tag)).
+
+to_log_lazy(Format, Args, Level, Tag,  Module, Line, Pid, Time, [{_, []}|TailLoggers]) ->
+    to_log_lazy(Format, Args, Level, Tag,  Module, Line, Pid, Time, TailLoggers);
+
+to_log_lazy(Format, Args, Level, Tag,  Module, Line, Pid, Time, [{Formatter, Loggers}|TailLoggers]) ->
+    DecFun = fun(MyFun) when is_function(MyFun) ->
+		     MyFun();
+		(Variable) ->
+		     Variable
+	      end,
+    Formatted = Formatter:format(Format, [DecFun(F) || F <- Args], 
+				 Level, Tag, Module, Line, Pid, Time),
+    [Logger:log(Level, Formatted)  || Logger <- Loggers],
+    to_log_lazy(Format, Args, Level, Tag,  Module, Line, Pid, Time, TailLoggers);
+    
+to_log_lazy(_, _, _, _, _, _, _, _, []) ->
+    ok.
+
 %% @doc Get all loggers as list of lists 
 get_loggers(Level, Module, Tag) ->
     [get_mod_logs(Flow, Level, Module, Tag) || Flow <- flows()].
-
-%% @doc Helpful log function
-to_log(Format, Args, Level, Tag,  Module, Line, Pid, Time, [Mods|TailMods]) ->
-    [begin
-	 Formatted = Mod:format(Format, Args, Level, Tag, Module, Line, Pid, Time),
-	 Mod:log(Level, Formatted)
-     end || Mod <- Mods],
-    to_log(Format, Args, Level, Tag,  Module, Line, Pid, Time, TailMods);    
-to_log(_, _, _, _, _, _, _, _, []) ->
-    ok.
 
 %% @doc Return list of flows, which should be logged
 flows() ->
