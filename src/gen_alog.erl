@@ -30,9 +30,9 @@
 -spec behaviour_info(atom()) -> [{atom(), integer()}, ...] |
                                 undefined.
 behaviour_info(callbacks) ->
-    [{start, 1},
-     {stop, 1},
-     {log, 2},
+    [{start, 2},
+     {stop, 2},
+     {log, 3},
      {format, 8}];
 behaviour_info(_) ->
     undefined.

@@ -24,9 +24,9 @@
 -behaviour(gen_alog).
 -include_lib("alog.hrl").
 
--export([start/1,
-         stop/1,
-         log/2,
+-export([start/2,
+         stop/2,
+         log/3,
          format/8]).
 
 -define(DEF_IDENT, "alogger").
@@ -35,8 +35,8 @@
 
 %% @doc starts syslog driver and opens log with predefined
 %%      configuration
--spec start(list()) -> ok.
-start(Opts) ->
+-spec start(atom(), list()) -> ok.
+start(_Name, Opts) ->
     Ident = gen_alog:get_opt(ident, Opts, ?DEF_IDENT),
     Logopt = gen_alog:get_opt(logopt, Opts, ?DEF_LOGOPT),
     Facility = gen_alog:get_opt(facility, Opts, ?DEF_FACILITY),
@@ -45,13 +45,13 @@ start(Opts) ->
     ok.
 
 %% @doc
--spec stop(list()) -> ok.
-stop(_) ->
+-spec stop(atom(), list()) -> ok.
+stop(_Name, _) ->
     ok.
 
 %% @doc logs message Msg with apropriate priority
--spec log(integer(), string()) -> ok.
-log(ALoggerPrio, Msg) ->
+-spec log(atom(), integer(), string()) -> ok.
+log(_Name, ALoggerPrio, Msg) ->
     SyslogPrio = map_prio(ALoggerPrio),
     syslog:log(SyslogPrio, Msg),
     ok.

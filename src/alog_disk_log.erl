@@ -26,11 +26,11 @@
 -include_lib("alog.hrl").
 
 %% API
--export([start_link/1]).
+-export([start_link/2]).
 %% gen_alog callbacks
--export([start/1,
-         stop/1,
-         log/2,
+-export([start/2,
+         stop/2,
+         log/3,
          format/8]).
 %% gen_server callbacks
 -export([init/1,
@@ -89,27 +89,27 @@
 
 %%% API
 %% @doc Starts logger
--spec start_link(list()) -> pid().
-start_link(Opts) ->
-  gen_server:start_link({local, ?MODULE}, ?MODULE, [Opts], []).
+-spec start_link(atom(), list()) -> pid().
+start_link(Name, Opts) ->
+  gen_server:start_link({local, Name}, ?MODULE, [Opts], []).
 
 %%% gen_alog callbacks
 %% @private
--spec start(list()) -> ok.
-start(Opts) ->
+-spec start(atom(), list()) -> ok.
+start(Name, Opts) ->
   SupRef = gen_alog:get_opt(sup_ref, Opts, ?DEF_SUP_REF),
-  attach_to_supervisor(SupRef, Opts),
+  attach_to_supervisor(SupRef, Name, Opts),
   ok.
 
 %% @private
--spec stop(list()) -> ok.
-stop(_) ->
-  gen_server:call(?MODULE, stop).
+-spec stop(atom(), list()) -> ok.
+stop(Name, _) ->
+  gen_server:call(Name, stop).
 
 %% @private
--spec log(integer(), string()) -> ok.
-log(_ALoggerPrio, Msg) ->
-  gen_server:cast(?MODULE, {log, "", Msg}),
+-spec log(atom(), integer(), string()) -> ok.
+log(Name, _ALoggerPrio, Msg) ->
+  gen_server:cast(Name, {log, "", Msg}),
   ok.
 
 %% @private
@@ -159,11 +159,11 @@ code_change(_OldVsn, State, _Extra) ->
 
 %%% Internal functions
 %% @private
-attach_to_supervisor(SupRef, Opts) ->
+attach_to_supervisor(SupRef, Name, Opts) ->
   Restart = permanent,
   Shutdown = 2000,
-  ChildSpec = {?MODULE,
-               {?MODULE, start_link, [Opts]},
+  ChildSpec = {Name,
+               {?MODULE, start_link, [Name, Opts]},
                Restart,
                Shutdown,
                worker,

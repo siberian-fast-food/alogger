@@ -153,15 +153,15 @@ check_config([]) ->
 
 %% @private
 %% @doc Checks if modules are loaded
-is_loaded(Prio, AllMods) ->
-    Loaded = lists:filter(fun(Elem) ->
-                                  case code:ensure_loaded(Elem) of
+is_loaded(Prio, Loggers) ->
+    Loaded = lists:filter(fun({_LogName, LogMod}) ->
+                                  case code:ensure_loaded(LogMod) of
                                       {module, _} ->
                                           false;
                                       {error, _} ->
                                           true
                                   end
-                          end, AllMods),
+                          end, Loggers),
     case Loaded of
         [] ->
             check_prio(Prio) ;

@@ -59,16 +59,16 @@
 
 %% Default enabled loggers
 %% will be used in case if alog.config doesn't exist
--define(DEF_LOGGERS_ENABLED, [alog_tty]).
+-define(DEF_LOGGERS_ENABLED, [{alog_tty, alog_tty}]).
 %% Default enabled flows
 %% will be used in case if alog.config doesn't exist
--define(DEF_FLOWS_ENABLED, [{{mod, ['_']}, {'=<', debug}, [alog_tty]}]).
+-define(DEF_FLOWS_ENABLED, [{{mod, ['_']}, {'=<', debug}, [{alog_tty, alog_tty}]}]).
 
 -type filter() :: {mod, atom()} | {mod, [atom()]} |
                   {tag, atom()} | {tag, [atom()]} |
                   {app, atom()}.
 
--type logger() :: atom().
+-type logger() :: {atom(), atom()}.
 
 -type priority() :: debug | info | notice | warning | error 
                     | critical | alert | emergency | integer().
@@ -424,16 +424,16 @@ replace_loggers(NewLoggers, OldLoggers, #config{flows = Flows} = Config) ->
 
 start_loggers(Loggers) ->
     [begin
-         LoggerConfig = alog_config:get_conf(Logger, []),
-         ok = Logger:start([{sup_ref, alog_sup} | LoggerConfig])
-     end || Logger <- Loggers],
+         LoggerConfig = alog_config:get_conf(LogName, []),
+         ok = LogMod:start(LogName, [{sup_ref, alog_sup} | LoggerConfig])
+     end || {LogName, LogMod} <- Loggers],
     ok.
 
 stop_loggers(Loggers) ->
     [begin
-         LoggerConfig = alog_config:get_conf(Logger, []),
-         ok = Logger:stop([{sup_ref, alog_sup} | LoggerConfig])
-     end  || Logger <- Loggers],
+         LoggerConfig = alog_config:get_conf(LogName, []),
+         ok = LogMod:stop(LogName, [{sup_ref, alog_sup} | LoggerConfig])
+     end  || {LogName, LogMod} <- Loggers],
     ok.
 
 %% @private

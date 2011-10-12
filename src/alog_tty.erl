@@ -26,24 +26,24 @@
 -behaviour(gen_alog).
 
 %% gen_alogger callbacks
--export([start/1,
-         stop/1,
-         log/2,
+-export([start/2,
+         stop/2,
+         log/3,
          format/8]).
 
 %% @private
--spec start(list()) -> ok.
-start(_) ->
+-spec start(atom(), list()) -> ok.
+start(_Name, _) ->
     ok.
 
 %% @private
--spec stop(list()) -> ok.
-stop(_) ->
+-spec stop(atom(), list()) -> ok.
+stop(_Name, _) ->
     ok.
 
 %% @private
--spec log(integer(), string()) -> ok.
-log(_ALoggerPrio, Msg) ->
+-spec log(atom(), integer(), string()) -> ok.
+log(_Name, _ALoggerPrio, Msg) ->
     case node(group_leader()) =:= node() of
         true ->
             io:format("~s", [Msg]);

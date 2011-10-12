@@ -70,15 +70,15 @@ install_test_logger_iface() ->
     {ok, BackupFlows} = alog_control:get_flows(),
     ok = alog_control:delete_all_flows(),
     MaxPr = get_max_priotity(),
-    ok = alog_control:add_logger(alog_test_logger_iface),
+    ok = alog_control:add_logger({alog_test_logger_iface, alog_test_logger_iface}),
     ok = alog_control:add_new_flow({mod,[?MODULE]}, {'=<', MaxPr},
-                                   [alog_test_logger_iface]),
+                                   [{alog_test_logger_iface, alog_test_logger_iface}]),
 
     #setup_state{backup_flows = BackupFlows}.
 
 remove_test_logger_iface(#setup_state{backup_flows = BackupFlows}) ->
     ok = alog_control:replace_flows(BackupFlows),
-    ok = alog_control:delete_logger(alog_test_logger_iface),
+    ok = alog_control:delete_logger({alog_test_logger_iface, alog_test_logger_iface}),
     alog:stop(),
     application:stop(sasl),
     ok.
