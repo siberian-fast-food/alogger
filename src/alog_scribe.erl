@@ -32,7 +32,8 @@
 -export([start/2,
          stop/2,
          log/3,
-         format/8]).
+         format/8,
+         reload/1]).
 %% gen_server callbacks
 -export([init/1,
          handle_call/3,
@@ -85,6 +86,10 @@ format(FormatString, Args, Level, Tag, Module, Line, Pid, TimeStamp) ->
     Msg = alog_common_formatter:format(FormatString, Args, Level,
                                        Tag, Module, Line, Pid, TimeStamp),
     lists:flatten(Msg).
+
+-spec reload(atom()) -> ok.
+reload(_Name) ->
+    ok.
 
 
 %%% gen_server callbacks

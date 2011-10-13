@@ -45,7 +45,8 @@
          add_logger/1,
          delete_logger/1,
          replace_loggers/1,
-         get_loggers/0]).
+         get_loggers/0,
+         reload/0]).
 
 %% gen_server callbacks
 -export([init/1,
@@ -179,6 +180,14 @@ replace_loggers(Loggers) ->
 -spec get_loggers() -> {ok, [logger()]}.
 get_loggers() ->
     gen_server:call(?SERVER, get_loggers).
+
+-spec reload() -> ok.
+reload() ->
+    {ok, Loggers} = get_loggers(),
+    lists:foreach(fun({LogName, LogMod}) ->
+                      LogMod:reload(LogName)
+                  end, Loggers),
+    ok.
 
 %% @private
 init_loggers() ->

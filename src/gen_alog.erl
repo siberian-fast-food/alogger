@@ -34,7 +34,8 @@ behaviour_info(callbacks) ->
     [{start, 2},
      {stop, 2},
      {log, 3},
-     {format, 8}];
+     {format, 8},
+     {reload, 1}];
 behaviour_info(_) ->
     undefined.
 

@@ -27,7 +27,8 @@
 -export([start/2,
          stop/2,
          log/3,
-         format/8]).
+         format/8,
+         reload/1]).
 
 -define(DEF_IDENT, "alogger").
 -define(DEF_LOGOPT, [cons, perror, pid]).
@@ -63,6 +64,10 @@ log(_Name, ALoggerPrio, Msg) ->
 format(FormatString, Args, Level, Tag, Module, Line, Pid, TimeStamp) ->
     alog_common_formatter:format(FormatString, Args, Level,
                                 Tag, Module, Line, Pid, TimeStamp).
+
+-spec reload(atom()) -> ok.
+reload(_Name) ->
+    ok.
 
 %%% internal functions
 %% @doc maps alogger priorities to syslog priorities

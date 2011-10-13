@@ -31,7 +31,8 @@
 -export([start/2,
          stop/2,
          log/3,
-         format/8]).
+         format/8,
+         reload/1]).
 %% gen_server callbacks
 -export([init/1,
          handle_call/3,
@@ -42,6 +43,7 @@
 
 -record(state, { log_ref
                , log_fun
+               , opts
                }).
 
 -define(DEF_SUP_REF, alog_sup).
@@ -122,17 +124,27 @@ format(FormatString, Args, Level, Tag, Module, Line, Pid, TimeStamp) ->
   alog_common_formatter:format(FormatString, Args, Level,
                                Tag, Module, Line, Pid, TimeStamp).
 
+-spec reload(atom()) -> ok.
+reload(Name) ->
+    gen_server:call(Name, reload).
+
 %%% gen_server callbacks
 %% @private
 init([Opts]) ->
   Args  = get_args(Opts),
   State = open_logs(Args),
-  {ok, State}.
+  {ok, State#state{opts = Opts}}.
 
 %% @private
+handle_call(reload, _From, #state{log_ref = LogRef, opts = Opts}) ->
+  disk_log:sync(LogRef),
+  disk_log:close(LogRef),
+  Args  = get_args(Opts),
+  State = open_logs(Args),
+  {reply, ok, State#state{opts = Opts}};
 handle_call(stop, _From, #state{log_ref = LogRef} = State) ->
   disk_log:sync(LogRef),
-  disk_log:stop(LogRef),
+  disk_log:close(LogRef),
   {stop, normal, ok, State};
 handle_call(_Msg, _From, State) ->
   {reply, ok, State}.

@@ -27,7 +27,8 @@
 -export([start/2,
          stop/2,
          log/3,
-         format/8]).
+         format/8,
+         reload/1]).
 
 %% @private
 start(_Name, _) -> ok.
@@ -39,6 +40,8 @@ stop(_Name, _)  -> ok.
 format(_FormatString, [RequestRef], Level, Tag, Module, Line, Pid, _Timestamp) ->
     Pid ! {format, RequestRef, Level, Tag, Module, Line, Pid},
     {RequestRef, Level, Tag, Module, Line, Pid}.
+
+reload(_Name) -> ok.
 
 %% @private
 log(_Name, Level, {RequestRef, Level, Tag, Module, Line, Pid}) ->
