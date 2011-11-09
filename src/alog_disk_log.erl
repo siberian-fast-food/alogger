@@ -184,11 +184,12 @@ open_logs({DLArgs, ADLArgs}) ->
   Format = gen_alog:get_opt(?FORMAT_ARG, DLArgs , ?FORMAT_DEF),
   Sync   = gen_alog:get_opt(?SYNC_ARG  , ADLArgs, ?SYNC_DEF),
   LogFun = get_log_fun(Format, Sync, ?LOG_FUNS),
+  State = #state{log_fun = LogFun},
   case disk_log:open(DLArgs) of
     {ok, LogRef} ->
-      #state{ log_ref = LogRef
-            , log_fun = LogFun
-            };
+      State#state{ log_ref = LogRef};
+    {repaired, LogRef, _recovered, _badbytes} ->
+      State#state{ log_ref = LogRef};
     Error ->
       throw(Error)
   end.
