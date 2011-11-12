@@ -56,7 +56,13 @@ base_test_() ->
                    [?assertEqual(error, priority_work(P)) || P <- GreatPriority],
                    LowPriority = get_low_priorities(CP),
                    [?assertEqual(ok, priority_work(P)) || P <- [CP | LowPriority]]
-               end || CP <- ?all_priorities])}]}.
+               end || CP <- ?all_priorities])},
+     {"not_for filter",
+      ?_test(begin
+		 ok = set_max_priority(),
+		 ok = set_not_for_filter(),
+		 [?assertEqual(error, priority_work(P)) || P <- ?all_priorities]
+	     end)}]}.
 
 install_test_logger_iface() ->
     ok = application:start(sasl),
@@ -88,6 +94,14 @@ set_max_priority() -> set_priority(get_max_priotity()).
 set_priority(P) ->
     ok = alog_control:set_flow_priority(1, {'=<', P}),
     ok.
+
+set_not_for_filter() ->
+    ok = set_filter({mod,[{'_', not_for,[?MODULE]}]}),
+    ok.
+
+set_filter(F) ->
+    ok = alog_control:set_flow_filter(1, F),
+    ok.   
 
 priority_work(?debug)   ->
     Ref = make_ref(),

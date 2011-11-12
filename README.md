@@ -125,7 +125,7 @@ alogger can be configured to write different flows (or streams of log messages) 
 
 * TagList is list of tags, Every tag is atom. If you set tag as filter, printouts with pointed tags is sent to loggers. Name of modules are  no matter in this case.
 
-* ModList is list of modules which should be logged to loggers. Tags are no matter.
+* ModList is list of modules which should be logged to loggers. Tags are no matter. When ModList is set to ['\_'] log message from any module will be printed. Also you can set exceptions using [{'\_', not_for, ExModList}] where ExModList is list of modules which should not be logged.  
 
 
 
