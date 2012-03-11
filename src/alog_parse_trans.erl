@@ -134,15 +134,15 @@ insert_flowlist_every(Any, _FlowList) ->
 
 %% @private
 %% @doc checks config.
-check_config([{{mod, _},Prio, Loggers}|Configs]) ->
-    case is_loaded(Prio, Loggers) of
+check_config([{{mod, _},Prio, FullLoggers}|Configs]) ->
+    case is_loaded(Prio, FullLoggers) of
 	ok ->
 	    check_config(Configs);
 	Other ->
 	    Other
     end;
-check_config([{{tag,_},Prio, Loggers}|Configs]) ->
-    case is_loaded(Prio, Loggers) of
+check_config([{{tag,_},Prio, FullLoggers}|Configs]) ->
+    case is_loaded(Prio, FullLoggers) of
 	ok ->
 	    check_config(Configs);
 	Other ->
@@ -153,15 +153,15 @@ check_config([]) ->
 
 %% @private
 %% @doc Checks if modules are loaded
-is_loaded(Prio, Loggers) ->
-    Loaded = lists:filter(fun({_LogName, LogMod}) ->
+is_loaded(Prio, FullLoggers) ->
+    Loaded = lists:filter(fun({{_LogName, LogMod}, _Format}) ->
                                   case code:ensure_loaded(LogMod) of
                                       {module, _} ->
                                           false;
                                       {error, _} ->
                                           true
                                   end
-                          end, Loggers),
+                          end, FullLoggers),
     case Loaded of
         [] ->
             check_prio(Prio) ;

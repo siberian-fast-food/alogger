@@ -47,11 +47,11 @@ get_loggers(Level, Module, Tag) ->
     [get_mod_logs(Flow, Level, Module, Tag) || Flow <- flows()].
 
 %% @doc Helpful log function
-to_log(Format, Args, Level, Tag, Module, Line, Pid, Time, [Loggers | TailLoggers]) ->
+to_log(Format, Args, Level, Tag, Module, Line, Pid, Time, [FullLoggers | TailLoggers]) ->
     [begin
-	 Formatted = LogMod:format(Format, Args, Level, Tag, Module, Line, Pid, Time),
-	 LogMod:log(LogName, Level, Formatted)
-     end || {LogName, LogMod} <- Loggers],
+         Formatted = Formatter:format(Format, Args, Level, Tag, Module, Line, Pid, Time),
+         LogMod:log(LogName, Level, Formatted)
+     end || {{LogName, LogMod}, Formatter} <- FullLoggers],
     to_log(Format, Args, Level, Tag,  Module, Line, Pid, Time, TailLoggers);
 to_log(_, _, _, _, _, _, _, _, []) ->
     ok.

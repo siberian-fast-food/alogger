@@ -72,7 +72,7 @@ install_test_logger_iface() ->
     MaxPr = get_max_priotity(),
     ok = alog_control:add_logger({alog_test_logger_iface, alog_test_logger_iface}),
     ok = alog_control:add_new_flow({mod,[?MODULE]}, {'=<', MaxPr},
-                                   [{alog_test_logger_iface, alog_test_logger_iface}]),
+                                   [{{alog_test_logger_iface, alog_test_logger_iface}, alog_common_formatter}]),
 
     #setup_state{backup_flows = BackupFlows}.
 
