@@ -24,6 +24,7 @@
 -behaviour(gen_alog).
 -behaviour(gen_server).
 -include_lib("alog.hrl").
+-include_lib("kernel/include/file.hrl").
 
 %% API
 -export([start_link/2]).
@@ -44,9 +45,14 @@
 -record(state, { log_ref
                , log_fun
                , opts
+               , name
+               , inode
+               , timer
                }).
 
 -define(DEF_SUP_REF, alog_sup).
+
+-define(CHECK_INTERVAL, 600000).
 
 %% pre-defined key of 'format' option
 -define(FORMAT_ARG, format).
@@ -132,19 +138,28 @@ reload(Name) ->
 %% @private
 init([Opts]) ->
   Args  = get_args(Opts),
-  State = open_logs(Args),
-  {ok, State#state{opts = Opts}}.
+  {LogRef, LogFun} = open_logs(Args),
+  Name = get_name(Args),
+  Inode = get_inode(Name),
+  Timer = erlang:start_timer(?CHECK_INTERVAL, self(), timeout),
+  {ok, #state{log_ref = LogRef,
+              log_fun = LogFun,
+              opts = Opts,
+              name = Name,
+              inode = Inode,
+              timer = Timer}}.
 
 %% @private
-handle_call(reload, _From, #state{log_ref = LogRef, opts = Opts}) ->
-  disk_log:sync(LogRef),
-  disk_log:close(LogRef),
+handle_call(reload, _From, #state{log_ref = LogRef, opts = Opts, name = Name, timer = TimerRef} = State) ->
+  erlang:cancel_timer(TimerRef),
+  safe_close(LogRef),
   Args  = get_args(Opts),
-  State = open_logs(Args),
-  {reply, ok, State#state{opts = Opts}};
+  {LogRef1, LogFun1} = open_logs(Args),
+  Inode = get_inode(Name),
+  Timer = erlang:start_timer(?CHECK_INTERVAL, self(), timeout),
+  {reply, ok, State#state{log_ref = LogRef1, log_fun = LogFun1, inode = Inode, timer = Timer}};
 handle_call(stop, _From, #state{log_ref = LogRef} = State) ->
-  disk_log:sync(LogRef),
-  disk_log:close(LogRef),
+  safe_close(LogRef),
   {stop, normal, ok, State};
 handle_call(_Msg, _From, State) ->
   {reply, ok, State}.
@@ -159,6 +174,24 @@ handle_cast(_Msg, State) ->
   {noreply, State}.
 
 %% @private
+handle_info({timeout, TimerRef, _}, #state{timer = TimerRef,
+                                           log_ref = LogRef,
+                                           opts = Opts,
+                                           name = Name,
+                                           inode = Inode} = State) ->
+  NewState =
+    case get_inode(Name) of
+      Inode ->
+        State;
+      _ ->
+        safe_close(LogRef),
+        Args  = get_args(Opts),
+        {LogRef1, LogFun1} = open_logs(Args),
+        NewInode = get_inode(Name),
+        State#state{log_ref = LogRef1, log_fun = LogFun1, inode = NewInode}
+    end,
+  NewTimer = erlang:start_timer(?CHECK_INTERVAL, self(), timeout),
+  {noreply, NewState#state{timer = NewTimer}};
 handle_info(_Msg, StateData) ->
   {noreply, StateData}.
 
@@ -197,12 +230,11 @@ open_logs({DLArgs, ADLArgs}) ->
   Format = gen_alog:get_opt(?FORMAT_ARG, DLArgs , ?FORMAT_DEF),
   Sync   = gen_alog:get_opt(?SYNC_ARG  , ADLArgs, ?SYNC_DEF),
   LogFun = get_log_fun(Format, Sync, ?LOG_FUNS),
-  State = #state{log_fun = LogFun},
   case disk_log:open(DLArgs) of
     {ok, LogRef} ->
-      State#state{ log_ref = LogRef};
+      {LogRef, LogFun};
     {repaired, LogRef, _recovered, _badbytes} ->
-      State#state{ log_ref = LogRef};
+      {LogRef, LogFun};
     Error ->
       throw(Error)
   end.
@@ -212,3 +244,21 @@ get_log_fun(Format, Sync, [{Format, Sync, Fun} | _])->
   Fun;
 get_log_fun(Format, Sync, [_| T]) ->
   get_log_fun(Format, Sync, T).
+
+
+get_name({DLArgs, _ADLArgs}) ->
+  {file, Name} = proplists:lookup(file, DLArgs),
+  Name.
+
+get_inode(Name) ->
+  case file:read_file_info(Name) of
+    {ok, Info} ->
+      Info#file_info.inode;
+    _ ->
+      undefined
+  end.
+
+safe_close(LogRef) ->
+  disk_log:sync(LogRef),
+  disk_log:close(LogRef).
+
