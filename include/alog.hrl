@@ -34,6 +34,8 @@
 -define(LOGFUN, log).
 -define(LOG(Format, Args, Level, Tags),
         ?LOGMOD:?LOGFUN(Format, Args, Level, Tags, ?MODULE, ?LINE, self())).
+-define(LOG(Format, Args, Level, Tags, IDFun),
+        ?LOGMOD:?LOGFUN(Format, Args, Level, Tags, ?MODULE, ?LINE, IDFun())).
 
 -define(DBG(Format, Args, Tag), ?LOG(Format, Args, ?debug, Tag)).
 -define(DBG(Format, Args),      ?DBG(Format, Args, [])).
