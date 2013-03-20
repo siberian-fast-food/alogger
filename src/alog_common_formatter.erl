@@ -57,7 +57,7 @@ format(FormatString, Args, Level, Tag, Module, Line, Pid, TimeStamp) ->
 -spec format_timestamp({non_neg_integer(), non_neg_integer(), non_neg_integer()}) -> iolist().
 format_timestamp({_MegaSecs, _Secs, MicroSec} = NowTime) ->
     {{Y, M, D}, {H, Mi, S}} = calendar:now_to_local_time(NowTime),
-    io_lib:format("~4.10.0B-~2.10.0B-~2.10.0B ~2.10.0B:~2.10.0B:~2.10.0B:~6.10.0B ",
+    io_lib:format("~4.10.0B-~2.10.0B-~2.10.0B ~2.10.0B:~2.10.0B:~2.10.0B.~6.10.0B ",
                   [Y, M, D, H, Mi, S, MicroSec]).
     
 

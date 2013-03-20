@@ -24,14 +24,16 @@
 -behaviour(gen_alog).
 -behaviour(gen_server).
 -include_lib("alog.hrl").
+-include_lib("kernel/include/file.hrl").
 
 %% API
--export([start_link/1]).
+-export([start_link/2]).
 %% gen_alog callbacks
--export([start/1,
-         stop/1,
-         log/2,
-         format/8]).
+-export([start/2,
+         stop/2,
+         log/3,
+         format/8,
+         reload/1]).
 %% gen_server callbacks
 -export([init/1,
          handle_call/3,
@@ -42,9 +44,15 @@
 
 -record(state, { log_ref
                , log_fun
+               , opts
+               , name
+               , inode
+               , timer
                }).
 
 -define(DEF_SUP_REF, alog_sup).
+
+-define(CHECK_INTERVAL, 600000).
 
 %% pre-defined key of 'format' option
 -define(FORMAT_ARG, format).
@@ -89,27 +97,28 @@
 
 %%% API
 %% @doc Starts logger
--spec start_link(list()) -> pid().
-start_link(Opts) ->
-  gen_server:start_link({local, ?MODULE}, ?MODULE, [Opts], []).
+-spec start_link(atom(), list()) -> pid().
+start_link(Name, Opts) ->
+  OptsWithName = gen_alog:set_opt(name, Opts, Name),
+  gen_server:start_link({local, Name}, ?MODULE, [OptsWithName], []).
 
 %%% gen_alog callbacks
 %% @private
--spec start(list()) -> ok.
-start(Opts) ->
+-spec start(atom(), list()) -> ok.
+start(Name, Opts) ->
   SupRef = gen_alog:get_opt(sup_ref, Opts, ?DEF_SUP_REF),
-  attach_to_supervisor(SupRef, Opts),
+  attach_to_supervisor(SupRef, Name, Opts),
   ok.
 
 %% @private
--spec stop(list()) -> ok.
-stop(_) ->
-  gen_server:call(?MODULE, stop).
+-spec stop(atom(), list()) -> ok.
+stop(Name, _) ->
+  gen_server:call(Name, stop).
 
 %% @private
--spec log(integer(), string()) -> ok.
-log(_ALoggerPrio, Msg) ->
-  gen_server:cast(?MODULE, {log, "", Msg}),
+-spec log(atom(), integer(), string()) -> ok.
+log(Name, _ALoggerPrio, Msg) ->
+  gen_server:cast(Name, {log, "", Msg}),
   ok.
 
 %% @private
@@ -121,17 +130,36 @@ format(FormatString, Args, Level, Tag, Module, Line, Pid, TimeStamp) ->
   alog_common_formatter:format(FormatString, Args, Level,
                                Tag, Module, Line, Pid, TimeStamp).
 
+-spec reload(atom()) -> ok.
+reload(Name) ->
+    gen_server:call(Name, reload).
+
 %%% gen_server callbacks
 %% @private
 init([Opts]) ->
   Args  = get_args(Opts),
-  State = open_logs(Args),
-  {ok, State}.
+  {LogRef, LogFun} = open_logs(Args),
+  Name = get_name(Args),
+  Inode = get_inode(Name),
+  Timer = erlang:start_timer(?CHECK_INTERVAL, self(), timeout),
+  {ok, #state{log_ref = LogRef,
+              log_fun = LogFun,
+              opts = Opts,
+              name = Name,
+              inode = Inode,
+              timer = Timer}}.
 
 %% @private
+handle_call(reload, _From, #state{log_ref = LogRef, opts = Opts, name = Name, timer = TimerRef} = State) ->
+  erlang:cancel_timer(TimerRef),
+  safe_close(LogRef),
+  Args  = get_args(Opts),
+  {LogRef1, LogFun1} = open_logs(Args),
+  Inode = get_inode(Name),
+  Timer = erlang:start_timer(?CHECK_INTERVAL, self(), timeout),
+  {reply, ok, State#state{log_ref = LogRef1, log_fun = LogFun1, inode = Inode, timer = Timer}};
 handle_call(stop, _From, #state{log_ref = LogRef} = State) ->
-  disk_log:sync(LogRef),
-  disk_log:stop(LogRef),
+  safe_close(LogRef),
   {stop, normal, ok, State};
 handle_call(_Msg, _From, State) ->
   {reply, ok, State}.
@@ -146,6 +174,24 @@ handle_cast(_Msg, State) ->
   {noreply, State}.
 
 %% @private
+handle_info({timeout, TimerRef, _}, #state{timer = TimerRef,
+                                           log_ref = LogRef,
+                                           opts = Opts,
+                                           name = Name,
+                                           inode = Inode} = State) ->
+  NewState =
+    case get_inode(Name) of
+      Inode ->
+        State;
+      _ ->
+        safe_close(LogRef),
+        Args  = get_args(Opts),
+        {LogRef1, LogFun1} = open_logs(Args),
+        NewInode = get_inode(Name),
+        State#state{log_ref = LogRef1, log_fun = LogFun1, inode = NewInode}
+    end,
+  NewTimer = erlang:start_timer(?CHECK_INTERVAL, self(), timeout),
+  {noreply, NewState#state{timer = NewTimer}};
 handle_info(_Msg, StateData) ->
   {noreply, StateData}.
 
@@ -159,11 +205,11 @@ code_change(_OldVsn, State, _Extra) ->
 
 %%% Internal functions
 %% @private
-attach_to_supervisor(SupRef, Opts) ->
+attach_to_supervisor(SupRef, Name, Opts) ->
   Restart = permanent,
   Shutdown = 2000,
-  ChildSpec = {?MODULE,
-               {?MODULE, start_link, [Opts]},
+  ChildSpec = {Name,
+               {?MODULE, start_link, [Name, Opts]},
                Restart,
                Shutdown,
                worker,
@@ -184,12 +230,11 @@ open_logs({DLArgs, ADLArgs}) ->
   Format = gen_alog:get_opt(?FORMAT_ARG, DLArgs , ?FORMAT_DEF),
   Sync   = gen_alog:get_opt(?SYNC_ARG  , ADLArgs, ?SYNC_DEF),
   LogFun = get_log_fun(Format, Sync, ?LOG_FUNS),
-  State = #state{log_fun = LogFun},
   case disk_log:open(DLArgs) of
     {ok, LogRef} ->
-      State#state{ log_ref = LogRef};
+      {LogRef, LogFun};
     {repaired, LogRef, _recovered, _badbytes} ->
-      State#state{ log_ref = LogRef};
+      {LogRef, LogFun};
     Error ->
       throw(Error)
   end.
@@ -199,3 +244,21 @@ get_log_fun(Format, Sync, [{Format, Sync, Fun} | _])->
   Fun;
 get_log_fun(Format, Sync, [_| T]) ->
   get_log_fun(Format, Sync, T).
+
+
+get_name({DLArgs, _ADLArgs}) ->
+  {file, Name} = proplists:lookup(file, DLArgs),
+  Name.
+
+get_inode(Name) ->
+  case file:read_file_info(Name) of
+    {ok, Info} ->
+      Info#file_info.inode;
+    _ ->
+      undefined
+  end.
+
+safe_close(LogRef) ->
+  disk_log:sync(LogRef),
+  disk_log:close(LogRef).
+
