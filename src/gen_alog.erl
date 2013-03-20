@@ -25,7 +25,8 @@
 
 -export([behaviour_info/1,
          get_opt/2,
-         get_opt/3]).
+         get_opt/3,
+         set_opt/3]).
 
 -spec behaviour_info(atom()) -> [{atom(), integer()}, ...] |
                                 undefined.
@@ -58,3 +59,8 @@ get_opt(Opt, Opts, Default) ->
         {value, {_, Val}} ->
             Val
     end.
+
+%% @doc sets the Opt-named option in the Opts proplist to Value
+%%      and returns new options proplist
+set_opt(Opt, Opts, Value) ->
+    lists:keystore(Opt, 1, Opts, {Opt, Value}).

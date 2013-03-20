@@ -91,7 +91,8 @@
 %% @doc Starts logger
 -spec start_link(atom(), list()) -> pid().
 start_link(Name, Opts) ->
-  gen_server:start_link({local, Name}, ?MODULE, [Opts], []).
+  OptsWithName = gen_alog:set_opt(name, Opts, Name),
+  gen_server:start_link({local, Name}, ?MODULE, [OptsWithName], []).
 
 %%% gen_alog callbacks
 %% @private
