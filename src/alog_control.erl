@@ -239,7 +239,7 @@ do_request(init_loggers, #config{enabled_loggers = EnabledLoggers} = Config) ->
     ok = start_loggers(EnabledLoggers),
     ok = apply_config(Config),
 
-    case alog_config:get_conf(install_error_logger_handler, true) of
+    case alog_config:get_conf(install_error_logger_handler, false) of
         true ->
             ok = alog_error_logger_handler:install();
         _ -> pass
