@@ -24,22 +24,25 @@
 -module(alog_test_logger_iface).
 -behaviour(gen_alog).
 
--export([start/1,
-         stop/1,
-         log/2,
-         format/8]).
+-export([start/2,
+         stop/2,
+         log/3,
+         format/8,
+         reload/1]).
 
 %% @private
-start(_) -> ok.
+start(_Name, _) -> ok.
 
 %% @private
-stop(_)  -> ok.
+stop(_Name, _)  -> ok.
 
 %% @private
 format(_FormatString, [RequestRef], Level, Tag, Module, Line, Pid, _Timestamp) ->
     Pid ! {format, RequestRef, Level, Tag, Module, Line, Pid},
     {RequestRef, Level, Tag, Module, Line, Pid}.
 
+reload(_Name) -> ok.
+
 %% @private
-log(Level, {RequestRef, Level, Tag, Module, Line, Pid}) ->
+log(_Name, Level, {RequestRef, Level, Tag, Module, Line, Pid}) ->
     Pid ! {log, Level, RequestRef, Tag, Module, Line, Pid}.
