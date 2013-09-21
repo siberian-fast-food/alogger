@@ -33,7 +33,8 @@ run_examples() ->
     {ok, BackupFlows} = alog_control:get_flows(),
     ok = alog_control:delete_all_flows(),
     ok = alog_control:add_new_flow({mod,[?MODULE]}, {'=<', debug},
-                                    [{{console_log, alog_tty}, alog_tty}]),
+                                    [{{console_log, alog_tty}, alog_tty},
+                                     {{syslog_test, alog_syslog}, alog_syslog}]),
 
     A = "foo",
     B = bar,
