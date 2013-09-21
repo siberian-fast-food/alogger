@@ -1,23 +1,24 @@
+%% ----------------------------------------------------------------------
+%% Copyright 2011-2013 alogger project
+%%
+%% Licensed under the Apache License, Version 2.0 (the "License");
+%% you may not use this file except in compliance with the License.
+%% You may obtain a copy of the License at
+%%
+%%     http://www.apache.org/licenses/LICENSE-2.0
+%%
+%% Unless required by applicable law or agreed to in writing, software
+%% distributed under the License is distributed on an "AS IS" BASIS,
+%% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%% See the License for the specific language governing permissions and
+%% limitations under the License.
+%%
+%% @copyright 2013 Klarna AB
+%% @author Alexander Dergachev <alexander.dergachev@klarna.com>
+%%
 %% @doc
 %% Main interface for work with log flows.
 %% @end
-%% ----------------------------------------------------------------------
-%% Copyright (c) 2011 Siberian Fast Food
-%% Authors: Alexander Dergachev <alexander.dergachev@gmail.com>
-%%          Artem Golovinsky    <artemgolovinsky@gmail.com>
-%%          Igor Karymov        <ingham.k@gmail.com>
-%%          Dmitry Groshev      <lambdadmitry@gmail.com>
-%
-%% The contents of this file are subject to the Erlang Public License,
-%% Version 1.1, (the "License"); you may not use this file except in
-%% compliance with the License. You should have received a copy of the
-%% Erlang Public License along with this software. If not, it can be
-%% retrieved online at http://www.erlang.org/.
-%%
-%% Software distributed under the License is distributed on an "AS IS"
-%% basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
-%% the License for the specific language governing rights and limitations
-%% under the License.
 %% ----------------------------------------------------------------------
 
 -module(alog_control).
@@ -74,7 +75,7 @@
 
 -type full_logger() :: {logger(), atom()}.
 
--type priority() :: debug | info | notice | warning | error 
+-type priority() :: debug | info | notice | warning | error
                     | critical | alert | emergency | integer().
 
 -type priority_expr() :: '<' | '>' | '=<' | '>=' | '==' | '/='.
@@ -166,13 +167,13 @@ dump_to_config(File) ->
     gen_server:call(?SERVER, {dump_to_config, File}).
 
 %% @doc Add and start new logger.
--spec add_logger(logger()) -> ok | {error, term()}.                       
+-spec add_logger(logger()) -> ok | {error, term()}.
 add_logger(Logger) ->
     gen_server:call(?SERVER, {add_logger, Logger}).
 
 %% @doc Delete exist logger. All flows use this logger
 %% became disabled.
--spec delete_logger(logger()) -> ok | {error, term()}.                       
+-spec delete_logger(logger()) -> ok | {error, term()}.
 delete_logger(Logger) ->
     gen_server:call(?SERVER, {delete_logger, Logger}).
 
@@ -254,7 +255,7 @@ do_request(power_inverse, #config{power = Power} = Config) ->
                end,
     NewConfig = Config#config{power = NewPower},
     new_config_if_successfully_applied(NewConfig, Config);
-    
+
 do_request({set_power, Val}, #config{} = Config) ->
     NewConfig = Config#config{power = Val},
     new_config_if_successfully_applied(NewConfig, Config);
@@ -277,7 +278,7 @@ do_request(print_flows, #config{flows = Flows, power = Power} = Config) ->
 
 do_request({add_new_flow, Filter, Priority, FullLoggers},
            #config{flows = Flows, enabled_loggers = EnabledLoggers} = Config) ->
-    
+
     NewFlow = #flow{filter = Filter, priority = Priority,
                     full_loggers = FullLoggers},
 
@@ -304,7 +305,7 @@ do_request({set_flow_filter, Id, Filter},
 
 do_request({set_flow_loggers, Id, FullLoggers},
            #config{flows = Flows} = Config) ->
-    
+
     %%TODO check flow loggers
     ModFun =
         fun(Flow) ->
@@ -572,7 +573,7 @@ dump_to_config_low(File, Flow) ->
 %% @private
 update_terms(Terms, File, Flow) ->
     [[{alog, ListOfConf}]] = Terms,
-    WriteToConf = [{alog, new_flow(ListOfConf, Flow)}], 
+    WriteToConf = [{alog, new_flow(ListOfConf, Flow)}],
     write_to_config(WriteToConf, File).
 
 %% @private

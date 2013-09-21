@@ -1,3 +1,18 @@
+%% ----------------------------------------------------------------------
+%% Copyright 2011-2013 alogger project
+%%
+%% Licensed under the Apache License, Version 2.0 (the "License");
+%% you may not use this file except in compliance with the License.
+%% You may obtain a copy of the License at
+%%
+%%     http://www.apache.org/licenses/LICENSE-2.0
+%%
+%% Unless required by applicable law or agreed to in writing, software
+%% distributed under the License is distributed on an "AS IS" BASIS,
+%% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%% See the License for the specific language governing permissions and
+%% limitations under the License.
+%%
 %% @doc
 %% This module is a main alog module. It serves start/0 and
 %% stop/0 functions as a user API and implements appication behaviour.
@@ -7,23 +22,6 @@
 %% level - the one that accepts format string, arguments and list of tags,
 %% the one without tags and the one with string only.
 %% @end
-%% ----------------------------------------------------------------------
-%% Copyright (c) 2011 Siberian Fast Food
-%% Authors: Alexander Dergachev <alexander.dergachev@gmail.com>
-%%          Artem Golovinsky    <artemgolovinsky@gmail.com>
-%%          Igor Karymov        <ingham.k@gmail.com>
-%%          Dmitry Groshev      <lambdadmitry@gmail.com>
-%
-%% The contents of this file are subject to the Erlang Public License,
-%% Version 1.1, (the "License"); you may not use this file except in
-%% compliance with the License. You should have received a copy of the
-%% Erlang Public License along with this software. If not, it can be
-%% retrieved online at http://www.erlang.org/.
-%%
-%% Software distributed under the License is distributed on an "AS IS"
-%% basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
-%% the License for the specific language governing rights and limitations
-%% under the License.
 %% ----------------------------------------------------------------------
 
 -module(alog).

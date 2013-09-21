@@ -10,7 +10,7 @@ __Authors:__ Alexander Dergachev ([`alexander.dergachev@gmail.com`](mailto:alexa
 License
 -------
 <pre>
-Copyright (c) 2011 Siberian Fast Food
+Copyright 2011-2013 alogger project
 Authors: Alexander Dergachev alexander.dergachev@gmail.com
          Artem Golovinsky    artemgolovinsky@gmail.com
          Igor Karymov        ingham.k@gmail.com
