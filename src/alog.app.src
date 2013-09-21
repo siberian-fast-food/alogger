@@ -20,7 +20,7 @@
 {application, alog,
  [
   {description, "Abstract logger (alog)"},
-  {vsn, "1"},
+  {vsn, "2.0.2"},
   {registered, []},
   {applications, [kernel,
                   stdlib,
