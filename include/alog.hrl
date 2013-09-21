@@ -41,6 +41,10 @@
 -define(DBG(Format, Args),      ?DBG(Format, Args, [])).
 -define(DBG(Format),            ?DBG(Format, [])).
 
+-define(DEBUG(Format, Args, Tag), ?LOG(Format, Args, ?debug, Tag)).
+-define(DEBUG(Format, Args),      ?DEBUG(Format, Args, [])).
+-define(DEBUG(Format),            ?DEBUG(Format, [])).
+
 -define(INFO(Format, Args, Tag), ?LOG(Format, Args, ?info, Tag)).
 -define(INFO(Format, Args),      ?INFO(Format, Args, [])).
 -define(INFO(Format),            ?INFO(Format, [])).
