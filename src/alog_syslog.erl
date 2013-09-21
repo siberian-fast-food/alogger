@@ -42,19 +42,21 @@ start(_Name, Opts) ->
     Logopt = gen_alog:get_opt(logopt, Opts, ?DEF_LOGOPT),
     Facility = gen_alog:get_opt(facility, Opts, ?DEF_FACILITY),
     syslog:start(),
-    syslog:open(Ident, Logopt, Facility),
+    {ok, Port} = syslog:open(Ident, Logopt, Facility),
+    register(?MODULE, Port),
     ok.
 
 %% @doc
 -spec stop(atom(), list()) -> ok.
 stop(_Name, _) ->
+    syslog:stop(?MODULE),
     ok.
 
 %% @doc logs message Msg with apropriate priority
 -spec log(atom(), integer(), string()) -> ok.
 log(_Name, ALoggerPrio, Msg) ->
     SyslogPrio = map_prio(ALoggerPrio),
-    syslog:log(SyslogPrio, Msg),
+    syslog:log(?MODULE, SyslogPrio, Msg),
     ok.
 
 %% @doc returns formated log message
