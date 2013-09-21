@@ -41,13 +41,13 @@ The Abstract Logger Interface (alogger) brings completely new opportunities of l
   * the possibility to introduce any new logger to your project without a need to change the project code at all
 
   * the interface will provide some neat features which are not exist in most of the existent loggers, like these:
-    
+
     * the possibility to change the logging priority "on the fly" without any significant overhead thanks to some parse_transform and hot code reloading magic
 
     * the possibility to change the logging priority by modules or by special tags
 
-    
- 
+
+
 
 
 
@@ -67,8 +67,6 @@ A the moment there're four logger interfaces out of the box:
 * __alog_tty__: a simple one, it prints logs by io:format
 
 * __alog_syslog__: an interface towards Syslog daemon
-
-* __alog_scribe__: an interface towards Scribe log daemon through thrift protocol
 
 * __alog_disk_log__: an interface towards disk_log logging facility
 
@@ -125,7 +123,7 @@ alogger can be configured to write different flows (or streams of log messages) 
 
 * TagList is list of tags, Every tag is atom. If you set tag as filter, printouts with pointed tags is sent to loggers. Name of modules are  no matter in this case.
 
-* ModList is list of modules which should be logged to loggers. Tags are no matter. When ModList is set to ['\_'] log message from any module will be printed. Also you can set exceptions using [{'\_', not_for, ExModList}] where ExModList is list of modules which should not be logged.  
+* ModList is list of modules which should be logged to loggers. Tags are no matter. When ModList is set to ['\_'] log message from any module will be printed. Also you can set exceptions using [{'\_', not_for, ExModList}] where ExModList is list of modules which should not be logged.
 
 
 
@@ -173,10 +171,6 @@ We prepared some simple logging examples, so you could check how it works. You c
 <pre>
 > alog_examples:run_examples().
 </pre>
-
-
-
-NOTE: if you have enabled alog_scribe logger interface, you should have Scribe log daemon installed and configured (an configuration example you can find in the priv directory). For more information about Scribe installation procedure see Scribe documentation.
 
 
 
@@ -233,9 +227,6 @@ Aug 7 2011 23:56:44
 
 
 
-<table width="100%" border="0" summary="list of packages"><tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/scribe/package-summary.md" class="package">scribe</a></td></tr></table>
-
-
 
 <h2 class="indextitle">Modules</h2>
 
@@ -252,8 +243,6 @@ Aug 7 2011 23:56:44
 <tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_if_default.md" class="module">alog_if_default</a></td></tr>
 <tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_parse_trans.md" class="module">alog_parse_trans</a></td></tr>
 <tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_pt.md" class="module">alog_pt</a></td></tr>
-<tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_scribe.md" class="module">alog_scribe</a></td></tr>
 <tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_syslog.md" class="module">alog_syslog</a></td></tr>
 <tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/doc/alog_tty.md" class="module">alog_tty</a></td></tr>
 <tr><td><a href="https://github.com/siberian-fast-food/alogger/blob/master/doc/gen_alogger.md" class="module">gen_alogger</a></td></tr></table>
-

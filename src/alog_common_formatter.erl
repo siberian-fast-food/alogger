@@ -1,7 +1,7 @@
 %% @doc
 %% The default log message formatter. You can use it for formating
 %% your log messages in your own log interfaces like we do in
-%% alog_syslog, alog_tty and alog_scribe.
+%% alog_syslog and alog_tty.
 %% @end
 %% ----------------------------------------------------------------------
 %% Copyright (c) 2011 Siberian Fast Food
@@ -59,7 +59,7 @@ format_timestamp({_MegaSecs, _Secs, MicroSec} = NowTime) ->
     {{Y, M, D}, {H, Mi, S}} = calendar:now_to_local_time(NowTime),
     io_lib:format("~4.10.0B-~2.10.0B-~2.10.0B ~2.10.0B:~2.10.0B:~2.10.0B.~6.10.0B ",
                   [Y, M, D, H, Mi, S, MicroSec]).
-    
+
 
 %%% internal functions
 %% @private
